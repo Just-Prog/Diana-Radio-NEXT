@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       NeteaseCloudMusicApi:
-        specifier: git+ssh://git@github.com/Just-Prog/NCMApi_BAK
+        specifier: git+https://github.com/Just-Prog/NCMApi_BAK.git
         version: git+https://github.com/Just-Prog/NCMApi_BAK.git#21ac52d4f7cc64fdfeb61a095e4f687f376be6df
       express:
         specifier: ^5.1.0

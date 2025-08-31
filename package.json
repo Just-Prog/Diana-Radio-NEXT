@@ -3,18 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write"
   },
   "dependencies": {
-    "NeteaseCloudMusicApi": "git+ssh://git@github.com/Just-Prog/NCMApi_BAK",
-    "express": "^5.1.0",
     "next": "15.5.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "NeteaseCloudMusicApi": "git+https://github.com/Just-Prog/NCMApi_BAK.git"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

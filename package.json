@@ -10,10 +10,11 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "NeteaseCloudMusicApi": "git+https://github.com/Just-Prog/NCMApi_BAK.git",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "NeteaseCloudMusicApi": "git+https://github.com/Just-Prog/NCMApi_BAK.git"
+    "redis": "^5.8.2"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

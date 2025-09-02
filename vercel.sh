@@ -4,4 +4,5 @@ sed -i -e "s/git+https:\/\/github.com\/Just-Prog/git+https:\/\/Just-Prog:$GITHUB
 echo "-⭐- 已替换 private 库源"
 pnpm install --no-frozen-lockfile
 echo "-👍- 安装完毕"
-pnpm build
+#pnpm build
+#echo "-👍- 构建完毕"

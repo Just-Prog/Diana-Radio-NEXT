@@ -21,6 +21,11 @@ export async function GET(
         isValidProgram = true;
         break;
       }
+    } else {
+      return Response.json({
+        code: 404,
+        message: 'whitelist may have not been refreshed, try refresh first',
+      });
     }
   }
 

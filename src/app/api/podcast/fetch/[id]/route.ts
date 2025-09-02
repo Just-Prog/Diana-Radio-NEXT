@@ -25,7 +25,10 @@ export async function GET(
   }
 
   if (!isValidProgram) {
-    return Response.json({ error: 'Forbidden' }, { status: 403 });
+    return Response.json(
+      { code: 403, message: 'audio id not in whitelist' },
+      { status: 403 }
+    );
   }
 
   const res = await song_url({ id });

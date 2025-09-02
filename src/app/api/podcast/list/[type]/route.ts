@@ -68,10 +68,13 @@ export async function GET(
     });
     const response = result.body as unknown as listResponse;
     if (response.code === 405) {
-      return Response.json({
-        code: 405,
-        message: 'request blocked by ncm risk firewall',
-      });
+      return Response.json(
+        {
+          code: 405,
+          message: 'request blocked by ncm risk firewall',
+        },
+        { status: 405 }
+      );
     }
     return Response.json(syncDB(response, type));
   }

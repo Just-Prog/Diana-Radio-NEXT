@@ -2,6 +2,7 @@ import { song_url } from 'NeteaseCloudMusicApi';
 import type { NextRequest } from 'next/server';
 import { DianaWeeklyAvailablePodcasts } from '@/app/api/podcast/constants';
 import redis from '@/app/lib/redis';
+import { refreshAll } from '../../list/[type]/route';
 
 export async function GET(
   req: NextRequest,
@@ -11,26 +12,25 @@ export async function GET(
 
   // Check if the ID exists in any of the programs lists
   const programTypes = Object.keys(DianaWeeklyAvailablePodcasts);
-  let isValidProgram = false;
+
+  const programInited = await redis.get(`${programTypes[0]}_updated_at`);
+
+  if (!programInited) {
+    await refreshAll();
+  }
 
   for (const type of programTypes) {
     const programsData = await redis.get(`${type}_programs`);
     if (programsData) {
       const programs = JSON.parse(programsData);
       if (programs.some((program: any) => String(program.id) === String(id))) {
-        isValidProgram = true;
-        break;
+        const res = await song_url({ id });
+        return Response.json(res.body);
       }
     }
   }
-
-  if (!isValidProgram) {
-    return Response.json(
-      { code: 403, message: 'audio id not in whitelist' },
-      { status: 403 }
-    );
-  }
-
-  const res = await song_url({ id });
-  return Response.json(res.body);
+  return Response.json(
+    { code: 403, message: 'audio id not in whitelist' },
+    { status: 403 }
+  );
 }

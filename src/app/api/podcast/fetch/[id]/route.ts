@@ -1,8 +1,8 @@
 import { song_url } from 'NeteaseCloudMusicApi';
 import type { NextRequest } from 'next/server';
 import { DianaWeeklyAvailablePodcasts } from '@/app/api/podcast/constants';
+import { refreshAll } from '@/app/lib/api/podcast';
 import redis from '@/app/lib/redis';
-import { refreshAll } from '../../list/[type]/route';
 
 export async function GET(
   req: NextRequest,

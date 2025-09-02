@@ -1,18 +1,9 @@
+/** biome-ignore-all lint/style/noMagicNumbers: shut up biome */
 import { dj_program } from 'NeteaseCloudMusicApi';
 import type { NextRequest } from 'next/server';
-import { createClient } from 'redis';
 
-const redis = await createClient({ url: process.env.REDIS_URL }).connect();
-
-const PC_SONGS = '986394922'; // A-SOUL嘉然歌曲合集
-const PC_SLEEPSTORY = '992840254'; // 嘉然睡前故事合集
-const PC_JIANWENLU = '1220070148'; // 小然见闻录
-
-const DianaWeeklyAvailablePodcasts = {
-  jianwen: PC_JIANWENLU,
-  sleep: PC_SLEEPSTORY,
-  songs: PC_SONGS,
-};
+import redis from '@/app/lib/redis';
+import { DianaWeeklyAvailablePodcasts } from '../../constants';
 
 type listResponse = {
   code: number;
@@ -22,7 +13,6 @@ type listResponse = {
 
 const syncDB = (data: any, prefix: string) => {
   const count = String(data.count);
-  // biome-ignore lint/style/noMagicNumbers: 毫秒转换为秒
   const updatedAt = String(Number.parseInt(String(Date.now() / 1000), 10));
   const programs = data.programs.map((e: any) => ({
     id: e.mainSong.id,
@@ -57,7 +47,7 @@ export async function GET(
       Number.parseInt(String(Date.now() / 1000), 10) - Number(isUpdated) <
         86_400
     ) {
-      console.log(`⭐Hit Cache (target: ${type})`);
+      // console.log(`⭐Hit Cache (target: ${type})`);
       const count = await redis.get(`${type}_count`);
       const updated_at = await redis.get(`${type}_updated_at`);
       const programs = JSON.parse(

@@ -1,7 +1,5 @@
 import { createClient } from 'redis';
 
-const redis = await createClient({
-  url: `${process.env.REDIS_URL}/${process.env.NODE_ENV === 'production' ? '0' : '1'}`,
-}).connect();
+const redis = await createClient({ url: process.env.REDIS_URL }).connect();
 
 export default redis;

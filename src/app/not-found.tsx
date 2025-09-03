@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import Image from 'next/image';
 import './globals.css';
 
@@ -7,7 +7,11 @@ import Link from 'next/link';
 import image from '@/app/assets/404.png';
 import Divider from './ui/divider';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ variable: '--font-inter', subsets: ['latin'] });
+const mono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: '404 - Diana Audio',
@@ -16,9 +20,11 @@ export const metadata: Metadata = {
 
 export default function GlobalNotFound() {
   return (
-    <html className={inter.className} lang="zh">
+    <html lang="zh">
       <body>
-        <div className="flex h-screen min-h-screen w-full items-center justify-center">
+        <div
+          className={`${inter.variable} ${mono.variable} flex h-screen min-h-screen w-full items-center justify-center px-4 antialiased`}
+        >
           <div className="flex flex-row gap-x-4">
             <div className="flex">
               <Image alt="" className="h-45 w-45 object-contain" src={image} />

@@ -24,7 +24,7 @@ export default function NavBar() {
       mode="horizontal"
       selectedKeys={pathNow}
     >
-      <MenuItem className="cursor-pointer!" disabled key="/">
+      <MenuItem className="mr-10 cursor-pointer!" disabled key="/">
         <Link href="/">
           <Image alt="" className="w-24 object-contain" src={LogoHorizon} />
         </Link>

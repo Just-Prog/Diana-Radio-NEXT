@@ -10,6 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@arco-design/web-react": "^2.66.5",
     "NeteaseCloudMusicApi": "git+https://github.com/Just-Prog/NCMApi_BAK.git",
     "next": "15.5.2",
     "react": "19.1.0",

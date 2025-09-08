@@ -5,7 +5,7 @@ import './globals.css';
 
 import Link from 'next/link';
 import image from '@/app/assets/404.png';
-import Divider from './ui/divider';
+import Divider from './ui/common/divider';
 
 const inter = Inter({ variable: '--font-inter', subsets: ['latin'] });
 const mono = JetBrains_Mono({

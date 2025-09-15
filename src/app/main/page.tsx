@@ -16,7 +16,7 @@ type SongInfo = {
 };
 
 export default function MainPage() {
-  const [currentPlaying, setCurrentPlaying] = useState<SongInfo>({});
+  const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
 
   const [windowSize, setWindowSize] = useState(getWindowSize());
@@ -44,7 +44,7 @@ export default function MainPage() {
             <Player
               songInfo={currentPlaying}
               togglePlaylist={() => setPlaylistOpened(true)}
-              type={currentPlaying.type ?? 'songs'}
+              type={currentPlaying?.type ?? 'songs'}
             />
           </div>
         </div>

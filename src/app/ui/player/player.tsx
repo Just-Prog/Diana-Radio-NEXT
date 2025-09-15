@@ -40,7 +40,7 @@ const PlayerControllerButton: React.FC<{
 
 const Player: React.FC<{
   type: 'songs' | 'sleep' | 'jianwen';
-  songInfo: SongInfo;
+  songInfo: SongInfo | undefined;
   togglePlaylist: () => void;
 }> = ({ type, songInfo, togglePlaylist }) => {
   return (

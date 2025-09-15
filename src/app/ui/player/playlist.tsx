@@ -9,13 +9,12 @@ import image_404 from '@/app/assets/404.png';
 import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
 import type { SongInfo } from '@/app/main/page';
-import { PlayerControllerButton } from './player';
 
 const Option = Select.Option;
 const options = DianaWeeklyAvailableProgramsInfo;
 
 const Playlist: React.FC<{
-  currentPlaying: SongInfo;
+  currentPlaying: SongInfo | undefined;
   setCurrentPlaying: (value: SongInfo) => void;
 }> = ({ currentPlaying }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);

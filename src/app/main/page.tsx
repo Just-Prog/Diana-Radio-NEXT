@@ -5,19 +5,7 @@ import Request from '../lib/axios/request';
 import Player from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
 export default function MainPage() {
-  const [playlist, setPlaylist] = useState<[]>();
-  const [playlistType, setPlaylistType] = useState<
-    'songs' | 'sleep' | 'jianwen'
-  >('songs');
   const [currentPlaying, setCurrentPlaying] = useState<any>({});
-  const fetchPlaylist = async () => {
-    const data = await Request.get(`${PODCAST_LIST_FETCH}/${playlistType}`);
-    setPlaylist(data.data);
-  };
-  // biome-ignore lint/correctness/useExhaustiveDependencies: why?
-  useEffect(() => {
-    fetchPlaylist();
-  }, [playlistType]);
 
   return (
     <div className="flex h-full max-w-full flex-1 flex-col overflow-y-auto overflow-x-hidden md:flex-row">
@@ -30,7 +18,7 @@ export default function MainPage() {
         </div>
       </div>
       <div className="h-full flex-1 md:flex-2">
-        <Playlist currentPlaying={currentPlaying} data={playlist} />
+        <Playlist currentPlaying={currentPlaying} />
       </div>
     </div>
   );

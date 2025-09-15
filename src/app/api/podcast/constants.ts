@@ -8,4 +8,16 @@ const DianaWeeklyAvailablePodcasts = {
   songs: PC_SONGS,
 };
 
-export { PC_SONGS, PC_SLEEPSTORY, PC_JIANWENLU, DianaWeeklyAvailablePodcasts };
+const DianaWeeklyAvailableProgramsInfo = [
+  { name: 'A-SOUL嘉然歌曲合集', key: 'songs' },
+  { name: '嘉然睡前故事合集', key: 'sleep' },
+  { name: '小然见闻录', key: 'jianwen' },
+];
+
+export {
+  PC_SONGS,
+  PC_SLEEPSTORY,
+  PC_JIANWENLU,
+  DianaWeeklyAvailablePodcasts,
+  DianaWeeklyAvailableProgramsInfo,
+};

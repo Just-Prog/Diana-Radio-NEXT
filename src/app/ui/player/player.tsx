@@ -1,5 +1,4 @@
 'use client';
-import { Button } from '@arco-design/web-react';
 import {
   IconBackward,
   IconForward,
@@ -9,6 +8,7 @@ import {
   IconSound,
 } from '@arco-design/web-react/icon';
 import Image from 'next/image';
+import type { ReactNode } from 'react';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
 import songs_cover from '@/app/assets/program/songs.png';
 import sleep_cover from '@/app/assets/program/songs.png';
@@ -19,9 +19,9 @@ const programCover = {
   sleep: sleep_cover,
 };
 
-const PlayerControllerButton = ({ children }) => {
+const PlayerControllerButton = (children: ReactNode) => {
   return (
-    <span className="cursor-pointer rounded-2xl px-4 pt-2 pb-1 hover:bg-gray-400/20">
+    <span className="cursor-pointer rounded-2xl px-4 pt-2 pb-1 duration-400 hover:bg-gray-400/20">
       {children}
     </span>
   );

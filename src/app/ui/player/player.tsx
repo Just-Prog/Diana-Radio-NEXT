@@ -2,6 +2,7 @@
 import {
   IconBackward,
   IconForward,
+  IconMenuFold,
   IconPlayArrow,
   IconSkipNext,
   IconSkipPrevious,
@@ -12,6 +13,7 @@ import type { ReactNode } from 'react';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
 import songs_cover from '@/app/assets/program/songs.png';
 import sleep_cover from '@/app/assets/program/songs.png';
+import type { SongInfo } from '@/app/main/page';
 
 const programCover = {
   songs: songs_cover,
@@ -19,18 +21,28 @@ const programCover = {
   sleep: sleep_cover,
 };
 
-const PlayerControllerButton = (children: ReactNode) => {
+const PlayerControllerButton: React.FC<{
+  children: ReactNode;
+  action?: () => void;
+}> = ({ children, action }) => {
   return (
-    <span className="cursor-pointer rounded-2xl px-4 pt-2 pb-1 duration-400 hover:bg-gray-400/20">
+    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: shut up
+    // biome-ignore lint/a11y/noStaticElementInteractions: shut up
+    // biome-ignore lint/a11y/useKeyWithClickEvents: sb biome
+    <div
+      className="cursor-pointer rounded-2xl px-1 pt-2 pb-1 duration-400 hover:bg-gray-400/20 md:px-4"
+      onClick={action}
+    >
       {children}
-    </span>
+    </div>
   );
 };
 
 const Player: React.FC<{
   type: 'songs' | 'sleep' | 'jianwen';
-  songInfo: any;
-}> = ({ type, songInfo }) => {
+  songInfo: SongInfo;
+  togglePlaylist: () => void;
+}> = ({ type, songInfo, togglePlaylist }) => {
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex-1">
@@ -67,6 +79,9 @@ const Player: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton>
             <IconSound className="text-lg text-white" />
+          </PlayerControllerButton>
+          <PlayerControllerButton action={togglePlaylist}>
+            <IconMenuFold className="text-lg text-white" />
           </PlayerControllerButton>
         </div>
       </div>

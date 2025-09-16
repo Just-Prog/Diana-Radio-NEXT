@@ -90,7 +90,7 @@ const Playlist: React.FC<{
                 }
                 key={v.id}
               >
-                <div className="w-full max-w-full gap-x-4 overflow-clip">
+                <div className="line-clamp-1 w-full max-w-full gap-x-4 overflow-clip text-ellipsis">
                   <IconMusic />
                   <span>{v.name}</span>
                 </div>

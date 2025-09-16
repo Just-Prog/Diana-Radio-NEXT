@@ -1,13 +1,9 @@
 'use client';
 import { Drawer } from '@arco-design/web-react';
 import { useEffect, useState } from 'react';
+import useWindowSize from '../lib/hooks/useWindowSize';
 import Player from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
-
-const getWindowSize = () => ({
-  innerHeight: window.innerHeight,
-  innerWidth: window.innerWidth,
-});
 
 type SongInfo = {
   id: string;
@@ -19,19 +15,7 @@ export default function MainPage() {
   const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
 
-  const [windowSize, setWindowSize] = useState(getWindowSize());
-
-  const handleResize = () => {
-    setWindowSize(getWindowSize());
-  };
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: ?
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const windowSize = useWindowSize();
 
   return (
     <>
@@ -58,7 +42,7 @@ export default function MainPage() {
         onCancel={() => setPlaylistOpened(false)}
         unmountOnExit
         visible={playlistOpened}
-        width={windowSize.innerWidth <= 768 ? '100%' : '50%'}
+        width={windowSize?.width && window.innerWidth <= 768 ? '100%' : '50%'}
       >
         <div className="h-full md:flex-2">
           <Playlist

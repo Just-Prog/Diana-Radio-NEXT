@@ -56,7 +56,7 @@ const Player: React.FC<{
             />
           </div>
 
-          <div className="flex flex-col items-center gap-y-2">
+          <div className="flex flex-col items-center gap-y-2 px-8 text-center">
             <span className="font-bold text-black/85 text-xl md:text-2xl">
               {songInfo?.name ?? 'Diana Radio'}
             </span>
@@ -100,3 +100,4 @@ const Player: React.FC<{
 };
 
 export default Player;
+export { programCover };

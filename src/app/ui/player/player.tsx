@@ -10,9 +10,10 @@ import {
 } from '@arco-design/web-react/icon';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
+import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
+import sleep_cover from '@/app/assets/program/sleep.png';
 import songs_cover from '@/app/assets/program/songs.png';
-import sleep_cover from '@/app/assets/program/songs.png';
 import type { SongInfo } from '@/app/main/page';
 
 const programCover = {
@@ -51,13 +52,22 @@ const Player: React.FC<{
             <Image
               alt="cover"
               className={'w-40 animate-[spin_3s_linear_infinite] md:w-50'}
-              src={programCover[type]}
+              src={programCover[songInfo?.type ?? 'songs']}
             />
           </div>
 
-          <span className="font-bold text-black/85 text-xl md:text-2xl">
-            SongName
-          </span>
+          <div className="flex flex-col items-center gap-y-2">
+            <span className="font-bold text-black/85 text-xl md:text-2xl">
+              {songInfo?.name ?? 'Diana Radio'}
+            </span>
+            <span className="font-normal text-black/85 text-sm md:text-lg">
+              {songInfo?.type
+                ? DianaWeeklyAvailableProgramsInfo.find(
+                    (v) => v.key === songInfo?.type
+                  )?.name
+                : '未选择'}
+            </span>
+          </div>
         </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">

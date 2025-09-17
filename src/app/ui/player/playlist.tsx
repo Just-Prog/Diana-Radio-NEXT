@@ -16,7 +16,7 @@ const options = DianaWeeklyAvailableProgramsInfo;
 const Playlist: React.FC<{
   currentPlaying: SongInfo | undefined;
   setCurrentPlaying: (value: SongInfo) => void;
-}> = ({ currentPlaying }) => {
+}> = ({ currentPlaying, setCurrentPlaying }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<SongInfo[]>();
   // biome-ignore lint/style/noMagicNumbers: 首播时间
@@ -84,7 +84,13 @@ const Playlist: React.FC<{
             return (
               <List.Item
                 extra={
-                  <div className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20">
+                  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: shut up
+                  // biome-ignore lint/a11y/noStaticElementInteractions: shut up
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: shut up
+                  <div
+                    className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
+                    onClick={() => setCurrentPlaying(v)}
+                  >
                     <IconPlayCircle className="text-sm" />
                   </div>
                 }

@@ -9,11 +9,13 @@ import {
   IconSound,
 } from '@arco-design/web-react/icon';
 import Image from 'next/image';
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
 import sleep_cover from '@/app/assets/program/sleep.png';
 import songs_cover from '@/app/assets/program/songs.png';
+import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
+import Request from '@/app/lib/axios/request';
 import type { SongInfo } from '@/app/main/page';
 
 const programCover = {
@@ -44,6 +46,22 @@ const Player: React.FC<{
   songInfo: SongInfo | undefined;
   togglePlaylist: () => void;
 }> = ({ type, songInfo, togglePlaylist }) => {
+  const player = useRef(null);
+  const playerURL = useState('');
+  const fetchProgramURL = async () => {
+    if (songInfo?.id) {
+      const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
+      console.log(data.data);
+    } else {
+      return;
+    }
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ?真加了你又不乐意
+  useEffect(() => {
+    fetchProgramURL();
+  }, [songInfo]);
+
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex-1">
@@ -71,6 +89,8 @@ const Player: React.FC<{
         </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
+        {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
+        <audio preload="metadata" ref={player} src={undefined} />
         <div className="flex gap-x-4">
           <PlayerControllerButton>
             <IconSkipPrevious className="text-lg text-white" />

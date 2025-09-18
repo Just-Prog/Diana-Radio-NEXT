@@ -4,6 +4,14 @@ import { DianaWeeklyAvailablePodcasts } from '@/app/api/podcast/constants';
 import { refreshAll } from '@/app/lib/api/podcast';
 import redis from '@/app/lib/redis';
 
+interface songInfoResp {
+  br: number;
+  code: number;
+  md5: string;
+  type: string;
+  url: string;
+}
+
 export async function GET(
   req: NextRequest,
   ctx: RouteContext<'/api/podcast/fetch/[id]'>
@@ -24,8 +32,18 @@ export async function GET(
     if (programsData) {
       const programs = JSON.parse(programsData);
       if (programs.some((program: any) => String(program.id) === String(id))) {
-        const res = await song_url({ id });
-        return Response.json(res.body);
+        const res: songInfoResp[] = (await song_url({ id })).body
+          .data as songInfoResp[];
+        const data = res[0];
+        return Response.json({
+          code: data.code,
+          data: {
+            br: data.br,
+            md5: data.md5,
+            type: data.type,
+            url: data.url,
+          },
+        });
       }
     }
   }

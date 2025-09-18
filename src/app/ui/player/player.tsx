@@ -42,16 +42,15 @@ const PlayerControllerButton: React.FC<{
 };
 
 const Player: React.FC<{
-  type: 'songs' | 'sleep' | 'jianwen';
   songInfo: SongInfo | undefined;
   togglePlaylist: () => void;
-}> = ({ type, songInfo, togglePlaylist }) => {
+}> = ({ songInfo, togglePlaylist }) => {
   const player = useRef(null);
-  const playerURL = useState('');
+  const [playerURL, setPlayerURL] = useState('');
   const fetchProgramURL = async () => {
     if (songInfo?.id) {
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
-      console.log(data.data);
+      setPlayerURL(data.data.data.url);
     } else {
       return;
     }
@@ -59,7 +58,11 @@ const Player: React.FC<{
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: ?真加了你又不乐意
   useEffect(() => {
-    fetchProgramURL();
+    fetchProgramURL().then(() => {
+      (async () => {
+        await player.current.play();
+      })();
+    });
   }, [songInfo]);
 
   return (
@@ -90,7 +93,7 @@ const Player: React.FC<{
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
-        <audio preload="metadata" ref={player} src={undefined} />
+        <audio preload="metadata" ref={player} src={playerURL} />
         <div className="flex gap-x-4">
           <PlayerControllerButton>
             <IconSkipPrevious className="text-lg text-white" />
@@ -98,7 +101,11 @@ const Player: React.FC<{
           <PlayerControllerButton>
             <IconBackward className="text-lg text-white" />
           </PlayerControllerButton>
-          <PlayerControllerButton>
+          <PlayerControllerButton
+            action={async () => {
+              await player.current.play();
+            }}
+          >
             <IconPlayArrow className="text-lg text-white" />
           </PlayerControllerButton>
           <PlayerControllerButton>

@@ -27,7 +27,7 @@ export default function MainPage() {
         {/* <div className="h-full bg-linear-120 from-pink-400 to-orange-300 backdrop-blur-lg md:flex-3"> */}
         <div className="h-full backdrop-blur-lg md:flex-3">
           <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0] blur-lg">
-            <Image 
+            <Image
               alt=""
               className="w-[120%] bg-black opacity-75"
               src={programCover[currentPlaying?.type ?? 'songs']}
@@ -37,7 +37,6 @@ export default function MainPage() {
             <Player
               songInfo={currentPlaying}
               togglePlaylist={() => setPlaylistOpened(true)}
-              type={currentPlaying?.type ?? 'songs'}
             />
           </div>
         </div>

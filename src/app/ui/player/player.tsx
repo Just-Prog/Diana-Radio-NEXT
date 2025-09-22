@@ -77,6 +77,7 @@ const Player: React.FC<{
       setPlayerURL(data.data.data.url);
       await play();
       setPaused(false);
+      setupMediaSessionMetadata();
     } else {
       return;
     }
@@ -99,6 +100,42 @@ const Player: React.FC<{
   useEffect(() => {
     fetchProgramURL();
   }, [songInfo]);
+
+  const initMediaSession = () => {
+    if ('mediaSession' in navigator) {
+      console.log('环境支持MediaSession');
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        play();
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        pause();
+      });
+    } else {
+      console.log('MediaSession不可用');
+    }
+  };
+
+  const setupMediaSessionMetadata = useCallback(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: songInfo?.name,
+        artist: DianaWeeklyAvailableProgramsInfo.find(
+          (v) => v.key === songInfo?.type
+        )?.name,
+        artwork: [
+          {
+            src: programCover[songInfo?.type ?? 'songs'].src,
+            sizes: '512x512',
+          },
+        ],
+      });
+    }
+  }, [songInfo]);
+
+  useEffect(() => {
+    initMediaSession();
+  }, []);
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -128,7 +165,12 @@ const Player: React.FC<{
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
-        <audio preload="metadata" ref={player} src={playerURL} />
+        <audio
+          crossOrigin="anonymous"
+          preload="auto"
+          ref={player}
+          src={playerURL}
+        />
         <div className="flex gap-x-4">
           <PlayerControllerButton>
             <IconSkipPrevious className="text-lg text-white" />

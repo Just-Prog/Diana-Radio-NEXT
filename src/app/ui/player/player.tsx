@@ -39,7 +39,7 @@ const PlayerControllerButton: React.FC<{
   return (
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: shut up
     // biome-ignore lint/a11y/noStaticElementInteractions: shut up
-    // biome-ignore lint/a11y/useKeyWithClickEvents: sb biome
+    // biome-ignore lint/a11y/useKeyWithClickEvents: shut up biome
     <div
       className="cursor-pointer rounded-2xl px-1 pt-2 pb-1 duration-400 hover:bg-gray-400/20 md:px-4"
       onClick={action}
@@ -53,16 +53,29 @@ const Player: React.FC<{
   songInfo: SongInfo | undefined;
   togglePlaylist: () => void;
 }> = ({ songInfo, togglePlaylist }) => {
-  const player = useRef(null);
-  const [playerURL, setPlayerURL] = useState(null);
+  const player = useRef<HTMLAudioElement>(null);
+  const [playerURL, setPlayerURL] = useState<string | undefined>(undefined);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
+
+  const play = async () => {
+    if (player.current) {
+      await player.current.play();
+    }
+  };
+
+  const pause = () => {
+    if (player.current) {
+      player.current.pause();
+    }
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
-      const audio = player.current;
       setPaused('loading');
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
       setPlayerURL(data.data.data.url);
-      await audio.play();
+      await play();
       setPaused(false);
     } else {
       return;
@@ -70,12 +83,11 @@ const Player: React.FC<{
   }, [songInfo]);
 
   const togglePlayPause = async () => {
-    const audio = player.current;
     setPaused('loading');
     if (paused) {
-      await audio.play();
+      await play();
     } else {
-      await audio.pause();
+      pause();
     }
     setPaused(!paused);
   };

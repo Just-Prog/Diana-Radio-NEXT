@@ -2,14 +2,22 @@
 import {
   IconBackward,
   IconForward,
+  IconLoading,
   IconMenuFold,
+  IconPause,
   IconPlayArrow,
   IconSkipNext,
   IconSkipPrevious,
   IconSound,
 } from '@arco-design/web-react/icon';
 import Image from 'next/image';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
 import sleep_cover from '@/app/assets/program/sleep.png';
@@ -46,23 +54,35 @@ const Player: React.FC<{
   togglePlaylist: () => void;
 }> = ({ songInfo, togglePlaylist }) => {
   const player = useRef(null);
-  const [playerURL, setPlayerURL] = useState('');
-  const fetchProgramURL = async () => {
+  const [playerURL, setPlayerURL] = useState(null);
+  const [paused, setPaused] = useState<boolean | 'loading'>(true);
+  const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
+      const audio = player.current;
+      setPaused('loading');
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
       setPlayerURL(data.data.data.url);
+      await audio.play();
+      setPaused(false);
     } else {
       return;
     }
+  }, [songInfo]);
+
+  const togglePlayPause = async () => {
+    const audio = player.current;
+    setPaused('loading');
+    if (paused) {
+      await audio.play();
+    } else {
+      await audio.pause();
+    }
+    setPaused(!paused);
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: ?真加了你又不乐意
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ？
   useEffect(() => {
-    fetchProgramURL().then(() => {
-      (async () => {
-        await player.current.play();
-      })();
-    });
+    fetchProgramURL();
   }, [songInfo]);
 
   return (
@@ -72,7 +92,7 @@ const Player: React.FC<{
           <div className="overflow-clip rounded-[50%] shadow-black shadow-xl/10">
             <Image
               alt="cover"
-              className={'w-40 animate-[spin_3s_linear_infinite] md:w-50'}
+              className={`w-40 ${paused ? 'animate-none' : 'animate-[spin_3s_linear_infinite]'} md:w-50`}
               src={programCover[songInfo?.type ?? 'songs']}
             />
           </div>
@@ -101,12 +121,14 @@ const Player: React.FC<{
           <PlayerControllerButton>
             <IconBackward className="text-lg text-white" />
           </PlayerControllerButton>
-          <PlayerControllerButton
-            action={async () => {
-              await player.current.play();
-            }}
-          >
-            <IconPlayArrow className="text-lg text-white" />
+          <PlayerControllerButton action={togglePlayPause}>
+            {paused === 'loading' ? (
+              <IconLoading className="text-lg text-white" />
+            ) : paused ? (
+              <IconPlayArrow className="text-lg text-white" />
+            ) : (
+              <IconPause className="text-lg text-white" />
+            )}
           </PlayerControllerButton>
           <PlayerControllerButton>
             <IconForward className="text-lg text-white" />

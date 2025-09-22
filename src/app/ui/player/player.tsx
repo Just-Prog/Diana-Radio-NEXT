@@ -144,8 +144,10 @@ const Player: React.FC<{
   }, []);
 
   useEffect(() => {
-    console.dir(player.current);
-  }, [player.current]);
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = paused ? 'paused' : 'playing';
+    }
+  }, [paused]);
 
   return (
     <div className="flex h-full w-full flex-col">

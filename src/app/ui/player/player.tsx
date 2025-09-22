@@ -83,6 +83,9 @@ const Player: React.FC<{
   }, [songInfo]);
 
   const togglePlayPause = async () => {
+    if (!songInfo?.id) {
+      return;
+    }
     setPaused('loading');
     if (paused) {
       await play();
@@ -104,7 +107,7 @@ const Player: React.FC<{
           <div className="overflow-clip rounded-[50%] shadow-black shadow-xl/10">
             <Image
               alt="cover"
-              className={`w-40 ${paused ? 'animate-none' : 'animate-[spin_3s_linear_infinite]'} md:w-50`}
+              className={`w-40 animate-[spin_3s_linear_infinite] ${paused && 'pause-animation'} md:w-50`}
               src={programCover[songInfo?.type ?? 'songs']}
             />
           </div>

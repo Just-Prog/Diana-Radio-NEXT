@@ -56,6 +56,9 @@ const Player: React.FC<{
   const player = useRef<HTMLAudioElement>(null);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
 
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   const play = async () => {
     if (player.current) {
       await player.current.play();
@@ -108,6 +111,23 @@ const Player: React.FC<{
       player.current.onended = (_) => pause();
     }
   }, [player]);
+
+  useEffect(() => {
+    const audio = player.current;
+
+    if (audio) {
+      const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+      const handleLoadedData = () => setDuration(audio.duration);
+
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('loadeddata', handleLoadedData);
+
+      return () => {
+        audio.removeEventListener('timeupdate', handleTimeUpdate);
+        audio.removeEventListener('loadeddata', handleLoadedData);
+      };
+    }
+  }, []);
 
   const initMediaSession = () => {
     if ('mediaSession' in navigator) {
@@ -184,6 +204,12 @@ const Player: React.FC<{
             </span>
           </div>
         </div>
+      </div>
+      <div className={'h-1 w-full bg-[#fff]'}>
+        <div
+          className={'h-full bg-[#e799b0]'}
+          style={{ width: `${(currentTime / duration) * 100}%` }}
+        />
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}

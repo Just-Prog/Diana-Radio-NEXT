@@ -103,6 +103,12 @@ const Player: React.FC<{
     fetchProgramURL();
   }, [songInfo]);
 
+  useEffect(() => {
+    if (player.current) {
+      player.current.onended = (_) => pause();
+    }
+  }, [player]);
+
   const initMediaSession = () => {
     if ('mediaSession' in navigator) {
       console.log('环境支持MediaSession');
@@ -114,6 +120,10 @@ const Player: React.FC<{
       navigator.mediaSession.setActionHandler('pause', () => {
         pause();
         navigator.mediaSession.playbackState = 'paused';
+      });
+      navigator.mediaSession.setActionHandler('stop', () => {
+        pause();
+        navigator.mediaSession.playbackState = 'none';
       });
     } else {
       console.log('MediaSession不可用');

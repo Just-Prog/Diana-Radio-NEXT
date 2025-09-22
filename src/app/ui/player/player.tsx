@@ -54,18 +54,19 @@ const Player: React.FC<{
   togglePlaylist: () => void;
 }> = ({ songInfo, togglePlaylist }) => {
   const player = useRef<HTMLAudioElement>(null);
-  const [playerURL, setPlayerURL] = useState<string | undefined>(undefined);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
 
   const play = async () => {
     if (player.current) {
       await player.current.play();
+      setPaused(false);
     }
   };
 
   const pause = () => {
     if (player.current) {
       player.current.pause();
+      setPaused(true);
     }
   };
 
@@ -74,9 +75,10 @@ const Player: React.FC<{
     if (songInfo?.id) {
       setPaused('loading');
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
-      setPlayerURL(data.data.data.url);
+      if (player.current) {
+        player.current.src = data.data.data.url;
+      }
       await play();
-      setPaused(false);
       setupMediaSessionMetadata();
     } else {
       return;
@@ -105,11 +107,13 @@ const Player: React.FC<{
     if ('mediaSession' in navigator) {
       console.log('环境支持MediaSession');
 
-      navigator.mediaSession.setActionHandler('play', () => {
-        play();
+      navigator.mediaSession.setActionHandler('play', async () => {
+        await play();
+        navigator.mediaSession.playbackState = 'playing';
       });
       navigator.mediaSession.setActionHandler('pause', () => {
         pause();
+        navigator.mediaSession.playbackState = 'paused';
       });
     } else {
       console.log('MediaSession不可用');
@@ -120,7 +124,8 @@ const Player: React.FC<{
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: songInfo?.name,
-        artist: DianaWeeklyAvailableProgramsInfo.find(
+        artist: 'Diana Radio',
+        album: DianaWeeklyAvailableProgramsInfo.find(
           (v) => v.key === songInfo?.type
         )?.name,
         artwork: [
@@ -130,12 +135,17 @@ const Player: React.FC<{
           },
         ],
       });
+      navigator.mediaSession.playbackState = 'playing';
     }
   }, [songInfo]);
 
   useEffect(() => {
     initMediaSession();
   }, []);
+
+  useEffect(() => {
+    console.dir(player.current);
+  }, [player.current]);
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -165,12 +175,7 @@ const Player: React.FC<{
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
-        <audio
-          crossOrigin="anonymous"
-          preload="auto"
-          ref={player}
-          src={playerURL}
-        />
+        <audio ref={player} />
         <div className="flex gap-x-4">
           <PlayerControllerButton>
             <IconSkipPrevious className="text-lg text-white" />

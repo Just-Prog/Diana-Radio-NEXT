@@ -73,6 +73,12 @@ const Player: React.FC<{
     }
   };
 
+  const seek = (v: number) => {
+    if (player.current) {
+      player.current.currentTime = v;
+    }
+  };
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
@@ -218,7 +224,7 @@ const Player: React.FC<{
           <PlayerControllerButton>
             <IconSkipPrevious className="text-lg text-white" />
           </PlayerControllerButton>
-          <PlayerControllerButton>
+          <PlayerControllerButton action={() => seek(currentTime - 5)}>
             <IconBackward className="text-lg text-white" />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlayPause}>
@@ -230,7 +236,7 @@ const Player: React.FC<{
               <IconPause className="text-lg text-white" />
             )}
           </PlayerControllerButton>
-          <PlayerControllerButton>
+          <PlayerControllerButton action={() => seek(currentTime + 5)}>
             <IconForward className="text-lg text-white" />
           </PlayerControllerButton>
           <PlayerControllerButton>

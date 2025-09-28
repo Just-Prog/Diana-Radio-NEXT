@@ -193,7 +193,7 @@ const Player: React.FC<{
     }
   }, [paused]);
 
-  const onClickProgressBar = (event) => {
+  const onClickProgressBar = (event: { nativeEvent: { offsetX: number } }) => {
     const clickPos = event.nativeEvent.offsetX;
     const progBarWidth = progressBar.current?.clientWidth ?? 1;
     const target = (player.current?.duration ?? 0) * (clickPos / progBarWidth);

@@ -1,4 +1,5 @@
 'use client';
+import { Icon } from '@arco-design/web-react';
 import {
   IconBackward,
   IconForward,
@@ -50,6 +51,10 @@ const PlayerControllerButton: React.FC<{
     </div>
   );
 };
+
+const IconFont = Icon.addFromIconFontCn({
+  src: '//at.alicdn.com/t/c/font_5032848_tipbvltx1ls.js',
+});
 
 const Player: React.FC<{
   songInfo: SongInfo | undefined;
@@ -215,9 +220,17 @@ const Player: React.FC<{
       </div>
       <div className={'h-1 w-full bg-[#fff]'}>
         <div
-          className={'h-full bg-[#e799b0]'}
+          className={
+            'flex h-full flex-col items-end justify-center bg-[#e799b0]'
+          }
           style={{ width: `${(currentTime / duration) * 100}%` }}
-        />
+        >
+          <IconFont
+            className={'-right-2 absolute z-[99] text-2xl'}
+            style={{ left: `calc(${(currentTime / duration) * 100}% - 12px)` }}
+            type="icon-yuandian"
+          />
+        </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}

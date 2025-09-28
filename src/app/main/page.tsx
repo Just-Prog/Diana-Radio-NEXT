@@ -1,7 +1,6 @@
 'use client';
 import { Drawer } from '@arco-design/web-react';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useWindowSize from '../lib/hooks/useWindowSize';
 import Player, { programCover } from '../ui/player/player';
 import Playlist from '../ui/player/playlist';

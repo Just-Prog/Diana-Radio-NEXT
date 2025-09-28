@@ -61,6 +61,7 @@ const Player: React.FC<{
   togglePlaylist: () => void;
 }> = ({ songInfo, togglePlaylist }) => {
   const player = useRef<HTMLAudioElement>(null);
+  const progressBar = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
 
   const [currentTime, setCurrentTime] = useState(0);
@@ -192,6 +193,13 @@ const Player: React.FC<{
     }
   }, [paused]);
 
+  const onClickProgressBar = (event) => {
+    const clickPos = event.nativeEvent.offsetX;
+    const progBarWidth = progressBar.current?.clientWidth ?? 1;
+    const target = (player.current?.duration ?? 0) * (clickPos / progBarWidth);
+    seek(target);
+  };
+
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex-1">
@@ -218,7 +226,14 @@ const Player: React.FC<{
           </div>
         </div>
       </div>
-      <div className={'h-1 w-full bg-[#fff]'}>
+      {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: ? */}
+      {/** biome-ignore lint/a11y/useKeyWithClickEvents: ? */}
+      {/** biome-ignore lint/a11y/noStaticElementInteractions: ? */}
+      <div
+        className={'h-1 w-full bg-[#fff]'}
+        onClick={onClickProgressBar}
+        ref={progressBar}
+      >
         <div
           className={
             'flex h-full flex-col items-end justify-center bg-[#e799b0]'

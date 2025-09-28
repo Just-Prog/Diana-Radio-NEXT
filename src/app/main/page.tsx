@@ -9,7 +9,7 @@ import Playlist from '../ui/player/playlist';
 type SongInfo = {
   id: string;
   name: string;
-  type?: 'songs' | 'sleep' | 'jianwen';
+  type?: 'songs' | 'sleep' | 'jianwen' | 'hachimi';
 };
 
 export default function MainPage() {

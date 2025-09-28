@@ -19,6 +19,7 @@ import {
   useState,
 } from 'react';
 import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
+import hachimi_cover from '@/app/assets/program/hachimi.png';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
 import sleep_cover from '@/app/assets/program/sleep.png';
 import songs_cover from '@/app/assets/program/songs.png';
@@ -30,6 +31,7 @@ const programCover = {
   songs: songs_cover,
   jianwen: jianwen_cover,
   sleep: sleep_cover,
+  hachimi: hachimi_cover,
 };
 
 const PlayerControllerButton: React.FC<{

@@ -23,7 +23,7 @@ const Playlist: React.FC<{
   const [updatedAt, setUpdatedAt] = useState<number>(1_607_772_600);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [playlistType, setPlaylistType] = useState<
-    'songs' | 'sleep' | 'jianwen'
+    'songs' | 'sleep' | 'jianwen' | 'hachimi'
   >('songs');
   const fetchPlaylist = async () => {
     setIsLoading(true);

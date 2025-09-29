@@ -68,6 +68,8 @@ const Player: React.FC<{
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragProgress, setDragProgress] = useState(0);
 
   const play = async () => {
     if (player.current) {
@@ -85,6 +87,7 @@ const Player: React.FC<{
 
   const seek = (v: number) => {
     if (player.current) {
+      console.trace();
       player.current.currentTime = v;
     }
   };
@@ -126,7 +129,7 @@ const Player: React.FC<{
     if (player.current) {
       player.current.onended = (_) => pause();
     }
-  }, [player]);
+  }, [player.current]);
 
   useEffect(() => {
     const audio = player.current;
@@ -195,12 +198,71 @@ const Player: React.FC<{
     }
   }, [paused]);
 
-  const onClickProgressBar = (event: { nativeEvent: { offsetX: number } }) => {
-    const clickPos = event.nativeEvent.offsetX;
-    const progBarWidth = progressBar.current?.clientWidth ?? 1;
-    const target = (player.current?.duration ?? 0) * (clickPos / progBarWidth);
-    seek(Number.isNaN(target) ? 0 : target);
+  const onClickProgressBar = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isDragging) {
+      return;
+    }
+    if (event.nativeEvent.offsetX >= 0) {
+      const clickPos = event.nativeEvent.offsetX;
+      const progBarWidth = progressBar.current?.clientWidth ?? 1;
+      const target =
+        (player.current?.duration ?? 0) * (clickPos / progBarWidth);
+      seek(Number.isNaN(target) ? 0 : target);
+    }
   };
+
+  const handleMouseDown = (event: React.MouseEvent) => {
+    setIsDragging(true);
+    const rect = progressBar.current?.getBoundingClientRect();
+    if (rect) {
+      const clickPos = event.clientX - rect.left;
+      const progBarWidth = rect.width;
+      const progress = Math.max(0, Math.min(1, clickPos / progBarWidth));
+      setDragProgress(progress);
+    }
+  };
+
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!isDragging) {
+      return;
+    }
+
+    const rect = progressBar.current?.getBoundingClientRect() ?? {
+      left: 0,
+      width: 0,
+    };
+    const movPos = event.clientX - rect.left;
+    const progBarWidth = rect.width;
+    const progress = Math.max(0, Math.min(1, movPos / progBarWidth));
+    setDragProgress(progress);
+  };
+
+  const handleMouseUp = (event: MouseEvent) => {
+    const rect = progressBar.current?.getBoundingClientRect() ?? {
+      left: 0,
+      width: 0,
+    };
+    const movEnd = event.clientX - rect.left;
+    const progBarWidth = rect.width;
+    const progress = Math.max(0, Math.min(1, movEnd / progBarWidth));
+    const targetTime = (duration ?? 0) * progress;
+    seek(targetTime);
+    setTimeout(() => {
+      setIsDragging(false);
+    }, 10);
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: shutup
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging]);
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -240,11 +302,16 @@ const Player: React.FC<{
           className={
             'flex h-full flex-col items-end justify-center bg-[#e799b0]'
           }
-          style={{ width: `${(currentTime / duration) * 100}%` }}
+          style={{
+            width: `${isDragging ? dragProgress * 100 : (currentTime / duration) * 100}%`,
+          }}
         >
           <IconFont
-            className={'-right-2 absolute z-[99] text-2xl'}
-            style={{ left: `calc(${(currentTime / duration) * 100}% - 12px)` }}
+            className={'-right-2 absolute z-[99] cursor-pointer text-2xl'}
+            onMouseDown={handleMouseDown}
+            style={{
+              left: `calc(${isDragging ? dragProgress * 100 : (currentTime / duration) * 100}% - 12px)`,
+            }}
             type="icon-yuandian"
           />
         </div>

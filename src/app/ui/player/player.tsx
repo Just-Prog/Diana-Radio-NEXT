@@ -46,10 +46,10 @@ const PlayerControllerButton: React.FC<{
     // biome-ignore lint/a11y/noStaticElementInteractions: shut up
     // biome-ignore lint/a11y/useKeyWithClickEvents: shut up biome
     <div
-      className="cursor-pointer rounded-2xl px-1 pt-2 pb-1 duration-400 hover:bg-gray-400/20 md:px-4"
+      className="cursor-pointer rounded-2xl px-1 pt-2 pb-1 text-lg duration-400 hover:bg-[#e799b0]/40 md:px-4"
       onClick={action}
     >
-      {children}
+      <div className="opacity-45">{children}</div>
     </div>
   );
 };
@@ -321,31 +321,31 @@ const Player: React.FC<{
         <audio ref={player} />
         <div className="flex gap-x-4">
           <PlayerControllerButton>
-            <IconSkipPrevious className="text-lg text-white" />
+            <IconSkipPrevious />
           </PlayerControllerButton>
           <PlayerControllerButton action={() => seek(currentTime - 5)}>
-            <IconBackward className="text-lg text-white" />
+            <IconBackward />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlayPause}>
             {paused === 'loading' ? (
-              <IconLoading className="text-lg text-white" />
+              <IconLoading />
             ) : paused ? (
-              <IconPlayArrow className="text-lg text-white" />
+              <IconPlayArrow />
             ) : (
-              <IconPause className="text-lg text-white" />
+              <IconPause />
             )}
           </PlayerControllerButton>
           <PlayerControllerButton action={() => seek(currentTime + 5)}>
-            <IconForward className="text-lg text-white" />
+            <IconForward />
           </PlayerControllerButton>
           <PlayerControllerButton>
-            <IconSkipNext className="text-lg text-white" />
+            <IconSkipNext />
           </PlayerControllerButton>
           <PlayerControllerButton>
-            <IconSound className="text-lg text-white" />
+            <IconSound />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>
-            <IconMenuFold className="text-lg text-white" />
+            <IconMenuFold />
           </PlayerControllerButton>
         </div>
       </div>

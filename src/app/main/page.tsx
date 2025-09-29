@@ -57,7 +57,10 @@ export default function MainPage() {
         <div className="h-full md:flex-2">
           <Playlist
             currentPlaying={currentPlaying}
-            setCurrentPlaying={setCurrentPlaying}
+            setCurrentPlaying={(v) => {
+              setCurrentPlaying(v);
+              setPlaylistOpened(false);
+            }}
           />
         </div>
       </Drawer>

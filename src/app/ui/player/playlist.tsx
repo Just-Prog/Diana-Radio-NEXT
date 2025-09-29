@@ -54,15 +54,36 @@ const Playlist: React.FC<{
     <div className="flex h-full max-h-full flex-col gap-y-2 p-4">
       <span>已存档总数：{totalCount}</span>
       <span>最近更新: {new Date(updatedAt * 1000).toLocaleString()}</span>
+      <span>加载时间过久可能是在全局刷新，还请耐心等待。</span>
       <Select
         className="w-full"
         defaultValue={playlistType}
         onChange={(v) => setPlaylistType(v)}
         placeholder="选择电台"
+        renderFormat={(option, value) => {
+          return (
+            <span>
+              {
+                DianaWeeklyAvailableProgramsInfo.find((v) => v.key === value)
+                  ?.name
+              }
+            </span>
+          );
+        }}
       >
         {options.map((option) => (
           <Option key={option.key} value={option.key}>
-            {option.name}
+            <div className="flex flex-row items-center gap-x-4">
+              <div className="my-2 overflow-clip rounded">
+                <Image
+                  alt="cover"
+                  className="object-contain"
+                  src={option.cover}
+                  width={48}
+                />
+              </div>
+              <span className="font-bold text-semibold">{option.name}</span>
+            </div>
           </Option>
         ))}
       </Select>

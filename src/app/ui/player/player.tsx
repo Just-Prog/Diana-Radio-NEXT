@@ -19,11 +19,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
-import hachimi_cover from '@/app/assets/program/hachimi.png';
-import jianwen_cover from '@/app/assets/program/jianwen.png';
-import sleep_cover from '@/app/assets/program/sleep.png';
-import songs_cover from '@/app/assets/program/songs.png';
+import {
+  DianaWeeklyAvailableProgramsInfo,
+  hachimi_cover,
+  jianwen_cover,
+  sleep_cover,
+  songs_cover,
+} from '@/app/api/podcast/constants';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
 import type { SongInfo } from '@/app/main/page';

@@ -199,7 +199,7 @@ const Player: React.FC<{
     const clickPos = event.nativeEvent.offsetX;
     const progBarWidth = progressBar.current?.clientWidth ?? 1;
     const target = (player.current?.duration ?? 0) * (clickPos / progBarWidth);
-    seek(target);
+    seek(Number.isNaN(target) ? 0 : target);
   };
 
   return (
@@ -232,7 +232,7 @@ const Player: React.FC<{
       {/** biome-ignore lint/a11y/useKeyWithClickEvents: ? */}
       {/** biome-ignore lint/a11y/noStaticElementInteractions: ? */}
       <div
-        className={'h-1 w-full bg-[#fff]'}
+        className={'h-2 w-full bg-[#fff]'}
         onClick={onClickProgressBar}
         ref={progressBar}
       >

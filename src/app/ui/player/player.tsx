@@ -264,14 +264,65 @@ const Player: React.FC<{
     }, 10);
   };
 
+  const handleTouchStart = (event: React.TouchEvent) => {
+    if (!songInfo?.id) {
+      return;
+    }
+    setIsDragging(true);
+    const rect = progressBar.current?.getBoundingClientRect();
+    if (rect) {
+      const touch = event.touches[0];
+      const clickPos = touch.clientX - rect.left;
+      const progBarWidth = rect.width;
+      const progress = Math.max(0, Math.min(1, clickPos / progBarWidth));
+      setDragProgress(progress);
+    }
+  };
+
+  const handleTouchMove = (event: TouchEvent) => {
+    if (!isDragging) {
+      return;
+    }
+
+    const rect = progressBar.current?.getBoundingClientRect() ?? {
+      left: 0,
+      width: 0,
+    };
+    const touch = event.touches[0];
+    const movPos = touch.clientX - rect.left;
+    const progBarWidth = rect.width;
+    const progress = Math.max(0, Math.min(1, movPos / progBarWidth));
+    setDragProgress(progress);
+  };
+
+  const handleTouchEnd = (event: TouchEvent) => {
+    const rect = progressBar.current?.getBoundingClientRect() ?? {
+      left: 0,
+      width: 0,
+    };
+    const touch = event.changedTouches[0];
+    const movEnd = touch.clientX - rect.left;
+    const progBarWidth = rect.width;
+    const progress = Math.max(0, Math.min(1, movEnd / progBarWidth));
+    const targetTime = (duration ?? 0) * progress;
+    seek(targetTime);
+    setTimeout(() => {
+      setIsDragging(false);
+    }, 10);
+  };
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: shutup
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleTouchEnd);
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
   }, [isDragging]);
@@ -321,6 +372,7 @@ const Player: React.FC<{
           <IconFont
             className={'-right-2 absolute z-[99] cursor-pointer text-2xl'}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
             style={{
               left: `calc(${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}% - 12px)`,
             }}

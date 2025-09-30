@@ -315,14 +315,14 @@ const Player: React.FC<{
             'flex h-full flex-col items-end justify-center bg-[#e799b0]'
           }
           style={{
-            width: `${isDragging ? dragProgress * 100 : (currentTime / duration) * 100}%`,
+            width: `${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}%`,
           }}
         >
           <IconFont
             className={'-right-2 absolute z-[99] cursor-pointer text-2xl'}
             onMouseDown={handleMouseDown}
             style={{
-              left: `calc(${isDragging ? dragProgress * 100 : (currentTime / duration) * 100}% - 12px)`,
+              left: `calc(${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}% - 12px)`,
             }}
             type="icon-yuandian"
           />

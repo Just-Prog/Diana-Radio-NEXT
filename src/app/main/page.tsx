@@ -1,5 +1,5 @@
 'use client';
-import { Drawer } from '@arco-design/web-react';
+import { Drawer, Notification } from '@arco-design/web-react';
 import { useState } from 'react';
 import useWindowSize from '../lib/hooks/useWindowSize';
 import Player, { programCover } from '../ui/player/player';
@@ -12,6 +12,9 @@ type SongInfo = {
 };
 
 export default function MainPage() {
+  const [notification, contextHolder] = Notification.useNotification({
+    maxCount: 1,
+  });
   const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
 
@@ -19,6 +22,7 @@ export default function MainPage() {
 
   return (
     <>
+      {contextHolder}
       <div
         className="flex h-full max-w-full flex-1 flex-col overflow-y-auto overflow-x-hidden md:flex-row"
         id="player_card"
@@ -37,6 +41,7 @@ export default function MainPage() {
           </div>
           <div className="flex h-full max-h-full w-full max-w-full">
             <Player
+              notification={notification}
               songInfo={currentPlaying}
               togglePlaylist={() => setPlaylistOpened(true)}
             />

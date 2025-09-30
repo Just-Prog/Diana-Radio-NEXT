@@ -1,5 +1,5 @@
 'use client';
-import { Icon } from '@arco-design/web-react';
+import { Icon, type NotificationHookReturnType } from '@arco-design/web-react';
 import {
   IconBackward,
   IconForward,
@@ -47,7 +47,10 @@ const PlayerControllerButton: React.FC<{
     // biome-ignore lint/a11y/useKeyWithClickEvents: shut up biome
     <div
       className="cursor-pointer rounded-2xl px-1 pt-2 pb-1 text-lg duration-400 hover:bg-[#e799b0]/40 md:px-4"
-      onClick={action}
+      onClick={(event) => {
+        event.stopPropagation;
+        action?.();
+      }}
     >
       <div className="opacity-45">{children}</div>
     </div>
@@ -59,9 +62,10 @@ const IconFont = Icon.addFromIconFontCn({
 });
 
 const Player: React.FC<{
+  notification: NotificationHookReturnType;
   songInfo: SongInfo | undefined;
   togglePlaylist: () => void;
-}> = ({ songInfo, togglePlaylist }) => {
+}> = ({ songInfo, togglePlaylist, notification }) => {
   const player = useRef<HTMLAudioElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
@@ -87,7 +91,6 @@ const Player: React.FC<{
 
   const seek = (v: number) => {
     if (player.current) {
-      console.trace();
       player.current.currentTime = v;
     }
   };
@@ -320,7 +323,14 @@ const Player: React.FC<{
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
         <audio ref={player} />
         <div className="flex gap-x-4">
-          <PlayerControllerButton>
+          <PlayerControllerButton
+            action={() => {
+              notification.info?.({
+                title: 'TODO',
+                content: <span>🚧施工中🚧</span>,
+              });
+            }}
+          >
             <IconSkipPrevious />
           </PlayerControllerButton>
           <PlayerControllerButton action={() => seek(currentTime - 5)}>
@@ -338,10 +348,24 @@ const Player: React.FC<{
           <PlayerControllerButton action={() => seek(currentTime + 5)}>
             <IconForward />
           </PlayerControllerButton>
-          <PlayerControllerButton>
+          <PlayerControllerButton
+            action={() => {
+              notification.info?.({
+                title: 'TODO',
+                content: <span>🚧施工中🚧</span>,
+              });
+            }}
+          >
             <IconSkipNext />
           </PlayerControllerButton>
-          <PlayerControllerButton>
+          <PlayerControllerButton
+            action={() => {
+              notification.info?.({
+                title: 'TODO',
+                content: <span key={'sss'}>🚧施工中🚧</span>,
+              });
+            }}
+          >
             <IconSound />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>

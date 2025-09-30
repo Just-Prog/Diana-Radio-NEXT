@@ -46,13 +46,15 @@ const PlayerControllerButton: React.FC<{
     // biome-ignore lint/a11y/noStaticElementInteractions: shut up
     // biome-ignore lint/a11y/useKeyWithClickEvents: shut up biome
     <div
-      className="cursor-pointer rounded-2xl px-1 pt-2 pb-1 text-lg duration-400 hover:bg-[#e799b0]/40 md:px-4"
+      className="cursor-pointer rounded-2xl px-1 pt-1 pb-1 text-lg duration-400 hover:bg-[#e799b0]/60 md:px-2"
       onClick={(event) => {
         event.stopPropagation;
         action?.();
       }}
     >
-      <div className="opacity-45">{children}</div>
+      <div className="flex-1 px-2 py-1 opacity-45 hover:opacity-80">
+        {children}
+      </div>
     </div>
   );
 };
@@ -112,6 +114,10 @@ const Player: React.FC<{
 
   const togglePlayPause = async () => {
     if (!songInfo?.id) {
+      notification.error?.({
+        title: '提示',
+        content: <span>请选择歌曲后重试</span>,
+      });
       return;
     }
     setPaused('loading');
@@ -202,7 +208,7 @@ const Player: React.FC<{
   }, [paused]);
 
   const onClickProgressBar = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging) {
+    if (isDragging || !songInfo?.id) {
       return;
     }
     if (event.nativeEvent.offsetX >= 0) {
@@ -215,6 +221,9 @@ const Player: React.FC<{
   };
 
   const handleMouseDown = (event: React.MouseEvent) => {
+    if (!songInfo?.id) {
+      return;
+    }
     setIsDragging(true);
     const rect = progressBar.current?.getBoundingClientRect();
     if (rect) {

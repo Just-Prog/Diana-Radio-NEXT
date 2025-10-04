@@ -51,7 +51,7 @@ const Playlist: React.FC<{
   }, [playlistType]);
 
   return (
-    <div className="flex h-full max-h-full flex-col gap-y-2 p-4">
+    <div className="flex flex-col gap-y-2 p-4 min-h-full flex-1 h-full max-h-full w-full">
       <span>已存档总数：{totalCount}</span>
       <span>最近更新: {new Date(updatedAt * 1000).toLocaleString()}</span>
       <span>加载时间过久可能是在全局刷新，还请耐心等待。</span>
@@ -87,7 +87,7 @@ const Playlist: React.FC<{
           </Option>
         ))}
       </Select>
-      <div className="h-full flex-1 overflow-auto overflow-x-clip">
+      <div className="flex-1 overflow-x-clip overflow-y-auto">
         <List
           dataSource={playlist}
           loading={isLoading}

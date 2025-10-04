@@ -1,5 +1,5 @@
 'use client';
-import { Drawer, Notification } from '@arco-design/web-react';
+import { Modal, Notification } from '@arco-design/web-react';
 import { useState } from 'react';
 import useWindowSize from '../lib/hooks/useWindowSize';
 import Player, { programCover } from '../ui/player/player';
@@ -48,18 +48,13 @@ export default function MainPage() {
           </div>
         </div>
       </div>
-      <Drawer
-        className="w-20 md:w-80"
+      <Modal
+        className="!w-[90%] md:!w-[60%] overflow-hidden flex"
         footer={null}
-        getPopupContainer={() => {
-          return document.querySelector('#player_card') ?? document.body;
-        }}
         onCancel={() => setPlaylistOpened(false)}
-        unmountOnExit
         visible={playlistOpened}
-        width={windowSize?.width && window.innerWidth <= 768 ? '100%' : '50%'}
       >
-        <div className="h-full md:flex-2">
+        <div className="flex flex-1 h-[calc(90vh-48px)] md:h-[80vh] w-full">
           <Playlist
             currentPlaying={currentPlaying}
             setCurrentPlaying={(v) => {
@@ -68,7 +63,7 @@ export default function MainPage() {
             }}
           />
         </div>
-      </Drawer>
+      </Modal>
     </>
   );
 }

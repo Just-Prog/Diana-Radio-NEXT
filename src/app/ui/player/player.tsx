@@ -383,7 +383,7 @@ const Player: React.FC<{
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
         <audio ref={player} />
-        <div className="flex gap-x-4">
+        <div className="flex gap-x-1/3 md:gap-x-4">
           <PlayerControllerButton
             action={() => {
               notification.info?.({

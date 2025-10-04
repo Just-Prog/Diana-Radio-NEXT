@@ -331,7 +331,9 @@ const Player: React.FC<{
     <div className="flex h-full w-full flex-col">
       <div className="flex-1">
         <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
-          <div className="overflow-clip rounded-[50%] shadow-black shadow-xl/10">
+          <div className="overflow-clip rounded-[50%] shadow-black shadow-xl/10" onClick={async()=>{
+            await togglePlayPause();
+          }}>
             <Image
               alt="cover"
               className={`w-40 animate-[spin_3s_linear_infinite] ${paused && 'pause-animation'} md:w-50`}

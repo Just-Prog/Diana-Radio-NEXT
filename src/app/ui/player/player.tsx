@@ -1,5 +1,5 @@
 'use client';
-import { Icon, type NotificationHookReturnType } from '@arco-design/web-react';
+import { Icon, Popconfirm, Popover, Slider, type NotificationHookReturnType } from '@arco-design/web-react';
 import {
   IconBackward,
   IconForward,
@@ -10,6 +10,7 @@ import {
   IconSkipNext,
   IconSkipPrevious,
   IconSound,
+  IconMute,
 } from '@arco-design/web-react/icon';
 import Image from 'next/image';
 import {
@@ -71,11 +72,14 @@ const Player: React.FC<{
   const player = useRef<HTMLAudioElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
-
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
+
+  const [isVolumeControllerVisible, setIsVolumeControllerVisible] = useState<boolean>(false);
 
   const play = async () => {
     if (player.current) {
@@ -96,6 +100,16 @@ const Player: React.FC<{
       player.current.currentTime = v;
     }
   };
+
+  const changeVolume = (v: number) => {
+    if(player.current){
+      player.current.volume = v;
+    }
+  }
+
+  useEffect(()=>{
+    changeVolume(volume);
+  },[volume]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
@@ -423,13 +437,36 @@ const Player: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton
             action={() => {
-              notification.info?.({
-                title: 'TODO',
-                content: <span key={'sss'}>🚧施工中🚧</span>,
-              });
+              if(!isVolumeControllerVisible){
+                setIsVolumeControllerVisible(true);
+              }
             }}
           >
-            <IconSound />
+            <Popover
+              // 这玩意关闭的时候会拉一坨 `<div style="width: 100%; position: absolute; top: 0px; left: 0px;"></div>` 到body
+              // 离谱
+              onVisibleChange={(v)=>setIsVolumeControllerVisible(v)}
+              popupVisible={isVolumeControllerVisible}
+              content={<div className="flex flex-row flex-1 gap-x-2 items-center justify-center">
+                <IconMute
+                  className="text-lg"
+                  style={{
+                    color: volume > 0 ? 'var(--color-text-4)' : 'var(--color-text-1)',
+                  }}
+                />
+                {/* 字节没给滑动输入条这玩意加触摸屏适配 */}
+                {/* 懒得喷.jpg */}
+                <Slider max={100} step={1} value={volume * 100} onChange={(val)=>{setVolume(val/100)}} style={{width: '153px'}} />
+                <IconSound
+                  className="text-lg"
+                  style={{
+                    color: volume === 0 ? 'var(--color-text-4)' : 'var(--color-text-1)',
+                  }}
+                />
+              </div>}
+            >
+              {volume === 0 ? <IconMute/> : <IconSound />}
+            </Popover>
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>
             <IconMenuFold />

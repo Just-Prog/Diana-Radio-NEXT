@@ -470,7 +470,7 @@ const Player: React.FC<{
                   <Slider
                     max={100}
                     onChange={(val) => {
-                      setVolume(val / 100);
+                      setVolume(val / 100.0);
                     }}
                     step={1}
                     style={{ width: '153px' }}

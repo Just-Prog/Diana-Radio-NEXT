@@ -1,17 +1,22 @@
 'use client';
-import { Icon, Popconfirm, Popover, Slider, type NotificationHookReturnType } from '@arco-design/web-react';
+import {
+  Icon,
+  type NotificationHookReturnType,
+  Popover,
+} from '@arco-design/web-react';
 import {
   IconBackward,
   IconForward,
   IconLoading,
   IconMenuFold,
+  IconMute,
   IconPause,
   IconPlayArrow,
   IconSkipNext,
   IconSkipPrevious,
   IconSound,
-  IconMute,
 } from '@arco-design/web-react/icon';
+import { Slider } from 'antd';
 import Image from 'next/image';
 import {
   type ReactNode,
@@ -79,7 +84,8 @@ const Player: React.FC<{
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
 
-  const [isVolumeControllerVisible, setIsVolumeControllerVisible] = useState<boolean>(false);
+  const [isVolumeControllerVisible, setIsVolumeControllerVisible] =
+    useState<boolean>(false);
 
   const play = async () => {
     if (player.current) {
@@ -102,14 +108,14 @@ const Player: React.FC<{
   };
 
   const changeVolume = (v: number) => {
-    if(player.current){
+    if (player.current) {
       player.current.volume = v;
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     changeVolume(volume);
-  },[volume]);
+  }, [volume]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
@@ -345,9 +351,12 @@ const Player: React.FC<{
     <div className="flex h-full w-full flex-col">
       <div className="flex-1">
         <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
-          <div className="overflow-clip rounded-[50%] shadow-black shadow-xl/10" onClick={async()=>{
-            await togglePlayPause();
-          }}>
+          <div
+            className="overflow-clip rounded-[50%] shadow-black shadow-xl/10"
+            onClick={async () => {
+              await togglePlayPause();
+            }}
+          >
             <Image
               alt="cover"
               className={`w-40 animate-[spin_3s_linear_infinite] ${paused && 'pause-animation'} md:w-50`}
@@ -437,7 +446,7 @@ const Player: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton
             action={() => {
-              if(!isVolumeControllerVisible){
+              if (!isVolumeControllerVisible) {
                 setIsVolumeControllerVisible(true);
               }
             }}
@@ -445,27 +454,43 @@ const Player: React.FC<{
             <Popover
               // 这玩意关闭的时候会拉一坨 `<div style="width: 100%; position: absolute; top: 0px; left: 0px;"></div>` 到body
               // 离谱
-              onVisibleChange={(v)=>setIsVolumeControllerVisible(v)}
+              content={
+                <div className="flex flex-1 flex-row items-center justify-center gap-x-2">
+                  <IconMute
+                    className="text-lg"
+                    style={{
+                      color:
+                        volume > 0
+                          ? 'var(--color-text-4)'
+                          : 'var(--color-text-1)',
+                    }}
+                  />
+                  {/* 字节没给滑动输入条这玩意加触摸屏适配 */}
+                  {/* 懒得喷.jpg */}
+                  <Slider
+                    max={100}
+                    onChange={(val) => {
+                      setVolume(val / 100);
+                    }}
+                    step={1}
+                    style={{ width: '153px' }}
+                    value={volume * 100}
+                  />
+                  <IconSound
+                    className="text-lg"
+                    style={{
+                      color:
+                        volume === 0
+                          ? 'var(--color-text-4)'
+                          : 'var(--color-text-1)',
+                    }}
+                  />
+                </div>
+              }
+              onVisibleChange={(v) => setIsVolumeControllerVisible(v)}
               popupVisible={isVolumeControllerVisible}
-              content={<div className="flex flex-row flex-1 gap-x-2 items-center justify-center">
-                <IconMute
-                  className="text-lg"
-                  style={{
-                    color: volume > 0 ? 'var(--color-text-4)' : 'var(--color-text-1)',
-                  }}
-                />
-                {/* 字节没给滑动输入条这玩意加触摸屏适配 */}
-                {/* 懒得喷.jpg */}
-                <Slider max={100} step={1} value={volume * 100} onChange={(val)=>{setVolume(val/100)}} style={{width: '153px'}} />
-                <IconSound
-                  className="text-lg"
-                  style={{
-                    color: volume === 0 ? 'var(--color-text-4)' : 'var(--color-text-1)',
-                  }}
-                />
-              </div>}
             >
-              {volume === 0 ? <IconMute/> : <IconSound />}
+              {volume === 0 ? <IconMute /> : <IconSound />}
             </Popover>
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>

@@ -8,12 +8,14 @@ import {
   IconBackward,
   IconForward,
   IconLoading,
+  IconLoop,
   IconMenuFold,
   IconMute,
   IconPause,
   IconPlayArrow,
   IconSkipNext,
   IconSkipPrevious,
+  IconSort,
   IconSound,
 } from '@arco-design/web-react/icon';
 import { Slider } from 'antd';
@@ -80,6 +82,7 @@ const Player: React.FC<{
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
+  const [loop, setLoop] = useState(false);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
@@ -116,6 +119,13 @@ const Player: React.FC<{
   useEffect(() => {
     changeVolume(volume);
   }, [volume]);
+
+  const toggleLoopStatus = () => {
+    if (player.current) {
+      player.current.loop = !loop;
+      setLoop(!loop);
+    }
+  };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
@@ -219,6 +229,7 @@ const Player: React.FC<{
 
   useEffect(() => {
     initMediaSession();
+    toggleLoopStatus();
   }, []);
 
   useEffect(() => {
@@ -492,6 +503,9 @@ const Player: React.FC<{
             >
               {volume === 0 ? <IconMute /> : <IconSound />}
             </Popover>
+          </PlayerControllerButton>
+          <PlayerControllerButton action={toggleLoopStatus}>
+            <IconLoop spin={loop} />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>
             <IconMenuFold />

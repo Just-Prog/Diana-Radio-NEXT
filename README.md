@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+    <img src="docs/intro_1.png" width="90%"/>
+</p>
+<h3 align="center" style="color: #e799b0">Diana Radio 嘉然电台FM.307</h3>
 
-## Getting Started
+<h4 align="center" style="color: #e799b0">An alternative frontend project for NCM Podcast</h4>
 
-First, run the development server:
+<h4 align="center">
+    Powered by <img src="docs/next.svg"/>
+</h4>
+
+## 先决条件
+
+支持 Node.JS 运行时的环境、Redis 数据库(必需)、某音乐平台 API 库备份（必需，自备）
+
+## 本地启动&构建
+
+安装所需依赖：
+
+> 请在此过程中自备某音乐平台的 API 库备份并自行替换 `package.json` 的存储库地址。
+> 如有 Vercel 平台部署需求请一并修改 `vercel.sh` 内的替换脚本内容。
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm i
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+启动开发服务器:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+默认的开发环境地址为 [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+如需构建:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+如需部署至 Vercel 等云函数平台请根据平台文档操作，对接 Redis Cloud 等 Redis/Valkey 数据库提供商，并修改环境变量 `REDIS_URL` 与 `GITHUB_TOKEN`以供程序接入数据库与平台编译拉取 API 库使用。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 鸣谢
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Bilibili [@嘉心糖周报](https://space.bilibili.com/247210788)
+> 云音乐播客 [@嘉心糖周报](https://music.163.com/#/user/home?id=8437701424)

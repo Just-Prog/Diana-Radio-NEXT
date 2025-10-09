@@ -9,6 +9,7 @@ type SongInfo = {
   id: string;
   name: string;
   type?: 'songs' | 'sleep' | 'jianwen' | 'hachimi';
+  playTime: number;
 };
 
 export default function MainPage() {
@@ -49,12 +50,12 @@ export default function MainPage() {
         </div>
       </div>
       <Modal
-        className="!w-[90%] md:!w-[60%] overflow-hidden flex"
+        className="!w-[90%] md:!w-[60%] flex overflow-hidden"
         footer={null}
         onCancel={() => setPlaylistOpened(false)}
         visible={playlistOpened}
       >
-        <div className="flex flex-1 h-[calc(90vh-48px)] md:h-[80vh] w-full">
+        <div className="flex h-[calc(90vh-48px)] w-full flex-1 md:h-[80vh]">
           <Playlist
             currentPlaying={currentPlaying}
             setCurrentPlaying={(v) => {

@@ -1,14 +1,19 @@
 'use client';
 
-import { Empty, List, Message, Select } from '@arco-design/web-react';
+import { List, Select } from '@arco-design/web-react';
 import { IconMusic, IconPlayCircle } from '@arco-design/web-react/icon';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+
 import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import image_404 from '@/app/assets/404.png';
 import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
 import type { SongInfo } from '@/app/main/page';
+
+dayjs.extend(duration);
 
 const Option = Select.Option;
 const options = DianaWeeklyAvailableProgramsInfo;
@@ -51,7 +56,7 @@ const Playlist: React.FC<{
   }, [playlistType]);
 
   return (
-    <div className="flex flex-col gap-y-2 p-4 min-h-full flex-1 h-full max-h-full w-full">
+    <div className="flex h-full max-h-full min-h-full w-full flex-1 flex-col gap-y-2 p-4">
       <span>已存档总数：{totalCount}</span>
       <span>最近更新: {new Date(updatedAt * 1000).toLocaleString()}</span>
       <span>加载时间过久可能是在全局刷新，还请耐心等待。</span>
@@ -87,7 +92,7 @@ const Playlist: React.FC<{
           </Option>
         ))}
       </Select>
-      <div className="flex-1 overflow-x-clip overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-clip">
         <List
           dataSource={playlist}
           loading={isLoading}
@@ -108,18 +113,29 @@ const Playlist: React.FC<{
                   // biome-ignore lint/a11y/noNoninteractiveElementInteractions: shut up
                   // biome-ignore lint/a11y/noStaticElementInteractions: shut up
                   // biome-ignore lint/a11y/useKeyWithClickEvents: shut up
-                  <div
-                    className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
-                    onClick={() => setCurrentPlaying(v)}
-                  >
-                    <IconPlayCircle className="text-sm" />
+                  <div className="flex flex-row items-center">
+                    <span className="text-gray-500">
+                      {dayjs
+                        .duration(v.playTime, 'milliseconds')
+                        .format('HH:mm:ss')}
+                    </span>
+                    <div
+                      className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
+                      onClick={() => setCurrentPlaying(v)}
+                    >
+                      <IconPlayCircle className="text-sm" />
+                    </div>
                   </div>
                 }
                 key={v.id}
               >
                 <div className="line-clamp-1 w-full max-w-full gap-x-4 overflow-clip text-ellipsis">
                   <IconMusic />
-                  <span>{v.name}</span>
+                  <span
+                    className={`${currentPlaying?.id === v.id ? 'font-bold text-blue-500' : ''}`}
+                  >
+                    {v.name}
+                  </span>
                 </div>
               </List.Item>
             );

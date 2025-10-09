@@ -38,6 +38,11 @@ const syncDB = async (data: any, prefix: string) => {
   const programs = data.programs.map((e: any) => ({
     id: e.mainSong.id,
     name: e.mainSong.name,
+    playTime:
+      e.mainSong?.bMusic?.playTime ??
+      e.mainSong?.hMusic?.playTime ??
+      e.mainSong?.lMusic?.playTime ??
+      0,
   }));
   await redis.set(`${prefix}_count`, count);
   await redis.set(`${prefix}_updated_at`, updatedAt);

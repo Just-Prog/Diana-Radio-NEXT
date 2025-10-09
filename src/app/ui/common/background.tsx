@@ -13,44 +13,55 @@ const background_imgs_hardcode = [
 ];
 
 const Background: React.FC = () => {
-  const [no, setNo] = useState<number>();
-  const uri = no?.toString()
-    ? background_imgs_hardcode[Number.parseInt(no?.toString(), 10)]
-    : '';
+  const [uri, setUri] = useState<string>('');
+  const [top, setTop] = useState(0);
+  const [left, setLeft] = useState(0);
   const img = useRef<HTMLImageElement>(null);
 
-  const onMouseOver = (e) => {
-    console.log(e);
+  const onMouseOver = (e: MouseEvent) => {
+    if (img.current) {
+      setTop(e.clientY);
+      setLeft(e.clientX);
+    }
   };
 
   useEffect(() => {
-    if (img.current) {
-      document.addEventListener('mouseover', onMouseOver);
-      return document.removeEventListener('mouseover', onMouseOver);
-    }
-  }, [img.current]);
-
-  useEffect(() => {
-    setNo((Math.random() * 1000) % background_imgs_hardcode.length);
+    setUri(
+      background_imgs_hardcode[
+        Number.parseInt(
+          ((Math.random() * 1000) % background_imgs_hardcode.length).toString(),
+          10
+        )
+      ]
+    );
+    document.addEventListener('mousemove', onMouseOver);
+    return () => document.removeEventListener('mousemove', onMouseOver);
   }, []);
+
   return (
-    <div className="-z-50 fixed top-0 flex h-full w-full flex-1 items-center justify-center">
-      <div className="absolute top-0 z-10 h-full w-full bg-white opacity-65" />
-      {/** biome-ignore lint/performance/noImgElement: <explanation> */}
-      {/** biome-ignore lint/nursery/useImageSize: <explanation> */}
-      {/** biome-ignore lint/a11y/useAltText: <explanation> */}
-      {
+    <div className="-z-50 -top-4 fixed flex h-[120%] w-[120%] flex-1 items-center justify-center">
+      <div
+        className="absolute top-0 z-10 h-full w-full bg-white opacity-65"
+        id="bg-overlay"
+      />
+      {uri !== '' ? (
         <Image
           alt={''}
-          className={`h-[125%] w-[125%] object-cover blur-sm ease-in-out ${no ?? 'invisible'}`}
+          className={
+            'absolute h-full w-full object-cover blur-sm transition duration-300 ease-in-out'
+          }
           height={0}
           ref={img}
           referrerPolicy="no-referrer"
           sizes="100vw 100vh"
           src={uri}
+          style={{
+            top: `calc(${top / 50}px - 1vh)`,
+            left: `calc(${left / 50}px - 1vw)`,
+          }}
           width={0}
         />
-      }
+      ) : null}
     </div>
   );
 };

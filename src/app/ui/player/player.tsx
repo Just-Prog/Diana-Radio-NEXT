@@ -15,7 +15,6 @@ import {
   IconPlayArrow,
   IconSkipNext,
   IconSkipPrevious,
-  IconSort,
   IconSound,
 } from '@arco-design/web-react/icon';
 import { Slider } from 'antd';
@@ -36,6 +35,7 @@ import {
 } from '@/app/api/podcast/constants';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
+import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 
 const programCover = {
@@ -388,6 +388,10 @@ const Player: React.FC<{
             </span>
           </div>
         </div>
+      </div>
+      <div className="my-1.5 flex flex-row justify-between px-2 text-sm">
+        <span>{ts2mmss(currentTime, 's')}</span>
+        <span>{ts2mmss(duration, 's')}</span>
       </div>
       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: ? */}
       {/** biome-ignore lint/a11y/useKeyWithClickEvents: ? */}

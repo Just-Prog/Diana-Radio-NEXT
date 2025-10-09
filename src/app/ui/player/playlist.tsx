@@ -2,8 +2,6 @@
 
 import { List, Select } from '@arco-design/web-react';
 import { IconMusic, IconPlayCircle } from '@arco-design/web-react/icon';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -11,9 +9,8 @@ import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import image_404 from '@/app/assets/404.png';
 import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
+import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
-
-dayjs.extend(duration);
 
 const Option = Select.Option;
 const options = DianaWeeklyAvailableProgramsInfo;
@@ -110,15 +107,8 @@ const Playlist: React.FC<{
             return (
               <List.Item
                 extra={
-                  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: shut up
-                  // biome-ignore lint/a11y/noStaticElementInteractions: shut up
-                  // biome-ignore lint/a11y/useKeyWithClickEvents: shut up
                   <div className="flex flex-row items-center">
-                    <span className="text-gray-500">
-                      {dayjs
-                        .duration(v.playTime, 'milliseconds')
-                        .format('HH:mm:ss')}
-                    </span>
+                    <span className="text-gray-500">{ts2mmss(v.playTime)}</span>
                     <div
                       className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
                       onClick={() => setCurrentPlaying(v)}

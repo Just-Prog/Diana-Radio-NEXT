@@ -15,7 +15,7 @@ export default function MainPageLayout({
         </Layout.Header>
         <Layout.Content className="flex-1 overflow-hidden">
           <div className="flex h-full items-center justify-center">
-            <div className=" h-full w-full md:max-w[75%] md:h-[90%] md:w-[75%] overflow-auto md:rounded-2xl md:border-2 md:border-black/5 md:shadow-black/5 md:shadow-sm">
+            <div className="md:max-w[75%] h-full w-full overflow-auto md:h-[90%] md:w-[75%] md:rounded-2xl md:border-2 md:border-black/5 md:shadow-black/5 md:shadow-sm">
               {children}
             </div>
           </div>

@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       ],
     },
   },
+  images: {
+    remotePatterns: [new URL('https://*.hdslb.com/**')],
+  },
 };
 
 export default nextConfig;

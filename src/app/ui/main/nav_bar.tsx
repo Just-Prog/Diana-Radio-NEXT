@@ -8,9 +8,27 @@ import { useEffect, useState } from 'react';
 
 import LogoHorizon from '@/app/assets/logo_horizon.png';
 
+interface NavBarItemProps {
+  href: string;
+  desc: string;
+}
+
 export default function NavBar() {
   const pathname = usePathname();
   const [pathNow, setPathNow] = useState<string[]>([]);
+
+  const NavBarItem: React.FC<NavBarItemProps> = ({ href, desc }) => {
+    return (
+      <Link href={href}>
+        <Button
+          className={`${pathNow[0] && pathNow[0] === href ? '!text-[#e79dad]' : '!text-black'} !font-bold`}
+          type="text"
+        >
+          {desc}
+        </Button>
+      </Link>
+    );
+  };
 
   useEffect(() => {
     setPathNow([pathname]);
@@ -26,16 +44,8 @@ export default function NavBar() {
         />
       </Link>
       <div className="flex flex-row gap-x-4">
-        <Link href="/main">
-          <Button className="!text-black !font-bold" type="text">
-            主页
-          </Button>
-        </Link>
-        <Link href="/about">
-          <Button className="!text-black !font-bold" type="text">
-            关于
-          </Button>
-        </Link>
+        <NavBarItem desc="主页" href="/main" />
+        <NavBarItem desc="关于" href="/about" />
       </div>
     </div>
   );

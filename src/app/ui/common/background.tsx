@@ -14,14 +14,22 @@ const background_imgs_hardcode = [
 
 const Background: React.FC = () => {
   const [uri, setUri] = useState<string>('');
-  const [top, setTop] = useState(0);
-  const [left, setLeft] = useState(0);
+  const [mouseEntered, setMouseEntered] = useState(true);
   const img = useRef<HTMLImageElement>(null);
 
   const onMouseOver = (e: MouseEvent) => {
     if (img.current) {
-      setTop(e.clientY);
-      setLeft(e.clientX);
+      img.current.style = `transform: translate3d(calc(${e.clientX / 50}px - 1vw), calc(${e.clientY / 50}px - 1vh), 0)`;
+    }
+  };
+
+  const onMouseEnter = (e: MouseEvent) => {
+    setMouseEntered(true);
+  };
+  const onMouseLeave = (e: MouseEvent) => {
+    setMouseEntered(false);
+    if (img.current) {
+      img.current.style = 'transform: translate3d(0px, 0px, 0px)';
     }
   };
 
@@ -35,30 +43,32 @@ const Background: React.FC = () => {
       ]
     );
     document.addEventListener('mousemove', onMouseOver);
-    return () => document.removeEventListener('mousemove', onMouseOver);
+    document.addEventListener('mouseenter', onMouseEnter);
+    document.addEventListener('mouseleave', onMouseLeave);
+    return () => {
+      document.removeEventListener('mousemove', onMouseOver);
+      document.removeEventListener('mouseenter', onMouseEnter);
+      document.removeEventListener('mouseleave', onMouseLeave);
+    };
   }, []);
 
   return (
-    <div className="-z-50 -top-4 fixed flex h-[120%] w-[120%] flex-1 items-center justify-center">
+    <div className="-z-50 -top-4 -left-6 fixed flex h-[120%] w-[120%] flex-1 items-center justify-center">
       <div
-        className="absolute top-0 z-10 h-full w-full bg-white opacity-65"
+        className={`'bg-white' absolute top-0 z-10 h-full w-full bg-white transition duration-500 ease-in-out ${mouseEntered ? 'opacity-65' : 'opacity-55'}`}
         id="bg-overlay"
       />
       {uri !== '' ? (
         <Image
           alt={''}
           className={
-            'absolute h-full w-full object-cover blur-sm transition duration-300 ease-in-out'
+            'relative h-full w-full object-cover object-center blur-sm transition duration-200 ease-linear'
           }
           height={0}
           ref={img}
           referrerPolicy="no-referrer"
           sizes="100vw 100vh"
           src={uri}
-          style={{
-            top: `calc(${top / 50}px - 1vh)`,
-            left: `calc(${left / 50}px - 1vw)`,
-          }}
           width={0}
         />
       ) : null}

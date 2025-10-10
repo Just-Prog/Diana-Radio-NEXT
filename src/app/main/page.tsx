@@ -1,7 +1,7 @@
 'use client';
 import { Modal, Notification } from '@arco-design/web-react';
+import Image from 'next/image';
 import { useState } from 'react';
-import useWindowSize from '../lib/hooks/useWindowSize';
 import Player, { programCover } from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
 
@@ -19,8 +19,6 @@ export default function MainPage() {
   const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
 
-  const windowSize = useWindowSize();
-
   return (
     <>
       {contextHolder}
@@ -31,14 +29,13 @@ export default function MainPage() {
         {/* <div className="h-full bg-linear-120 from-pink-400 to-orange-300 backdrop-blur-lg md:flex-3"> */}
         <div className="h-full backdrop-blur-lg md:flex-3">
           <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0] blur-lg">
-            <div
-              className="flex h-full min-h-full w-full min-w-full flex-1"
-              style={{
-                backgroundImage: `url(${programCover[currentPlaying?.type ?? 'songs'].src})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
+            <div className="flex h-full min-h-full w-full min-w-full flex-1">
+              <Image
+                alt=""
+                className={'h-full w-full object-cover object-center'}
+                src={programCover[currentPlaying?.type ?? 'songs']}
+              />
+            </div>
           </div>
           <div className="flex h-full max-h-full w-full max-w-full">
             <Player

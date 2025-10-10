@@ -21,7 +21,7 @@ export default function MainPageLayout({
           </div>
         </Layout.Content>
         <Layout.Footer className="bg-white">
-          <div className="py-8 shadow-black/100 shadow-lg">
+          <div className="py-4 shadow-black/100 shadow-lg">
             <div className="text-center">
               Diana Radio @Diana_Weekly, 2025{' '}
               <a

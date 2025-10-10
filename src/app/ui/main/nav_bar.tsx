@@ -1,7 +1,5 @@
 'use client';
-import { Menu } from '@arco-design/web-react';
-
-const MenuItem = Menu.Item;
+import { Button } from '@arco-design/web-react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,22 +17,26 @@ export default function NavBar() {
   }, [pathname]);
 
   return (
-    <Menu
-      defaultSelectedKeys={pathNow}
-      mode="horizontal"
-      selectedKeys={pathNow}
-    >
-      <MenuItem className="mr-10 cursor-pointer!" disabled key="/">
-        <Link href="/">
-          <Image alt="" className="w-24 object-contain" src={LogoHorizon} />
+    <div className="flex h-14 w-full flex-row items-center justify-start gap-x-8 bg-white px-10 py-2">
+      <Link className="my-2 block cursor-pointer p-auto" href="/">
+        <Image
+          alt=""
+          className="mr-auto ml-auto w-22 object-contain"
+          src={LogoHorizon}
+        />
+      </Link>
+      <div className="flex flex-row gap-x-4">
+        <Link href="/main">
+          <Button className="!text-black !font-bold" type="text">
+            主页
+          </Button>
         </Link>
-      </MenuItem>
-      <MenuItem key="/main">
-        <Link href="/main">主页</Link>
-      </MenuItem>
-      <MenuItem key="/about">
-        <Link href="/about">关于</Link>
-      </MenuItem>
-    </Menu>
+        <Link href="/about">
+          <Button className="!text-black !font-bold" type="text">
+            关于
+          </Button>
+        </Link>
+      </div>
+    </div>
   );
 }

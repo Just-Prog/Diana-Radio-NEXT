@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import logo from '@/app/assets/logo.png';
-import Background from './ui/common/background';
 
 export const metadata: Metadata = { referrer: 'no-referrer' };
 
 export default function Home() {
   return (
     <div className="flex h-screen min-h-screen w-screen flex-col items-center justify-center px-6 text-center font-sans">
-      <Background />
       <div className="items mb-8 flex flex-col items-center">
         <Link href="/main">
           <Image

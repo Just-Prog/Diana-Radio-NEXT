@@ -33,6 +33,7 @@ import {
   sleep_cover,
   songs_cover,
 } from '@/app/api/podcast/constants';
+import playerBG from '@/app/assets/program/bg.png';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
@@ -363,14 +364,15 @@ const Player: React.FC<{
       <div className="flex-1">
         <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
           <div
-            className="overflow-clip rounded-[50%] shadow-black shadow-xl/10"
+            className={`animate-[spin_3s_linear_infinite] overflow-clip rounded-[50%] shadow-black shadow-xl/10 ${paused && 'pause-animation'} flex items-center justify-center`}
             onClick={async () => {
               await togglePlayPause();
             }}
           >
+            <Image alt="bg" className={'h-50 w-50'} src={playerBG} />
             <Image
               alt="cover"
-              className={`w-40 animate-[spin_3s_linear_infinite] ${paused && 'pause-animation'} md:w-50`}
+              className={'absolute h-35 w-35 rounded-[50%]'}
               src={programCover[songInfo?.type ?? 'songs']}
             />
           </div>

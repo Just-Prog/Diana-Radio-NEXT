@@ -6,6 +6,7 @@ import Player, { programCover } from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
 
 type SongInfo = {
+  date: string;
   id: string;
   name: string;
   type?: 'songs' | 'sleep' | 'jianwen' | 'hachimi';

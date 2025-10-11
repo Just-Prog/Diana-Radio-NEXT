@@ -105,27 +105,32 @@ const Playlist: React.FC<{
           }
           render={(v) => {
             return (
-              <List.Item
-                extra={
+              <List.Item key={v.id}>
+                <div className="flex w-full max-w-full flex-row items-center gap-x-4">
+                  <IconMusic className="mr-2 text-lg" />
+                  <div
+                    className={`${currentPlaying?.id === v.id ? 'font-bold text-blue-500' : ''} mr-2 flex flex-1 flex-col`}
+                  >
+                    <span className="line-clamp-1 overflow-clip text-ellipsis text-sm">
+                      {v.name}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      <span>{ts2mmss(v.playTime)}</span>
+                      <span>
+                        {v.date
+                          ? ` - ${v.date.replaceAll('.', '/')}`
+                          : ' - 未知日期'}
+                      </span>
+                    </span>
+                  </div>
                   <div className="flex flex-row items-center">
-                    <span className="text-gray-500">{ts2mmss(v.playTime)}</span>
                     <div
                       className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
                       onClick={() => setCurrentPlaying(v)}
                     >
-                      <IconPlayCircle className="text-sm" />
+                      <IconPlayCircle className="text-lg" />
                     </div>
                   </div>
-                }
-                key={v.id}
-              >
-                <div className="line-clamp-1 w-full max-w-full gap-x-4 overflow-clip text-ellipsis">
-                  <IconMusic />
-                  <span
-                    className={`${currentPlaying?.id === v.id ? 'font-bold text-blue-500' : ''}`}
-                  >
-                    {v.name}
-                  </span>
                 </div>
               </List.Item>
             );

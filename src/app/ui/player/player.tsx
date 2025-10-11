@@ -292,7 +292,7 @@ const Player: React.FC<{
     seek(targetTime);
     setTimeout(() => {
       setIsDragging(false);
-    }, 10);
+    }, 100);
   };
 
   const handleTouchStart = (event: React.TouchEvent) => {
@@ -339,7 +339,7 @@ const Player: React.FC<{
     seek(targetTime);
     setTimeout(() => {
       setIsDragging(false);
-    }, 10);
+    }, 100);
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: shutup
@@ -389,10 +389,6 @@ const Player: React.FC<{
           </div>
         </div>
       </div>
-      <div className="my-1.5 flex flex-row justify-between px-2 text-sm">
-        <span>{ts2mmss(currentTime, 's')}</span>
-        <span>{ts2mmss(duration, 's')}</span>
-      </div>
       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: ? */}
       {/** biome-ignore lint/a11y/useKeyWithClickEvents: ? */}
       {/** biome-ignore lint/a11y/noStaticElementInteractions: ? */}
@@ -402,15 +398,13 @@ const Player: React.FC<{
         ref={progressBar}
       >
         <div
-          className={
-            'flex h-full flex-col items-end justify-center bg-[#e799b0]'
-          }
+          className={'flex h-full flex-col justify-center bg-[#e799b0]'}
           style={{
             width: `${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}%`,
           }}
         >
           <IconFont
-            className={'-right-2 absolute z-[99] cursor-pointer text-2xl'}
+            className={'-right-2 absolute z-[99] w-4 cursor-pointer text-2xl'}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             style={{
@@ -418,6 +412,10 @@ const Player: React.FC<{
             }}
             type="icon-yuandian"
           />
+        </div>
+        <div className="-top-10 relative my-1.5 flex w-full flex-row justify-between px-2 text-sm">
+          <span>{ts2mmss(currentTime, 's')}</span>
+          <span>{ts2mmss(duration, 's')}</span>
         </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">

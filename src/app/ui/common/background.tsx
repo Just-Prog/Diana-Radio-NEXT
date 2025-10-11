@@ -19,6 +19,8 @@ const Background: React.FC = () => {
 
   const onMouseOver = (e: MouseEvent) => {
     if (img.current) {
+      // 这个实现方法会导致在打开Chrome DevTools的时候爆卡
+      // 暂时不修
       img.current.style = `transform: translate3d(calc(${e.clientX / 50}px - 1vw), calc(${e.clientY / 50}px - 1vh), 0)`;
     }
   };

@@ -36,6 +36,7 @@ import {
 import playerBG from '@/app/assets/program/bg.png';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
+import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 
@@ -91,6 +92,8 @@ const Player: React.FC<{
   const [isVolumeControllerVisible, setIsVolumeControllerVisible] =
     useState<boolean>(false);
 
+  const playlistManager = getPlaylistManager();
+
   const play = async () => {
     if (player.current) {
       await player.current.play();
@@ -132,12 +135,20 @@ const Player: React.FC<{
   const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
       setPaused('loading');
-      const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
+      const data = await Request.get(`${PODCAST_AUDIO_FETCH}${songInfo?.id}`);
       if (player.current) {
         player.current.src = data.data.data.url;
       }
-      await play();
-      setupMediaSessionMetadata();
+      try {
+        await play();
+        setupMediaSessionMetadata();
+      } catch (e) {
+        notification.info?.({
+          title: '自动播放失败',
+          content: <span>请手动点击播放键重试。</span>,
+        });
+        setPaused(true);
+      }
     } else {
       return;
     }
@@ -167,7 +178,16 @@ const Player: React.FC<{
 
   useEffect(() => {
     if (player.current) {
-      player.current.onended = (_) => pause();
+      player.current.onended = (_) => {
+        const nextSong = playlistManager.playNext();
+        if (nextSong) {
+          window.dispatchEvent(
+            new CustomEvent('songEnded', { detail: nextSong })
+          );
+        } else {
+          pause();
+        }
+      };
     }
   }, [player.current]);
 
@@ -426,10 +446,18 @@ const Player: React.FC<{
         <div className="flex gap-x-1/3 md:gap-x-4">
           <PlayerControllerButton
             action={() => {
-              notification.info?.({
-                title: 'TODO',
-                content: <span>🚧施工中🚧</span>,
-              });
+              const previousSong = playlistManager.playPrevious();
+              if (previousSong) {
+                // 通知父组件更新当前播放歌曲
+                window.dispatchEvent(
+                  new CustomEvent('songChanged', { detail: previousSong })
+                );
+              } else {
+                notification.warning?.({
+                  title: '提示',
+                  content: <span>没有上一首歌曲</span>,
+                });
+              }
             }}
           >
             <IconSkipPrevious />
@@ -451,10 +479,18 @@ const Player: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton
             action={() => {
-              notification.info?.({
-                title: 'TODO',
-                content: <span>🚧施工中🚧</span>,
-              });
+              const nextSong = playlistManager.playNext();
+              if (nextSong) {
+                // 通知父组件更新当前播放歌曲
+                window.dispatchEvent(
+                  new CustomEvent('songChanged', { detail: nextSong })
+                );
+              } else {
+                notification.warning?.({
+                  title: '提示',
+                  content: <span>没有下一首歌曲</span>,
+                });
+              }
             }}
           >
             <IconSkipNext />

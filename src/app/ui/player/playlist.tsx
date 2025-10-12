@@ -9,6 +9,8 @@ import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import image_404 from '@/app/assets/404.png';
 import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
+import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
+import { playlistCache } from '@/app/lib/utils/storage';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 
@@ -21,31 +23,35 @@ const Playlist: React.FC<{
 }> = ({ currentPlaying, setCurrentPlaying }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<SongInfo[]>();
-  // biome-ignore lint/style/noMagicNumbers: 首播时间
-  const [updatedAt, setUpdatedAt] = useState<number>(1_607_772_600);
+  const FIRST_BROADCAST_TIMESTAMP = 1_607_772_600; // 2021-01-01 00:00:00 的时间戳
+  const [updatedAt, setUpdatedAt] = useState<number>(FIRST_BROADCAST_TIMESTAMP);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [playlistType, setPlaylistType] = useState<
     'songs' | 'sleep' | 'jianwen' | 'hachimi'
   >('songs');
+
+  const playlistManager = getPlaylistManager();
+
   const fetchPlaylist = async () => {
     setIsLoading(true);
     setPlaylist([]);
-    try {
-      const data = await Request.get(`${PODCAST_LIST_FETCH}/${playlistType}`);
-      setPlaylist(
-        data.data.programs.map((v: SongInfo) => {
-          v.type = playlistType;
-          return v;
-        })
-      );
-      setUpdatedAt(data.data.updated_at);
-      setTotalCount(data.data.count);
-    } finally {
-      setIsLoading(false);
-    }
+
+    const data = await Request.get(`${PODCAST_LIST_FETCH}${playlistType}`);
+    const songs = data.data.programs.map((v: SongInfo) => {
+      v.type = playlistType;
+      return v;
+    });
+
+    setPlaylist(songs);
+    setUpdatedAt(data.data.updated_at);
+    setTotalCount(data.data.count);
+
+    // 更新播放列表管理器和缓存
+    playlistManager.setPlaylist(songs, playlistType);
+    setIsLoading(false);
   };
 
-  const status = useState<'loading' | 'error' | 'done'>('loading');
+  // const status = useState<'loading' | 'error' | 'done'>('loading');
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: why?
   useEffect(() => {
@@ -62,7 +68,7 @@ const Playlist: React.FC<{
         defaultValue={playlistType}
         onChange={(v) => setPlaylistType(v)}
         placeholder="选择电台"
-        renderFormat={(option, value) => {
+        renderFormat={(_, value) => {
           return (
             <span>
               {
@@ -124,12 +130,23 @@ const Playlist: React.FC<{
                     </span>
                   </div>
                   <div className="flex flex-row items-center">
-                    <div
+                    <button
                       className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
-                      onClick={() => setCurrentPlaying(v)}
+                      onClick={() => {
+                        playlistManager.playSong(v);
+                        setCurrentPlaying(v);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          playlistManager.playSong(v);
+                          setCurrentPlaying(v);
+                        }
+                      }}
+                      type="button"
                     >
                       <IconPlayCircle className="text-lg" />
-                    </div>
+                    </button>
                   </div>
                 </div>
               </List.Item>

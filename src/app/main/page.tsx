@@ -1,7 +1,8 @@
 'use client';
 import { Modal, Notification } from '@arco-design/web-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import Player, { programCover } from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
 
@@ -19,6 +20,42 @@ export default function MainPage() {
   });
   const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
+
+  const playlistManager = getPlaylistManager();
+
+  // 处理播放器事件
+  useEffect(() => {
+    const handleSongChanged = (event: CustomEvent) => {
+      setCurrentPlaying(event.detail);
+    };
+
+    const handleSongEnded = (event: CustomEvent) => {
+      setCurrentPlaying(event.detail);
+    };
+
+    window.addEventListener('songChanged', handleSongChanged as EventListener);
+    window.addEventListener('songEnded', handleSongEnded as EventListener);
+
+    return () => {
+      window.removeEventListener(
+        'songChanged',
+        handleSongChanged as EventListener
+      );
+      window.removeEventListener('songEnded', handleSongEnded as EventListener);
+    };
+  }, []);
+
+  // 初始化时恢复播放状态
+  useEffect(() => {
+    console.log('started checking playing status');
+    const restoredSong = playlistManager.getCurrentSong();
+    if (restoredSong) {
+      console.log('found current song status', restoredSong);
+      setCurrentPlaying(restoredSong);
+    } else {
+      console.log('nothing happened');
+    }
+  }, []);
 
   return (
     <>

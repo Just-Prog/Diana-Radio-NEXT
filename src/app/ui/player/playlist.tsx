@@ -1,13 +1,17 @@
 'use client';
 
-import { Empty, List, Message, Select } from '@arco-design/web-react';
+import { List, Select } from '@arco-design/web-react';
 import { IconMusic, IconPlayCircle } from '@arco-design/web-react/icon';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+
 import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import image_404 from '@/app/assets/404.png';
 import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
+import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
+import { playlistCache } from '@/app/lib/utils/storage';
+import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 
 const Option = Select.Option;
@@ -19,31 +23,35 @@ const Playlist: React.FC<{
 }> = ({ currentPlaying, setCurrentPlaying }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<SongInfo[]>();
-  // biome-ignore lint/style/noMagicNumbers: 首播时间
-  const [updatedAt, setUpdatedAt] = useState<number>(1_607_772_600);
+  const FIRST_BROADCAST_TIMESTAMP = 1_607_772_600; // 2021-01-01 00:00:00 的时间戳
+  const [updatedAt, setUpdatedAt] = useState<number>(FIRST_BROADCAST_TIMESTAMP);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [playlistType, setPlaylistType] = useState<
     'songs' | 'sleep' | 'jianwen' | 'hachimi'
   >('songs');
+
+  const playlistManager = getPlaylistManager();
+
   const fetchPlaylist = async () => {
     setIsLoading(true);
     setPlaylist([]);
-    try {
-      const data = await Request.get(`${PODCAST_LIST_FETCH}/${playlistType}`);
-      setPlaylist(
-        data.data.programs.map((v: SongInfo) => {
-          v.type = playlistType;
-          return v;
-        })
-      );
-      setUpdatedAt(data.data.updated_at);
-      setTotalCount(data.data.count);
-    } finally {
-      setIsLoading(false);
-    }
+
+    const data = await Request.get(`${PODCAST_LIST_FETCH}${playlistType}`);
+    const songs = data.data.programs.map((v: SongInfo) => {
+      v.type = playlistType;
+      return v;
+    });
+
+    setPlaylist(songs);
+    setUpdatedAt(data.data.updated_at);
+    setTotalCount(data.data.count);
+
+    // 更新播放列表管理器和缓存
+    playlistManager.setPlaylist(songs, playlistType);
+    setIsLoading(false);
   };
 
-  const status = useState<'loading' | 'error' | 'done'>('loading');
+  // const status = useState<'loading' | 'error' | 'done'>('loading');
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: why?
   useEffect(() => {
@@ -51,7 +59,7 @@ const Playlist: React.FC<{
   }, [playlistType]);
 
   return (
-    <div className="flex flex-col gap-y-2 p-4 min-h-full flex-1 h-full max-h-full w-full">
+    <div className="flex h-full max-h-full min-h-full w-full flex-1 flex-col gap-y-2 p-4">
       <span>已存档总数：{totalCount}</span>
       <span>最近更新: {new Date(updatedAt * 1000).toLocaleString()}</span>
       <span>加载时间过久可能是在全局刷新，还请耐心等待。</span>
@@ -60,7 +68,7 @@ const Playlist: React.FC<{
         defaultValue={playlistType}
         onChange={(v) => setPlaylistType(v)}
         placeholder="选择电台"
-        renderFormat={(option, value) => {
+        renderFormat={(_, value) => {
           return (
             <span>
               {
@@ -87,7 +95,7 @@ const Playlist: React.FC<{
           </Option>
         ))}
       </Select>
-      <div className="flex-1 overflow-x-clip overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-clip">
         <List
           dataSource={playlist}
           loading={isLoading}
@@ -103,23 +111,43 @@ const Playlist: React.FC<{
           }
           render={(v) => {
             return (
-              <List.Item
-                extra={
-                  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: shut up
-                  // biome-ignore lint/a11y/noStaticElementInteractions: shut up
-                  // biome-ignore lint/a11y/useKeyWithClickEvents: shut up
+              <List.Item key={v.id}>
+                <div className="flex w-full max-w-full flex-row items-center gap-x-4">
+                  <IconMusic className="mr-2 text-lg" />
                   <div
-                    className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
-                    onClick={() => setCurrentPlaying(v)}
+                    className={`${currentPlaying?.id === v.id ? 'font-bold text-blue-500' : ''} mr-2 flex flex-1 flex-col`}
                   >
-                    <IconPlayCircle className="text-sm" />
+                    <span className="line-clamp-1 overflow-clip text-ellipsis text-sm">
+                      {v.name}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      <span>{ts2mmss(v.playTime)}</span>
+                      <span>
+                        {v.date
+                          ? ` - ${v.date.replaceAll('.', '/')}`
+                          : ' - 未知日期'}
+                      </span>
+                    </span>
                   </div>
-                }
-                key={v.id}
-              >
-                <div className="line-clamp-1 w-full max-w-full gap-x-4 overflow-clip text-ellipsis">
-                  <IconMusic />
-                  <span>{v.name}</span>
+                  <div className="flex flex-row items-center">
+                    <button
+                      className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
+                      onClick={() => {
+                        playlistManager.playSong(v);
+                        setCurrentPlaying(v);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          playlistManager.playSong(v);
+                          setCurrentPlaying(v);
+                        }
+                      }}
+                      type="button"
+                    >
+                      <IconPlayCircle className="text-lg" />
+                    </button>
+                  </div>
                 </div>
               </List.Item>
             );

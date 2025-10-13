@@ -37,7 +37,21 @@ const syncDB = async (data: any, prefix: string) => {
   const updatedAt = String(Number.parseInt(String(Date.now() / 1000), 10));
   const programs = data.programs.map((e: any) => ({
     id: e.mainSong.id,
-    name: e.mainSong.name,
+    // 暴力匹配 `【】`里的日期
+    // 希望组里负责电台的兄弟别动标题格式，欧内盖
+    name:
+      e.mainSong.name.includes('】') && e.mainSong.name.includes('【')
+        ? e.mainSong.name.split('】')[1]
+        : e.mainSong.name,
+    date:
+      e.mainSong.name.includes('】') && e.mainSong.name.includes('【')
+        ? e.mainSong.name.split('【')[1].split('】')[0]
+        : null,
+    playTime:
+      e.mainSong?.bMusic?.playTime ??
+      e.mainSong?.hMusic?.playTime ??
+      e.mainSong?.lMusic?.playTime ??
+      0,
   }));
   await redis.set(`${prefix}_count`, count);
   await redis.set(`${prefix}_updated_at`, updatedAt);

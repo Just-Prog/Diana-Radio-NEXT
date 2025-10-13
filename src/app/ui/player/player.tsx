@@ -8,6 +8,7 @@ import {
   IconBackward,
   IconForward,
   IconLoading,
+  IconLoop,
   IconMenuFold,
   IconMute,
   IconPause,
@@ -32,8 +33,11 @@ import {
   sleep_cover,
   songs_cover,
 } from '@/app/api/podcast/constants';
+import playerBG from '@/app/assets/program/bg.png';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
+import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
+import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 
 const programCover = {
@@ -80,12 +84,15 @@ const Player: React.FC<{
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
+  const [loop, setLoop] = useState(false);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
 
   const [isVolumeControllerVisible, setIsVolumeControllerVisible] =
     useState<boolean>(false);
+
+  const playlistManager = getPlaylistManager();
 
   const play = async () => {
     if (player.current) {
@@ -117,16 +124,31 @@ const Player: React.FC<{
     changeVolume(volume);
   }, [volume]);
 
+  const toggleLoopStatus = () => {
+    if (player.current) {
+      player.current.loop = !loop;
+      setLoop(!loop);
+    }
+  };
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
       setPaused('loading');
-      const data = await Request.get(`${PODCAST_AUDIO_FETCH}/${songInfo?.id}`);
+      const data = await Request.get(`${PODCAST_AUDIO_FETCH}${songInfo?.id}`);
       if (player.current) {
         player.current.src = data.data.data.url;
       }
-      await play();
-      setupMediaSessionMetadata();
+      try {
+        await play();
+        setupMediaSessionMetadata();
+      } catch (e) {
+        notification.info?.({
+          title: '自动播放失败',
+          content: <span>请手动点击播放键重试。</span>,
+        });
+        setPaused(true);
+      }
     } else {
       return;
     }
@@ -156,7 +178,16 @@ const Player: React.FC<{
 
   useEffect(() => {
     if (player.current) {
-      player.current.onended = (_) => pause();
+      player.current.onended = (_) => {
+        const nextSong = playlistManager.playNext();
+        if (nextSong) {
+          window.dispatchEvent(
+            new CustomEvent('songEnded', { detail: nextSong })
+          );
+        } else {
+          pause();
+        }
+      };
     }
   }, [player.current]);
 
@@ -219,6 +250,7 @@ const Player: React.FC<{
 
   useEffect(() => {
     initMediaSession();
+    toggleLoopStatus();
   }, []);
 
   useEffect(() => {
@@ -281,7 +313,7 @@ const Player: React.FC<{
     seek(targetTime);
     setTimeout(() => {
       setIsDragging(false);
-    }, 10);
+    }, 100);
   };
 
   const handleTouchStart = (event: React.TouchEvent) => {
@@ -328,7 +360,7 @@ const Player: React.FC<{
     seek(targetTime);
     setTimeout(() => {
       setIsDragging(false);
-    }, 10);
+    }, 100);
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: shutup
@@ -352,14 +384,15 @@ const Player: React.FC<{
       <div className="flex-1">
         <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
           <div
-            className="overflow-clip rounded-[50%] shadow-black shadow-xl/10"
+            className={`animate-[spin_3s_linear_infinite] overflow-clip rounded-[50%] shadow-black shadow-xl/10 ${paused && 'pause-animation'} flex items-center justify-center`}
             onClick={async () => {
               await togglePlayPause();
             }}
           >
+            <Image alt="bg" className={'h-50 w-50'} src={playerBG} />
             <Image
               alt="cover"
-              className={`w-40 animate-[spin_3s_linear_infinite] ${paused && 'pause-animation'} md:w-50`}
+              className={'absolute h-35 w-35 rounded-[50%]'}
               src={programCover[songInfo?.type ?? 'songs']}
             />
           </div>
@@ -387,15 +420,13 @@ const Player: React.FC<{
         ref={progressBar}
       >
         <div
-          className={
-            'flex h-full flex-col items-end justify-center bg-[#e799b0]'
-          }
+          className={'flex h-full flex-col justify-center bg-[#e799b0]'}
           style={{
             width: `${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}%`,
           }}
         >
           <IconFont
-            className={'-right-2 absolute z-[99] cursor-pointer text-2xl'}
+            className={'-right-2 absolute z-[99] w-4 cursor-pointer text-2xl'}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             style={{
@@ -404,6 +435,10 @@ const Player: React.FC<{
             type="icon-yuandian"
           />
         </div>
+        <div className="-top-10 relative my-1.5 flex w-full flex-row justify-between px-2 text-sm">
+          <span>{ts2mmss(currentTime, 's')}</span>
+          <span>{ts2mmss(duration, 's')}</span>
+        </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
@@ -411,10 +446,18 @@ const Player: React.FC<{
         <div className="flex gap-x-1/3 md:gap-x-4">
           <PlayerControllerButton
             action={() => {
-              notification.info?.({
-                title: 'TODO',
-                content: <span>🚧施工中🚧</span>,
-              });
+              const previousSong = playlistManager.playPrevious();
+              if (previousSong) {
+                // 通知父组件更新当前播放歌曲
+                window.dispatchEvent(
+                  new CustomEvent('songChanged', { detail: previousSong })
+                );
+              } else {
+                notification.warning?.({
+                  title: '提示',
+                  content: <span>没有上一首歌曲</span>,
+                });
+              }
             }}
           >
             <IconSkipPrevious />
@@ -436,10 +479,18 @@ const Player: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton
             action={() => {
-              notification.info?.({
-                title: 'TODO',
-                content: <span>🚧施工中🚧</span>,
-              });
+              const nextSong = playlistManager.playNext();
+              if (nextSong) {
+                // 通知父组件更新当前播放歌曲
+                window.dispatchEvent(
+                  new CustomEvent('songChanged', { detail: nextSong })
+                );
+              } else {
+                notification.warning?.({
+                  title: '提示',
+                  content: <span>没有下一首歌曲</span>,
+                });
+              }
             }}
           >
             <IconSkipNext />
@@ -492,6 +543,9 @@ const Player: React.FC<{
             >
               {volume === 0 ? <IconMute /> : <IconSound />}
             </Popover>
+          </PlayerControllerButton>
+          <PlayerControllerButton action={toggleLoopStatus}>
+            <IconLoop spin={loop} />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>
             <IconMenuFold />

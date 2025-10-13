@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import Background from './ui/common/background';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
+        <Background />
         <AntdRegistry>{children}</AntdRegistry>
       </body>
     </html>

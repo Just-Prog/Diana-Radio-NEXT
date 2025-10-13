@@ -1,6 +1,19 @@
 import type { NextRequest } from 'next/server';
 import Request from '@/app/lib/axios/request';
 
+type LiveRoomStatusProps = {
+  uid: number;
+  room_id: number;
+  description: string;
+  live_status: number;
+  area_id: number;
+  parent_area_id: number;
+  title: string;
+  user_cover: string;
+  keyframe: string;
+  live_time: string;
+};
+
 export async function GET(req: NextRequest) {
   try {
     const all = await Request.get(
@@ -11,9 +24,10 @@ export async function GET(req: NextRequest) {
         },
       }
     );
+    const data: LiveRoomStatusProps = all.data.data;
     return Response.json({
       code: 0,
-      data: all.data.data,
+      data,
     });
   } catch (e) {
     return Response.json(
@@ -25,3 +39,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export type { LiveRoomStatusProps };

@@ -21,12 +21,15 @@ const LiveIndicator = () => {
 
   useEffect(() => {
     fetchInfo().then((_) => {
-      const interval = setInterval(() => {
-        fetchInfo();
-      }, 60_000);
-      return () => {
-        clearInterval(interval);
-      };
+      if (process.env.NODE_ENV === 'production') {
+        // 避免开发调试的时候一直跑浪费编译资源
+        const interval = setInterval(() => {
+          fetchInfo();
+        }, 60_000);
+        return () => {
+          clearInterval(interval);
+        };
+      }
     });
   }, []);
 

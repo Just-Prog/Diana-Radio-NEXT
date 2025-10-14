@@ -19,7 +19,6 @@ export class PlaylistManager {
 
     // 恢复之前的播放状态
     this.restorePlayingState();
-    console.log('PlaylistManager inited');
   }
 
   // 设置播放列表
@@ -37,7 +36,6 @@ export class PlaylistManager {
   // 从缓存加载播放列表
   loadPlaylistFromCache(type: string): boolean {
     const cached = playlistCache.get(type);
-    console.log(cached);
     if (cached && cached.data.length > 0) {
       this.currentPlaylist = cached.data;
       this.currentType = type;
@@ -103,7 +101,6 @@ export class PlaylistManager {
 
   // 获取当前歌曲
   getCurrentSong(): SongInfo | null {
-    console.log('fetching current song, index: ', this.currentIndex);
     if (
       this.currentIndex >= 0 &&
       this.currentIndex < this.currentPlaylist.length
@@ -159,16 +156,9 @@ export class PlaylistManager {
   // 恢复播放状态
   restorePlayingState(): void {
     const savedSong = currentPlayingStorage.get();
-    console.log('fetched state from localstorage', savedSong);
     if (!savedSong?.type) {
       return;
     }
-
-    console.log(
-      'fetching cached playlist for type ',
-      savedSong.type,
-      this.loadPlaylistFromCache(savedSong.type)
-    );
     // 尝试从缓存恢复播放列表
     if (this.loadPlaylistFromCache(savedSong.type)) {
       // 在播放列表中找到保存的歌曲

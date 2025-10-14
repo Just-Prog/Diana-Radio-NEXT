@@ -48,13 +48,9 @@ export default function MainPage() {
 
   // 初始化时恢复播放状态
   useEffect(() => {
-    console.log('started checking playing status');
     const restoredSong = playlistManager.getCurrentSong();
     if (restoredSong) {
-      console.log('found current song status', restoredSong);
       setCurrentPlaying(restoredSong);
-    } else {
-      console.log('nothing happened');
     }
   }, []);
 

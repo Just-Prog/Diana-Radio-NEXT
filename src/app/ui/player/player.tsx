@@ -137,7 +137,7 @@ const Player: React.FC<{
       setPaused('loading');
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}${songInfo?.id}`);
       if (player.current) {
-        player.current.src = data.data.data.url;
+        player.current.src = data.data.data.url.replace('http://', 'https://');
       }
       try {
         await play();

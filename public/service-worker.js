@@ -50,3 +50,15 @@ self.addEventListener('fetch', (event) => {
     );
   }
 });
+
+self.addEventListener('message', (event) => {
+  const { action } = event.data;
+  if (action === 'CACHE_CLEAR') {
+    caches.delete(METADATA_BUCKET_NAME).then((_) => {
+      caches.delete(AUDIO_BUCKET_NAME).then((__) => {
+        console.log('cache storage cleared');
+        return;
+      });
+    });
+  }
+});

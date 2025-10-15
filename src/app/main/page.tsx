@@ -3,6 +3,7 @@ import { Modal, Notification } from '@arco-design/web-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
+import IconFont from '../lib/constants/icon_font';
 import LiveIndicator from '../ui/main/live_indicator';
 import Player, { programCover } from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
@@ -64,6 +65,19 @@ export default function MainPage() {
         {/* <div className="h-full bg-linear-120 from-pink-400 to-orange-300 backdrop-blur-lg md:flex-3"> */}
         <div className="h-full backdrop-blur-lg md:flex-3">
           <LiveIndicator />
+          <div
+            className="absolute top-4 right-4 cursor-pointer"
+            onClick={() => {
+              navigator.serviceWorker.controller.postMessage({
+                action: 'CACHE_CLEAR',
+              });
+            }}
+          >
+            <IconFont
+              className="z-[99] w-4 text-2xl text-black"
+              type="icon-qinglihuancun"
+            />
+          </div>
           <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0] blur-lg">
             <div className="flex h-full min-h-full w-full min-w-full flex-1">
               <Image

@@ -39,6 +39,7 @@ import Request from '@/app/lib/axios/request';
 import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
+import IconFont from '@/app/lib/constants/icon_font';
 
 const programCover = {
   songs: songs_cover,
@@ -68,10 +69,6 @@ const PlayerControllerButton: React.FC<{
     </div>
   );
 };
-
-const IconFont = Icon.addFromIconFontCn({
-  src: '//at.alicdn.com/t/c/font_5032848_tipbvltx1ls.js',
-});
 
 const Player: React.FC<{
   notification: NotificationHookReturnType;

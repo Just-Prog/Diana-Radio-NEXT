@@ -70,8 +70,11 @@ export default function MainPage() {
             <div
               className="absolute top-4 right-4 cursor-pointer"
               onClick={() => {
-                if (navigator?.serviceWorker) {
-                  navigator?.serviceWorker.controller.postMessage({
+                if (
+                  navigator?.serviceWorker &&
+                  navigator?.serviceWorker?.controller
+                ) {
+                  navigator?.serviceWorker?.controller.postMessage({
                     action: 'CACHE_CLEAR',
                   });
                 }

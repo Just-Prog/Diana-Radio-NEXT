@@ -11,6 +11,7 @@ import Playlist from '../ui/player/playlist';
 type SongInfo = {
   date: string;
   id: string;
+  pid: number;
   name: string;
   type?: 'songs' | 'sleep' | 'jianwen' | 'hachimi';
   playTime: number;

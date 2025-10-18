@@ -37,6 +37,7 @@ const syncDB = async (data: any, prefix: string) => {
   const updatedAt = String(Number.parseInt(String(Date.now() / 1000), 10));
   const programs = data.programs.map((e: any) => ({
     id: e.mainSong.id,
+    pid: e.id,
     // 暴力匹配 `【】`里的日期
     // 希望组里负责电台的兄弟别动标题格式，欧内盖
     name:

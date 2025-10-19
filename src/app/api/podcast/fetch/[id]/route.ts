@@ -22,7 +22,8 @@ type genericSongInfoResp = {
   };
 };
 
-type lyricsResp = { lyric: { time: string; text: string }[] };
+type lyrics163Resp = { lyric: string };
+type lyricsResp = { time: number; text: string };
 
 // 过滤函数，只保留 genericSongInfoResp 中定义的字段
 function filterGenericSongInfoResp(data: unknown): genericSongInfoResp {
@@ -95,28 +96,28 @@ export async function GET(
         const rawSongs = (rawProgramData as Record<string, unknown>)?.songs;
         const filteredRelatedSongs = filterRelatedSongs(rawSongs);
 
-        const lyrics: lyricsResp = { lyric: [] };
+        let lyrics: lyricsResp[] = [];
 
         if (filteredRelatedSongs.length !== 0) {
-          const tmp: string = (await lyric({ id: filteredRelatedSongs[0].id }))
-            .body.lrc.lyric as string;
-          lyrics.lyric =
-            tmp
-              .split('\n')
-              .map((v) => {
-                const matched = v.match(lrcTSRegex);
-                if (matched) {
-                  const time = (
-                    Number.parseInt(matched[1].split(':')[0]) * 60 +
-                    Number.parseInt(matched[1].split(':')[1])
-                  ).toString(); // lrc HH:mm:ss => minutes
-                  return {
-                    time,
-                    text: matched[2],
-                  };
-                }
-              })
-              .filter((v) => v) ?? [];
+          const tmp: lyrics163Resp = (
+            await lyric({ id: filteredRelatedSongs[0].id })
+          ).body.lrc as lyrics163Resp;
+          lyrics = tmp.lyric
+            .split('\n')
+            .map((v) => {
+              const matched = v.match(lrcTSRegex);
+              if (matched) {
+                const time =
+                  Number.parseInt(matched[1].split(':')[0]) * 60 +
+                  Number.parseInt(matched[1].split(':')[1]); // lrc HH:mm:ss => minutes
+                return {
+                  time,
+                  text: matched[2],
+                };
+              }
+              return;
+            })
+            .filter((v): v is lyricsResp => v !== undefined);
         }
 
         const data = res[0];
@@ -128,7 +129,7 @@ export async function GET(
             type: data.type,
             url: data.url,
             related: filteredRelatedSongs,
-            lrc: filterRelatedSongs.length !== 0 ? lyrics.lyric : null,
+            lrc: filteredRelatedSongs.length !== 0 ? lyrics : null,
           },
         });
       }

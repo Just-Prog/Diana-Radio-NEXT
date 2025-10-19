@@ -15,7 +15,9 @@ const AboutPage = () => {
       <Divider />
       <div className="flex flex-col justify-center text-center md:py-8 md:text-left">
         <div className="font-bold text-3xl">Diana Radio 嘉然电台</div>
-        <div className="font-normal text-lg">为 NCM 适配的替代前端页面</div>
+        <div className="font-normal text-lg">
+          不只是为 NCM 适配的替代前端页面
+        </div>
         <div className="font-normal text-lg">@嘉心糖周报 @Just-Prog</div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 </p>
 <h1 align="center" style="color: #e799b0">Diana Radio 嘉然电台FM.307</h3>
 
-<h3 align="center" style="color: #e799b0">An alternative frontend project for NCM Podcast</h4>
+<h3 align="center" style="color: #e799b0">NOT ONLY An alternative frontend project for NCM Podcast</h4>
 
 <h3 align="center">
     Powered by <img src="docs/next.svg"/>

@@ -80,6 +80,10 @@ export default function MainPage() {
                   navigator?.serviceWorker?.controller.postMessage({
                     action: 'CACHE_CLEAR',
                   });
+                  notification.info?.({
+                    title: '清理缓存',
+                    content: <span>已尝试清理。</span>,
+                  });
                 }
               }}
             >

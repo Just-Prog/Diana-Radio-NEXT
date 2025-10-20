@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import IconFont from '../common/iconfont';
 
 type lyricsResp = { time: number; text: string };
@@ -24,10 +25,26 @@ const LyricSwitch: React.FC<{
   );
 };
 
-const LyricDisplayArea = (lyrics: lyricsResp) => {
+const LyricDisplayArea: React.FC<{
+  lyrics: lyricsResp[];
+  current: number;
+}> = ({ lyrics, current }) => {
+  const [lyricCurrent, setLyricCurrent] = useState<number>(0);
+
+  useEffect(() => {
+    setLyricCurrent(
+      lyrics.length > 0
+        ? (() => {
+            const temp = lyrics.findIndex((v) => v.time >= current);
+            return temp !== -1 ? temp : lyrics.length - 1;
+          })()
+        : 0
+    );
+  }, [current]);
+
   return (
-    <div className="flex h-16 items-center justify-center">
-      Lyrics Display Area
+    <div className="flex h-4 w-[85%] items-center justify-center overflow-hidden rounded-lg bg-white/30 p-6 md:w-[40%]">
+      <p className="absolute">{lyrics[lyricCurrent]?.text ?? ''}</p>
     </div>
   );
 };

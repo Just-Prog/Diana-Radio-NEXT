@@ -39,7 +39,7 @@ import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 import IconFont from '@/app/ui/common/iconfont';
-import { LyricSwitch } from './lyrics';
+import { LyricDisplayArea, LyricSwitch } from './lyrics';
 
 const programCover = {
   songs: songs_cover,
@@ -86,10 +86,12 @@ const Player: React.FC<{
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
 
+  const [lyrics, setLyrics] = useState([]);
+
   const [isVolumeControllerVisible, setIsVolumeControllerVisible] =
     useState<boolean>(false);
 
-  const [isLyricBarEnabled, setIsLyricBarEnabled] = useState(false);
+  const [isLyricBarEnabled, setIsLyricBarEnabled] = useState(true);
 
   const playlistManager = getPlaylistManager();
 
@@ -140,6 +142,7 @@ const Player: React.FC<{
       }
       try {
         await play();
+        setLyrics(data.data.data.lrc ?? []);
         setupMediaSessionMetadata();
       } catch (e) {
         notification.info?.({
@@ -427,6 +430,14 @@ const Player: React.FC<{
                 : '未选择'}
             </span>
           </div>
+          {isLyricBarEnabled && (
+            <LyricDisplayArea
+              current={currentTime}
+              lyrics={
+                lyrics.length > 0 ? lyrics : [{ time: 0, text: '暂无歌词' }]
+              }
+            />
+          )}
         </div>
       </div>
       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: ? */}

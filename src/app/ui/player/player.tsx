@@ -39,6 +39,7 @@ import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 import IconFont from '@/app/ui/common/iconfont';
+import { LyricSwitch } from './lyrics';
 
 const programCover = {
   songs: songs_cover,
@@ -56,7 +57,7 @@ const PlayerControllerButton: React.FC<{
     // biome-ignore lint/a11y/noStaticElementInteractions: shut up
     // biome-ignore lint/a11y/useKeyWithClickEvents: shut up biome
     <div
-      className="cursor-pointer rounded-2xl px-1 pt-1 pb-1 text-lg duration-400 hover:bg-[#e799b0]/60 md:px-2"
+      className="flex cursor-pointer flex-row items-center justify-center rounded-2xl px-1 pt-1 pb-1 text-lg duration-400 hover:bg-[#e799b0]/60 md:px-2"
       onClick={(event) => {
         event.stopPropagation;
         action?.();
@@ -87,6 +88,8 @@ const Player: React.FC<{
 
   const [isVolumeControllerVisible, setIsVolumeControllerVisible] =
     useState<boolean>(false);
+
+  const [isLyricBarEnabled, setIsLyricBarEnabled] = useState(false);
 
   const playlistManager = getPlaylistManager();
 
@@ -562,6 +565,13 @@ const Player: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton action={toggleLoopStatus}>
             <IconLoop spin={loop} />
+          </PlayerControllerButton>
+          <PlayerControllerButton
+            action={() => setIsLyricBarEnabled(!isLyricBarEnabled)}
+          >
+            <div>
+              <LyricSwitch isLyricAreaEnabled={isLyricBarEnabled} />
+            </div>
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlaylist}>
             <IconMenuFold />

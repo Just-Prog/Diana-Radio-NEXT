@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 
 type IconProps = {
   type: string;
+  color?: string;
   size?: number;
   className?: string;
   onMouseDown?: (e: React.MouseEvent) => void;
@@ -13,6 +14,7 @@ type IconProps = {
 
 const IconFont: React.FC<IconProps> = ({
   type,
+  color = 'black',
   size = 24,
   className,
   onMouseDown,
@@ -22,6 +24,7 @@ const IconFont: React.FC<IconProps> = ({
   return (
     <span
       className={className ?? ''}
+      color={color}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
       style={style}

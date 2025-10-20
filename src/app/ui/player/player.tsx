@@ -1,6 +1,5 @@
 'use client';
 import {
-  Icon,
   type NotificationHookReturnType,
   Popover,
 } from '@arco-design/web-react';
@@ -39,7 +38,7 @@ import Request from '@/app/lib/axios/request';
 import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
-import IconFont from '@/app/lib/constants/icon_font';
+import IconFont from '@/app/ui/common/iconfont';
 
 const programCover = {
   songs: songs_cover,
@@ -442,11 +441,12 @@ const Player: React.FC<{
           }}
         >
           <IconFont
-            className={'-right-2 absolute z-[99] w-4 cursor-pointer text-2xl'}
+            className={'-right-2 absolute z-[99] w-4 cursor-pointer'}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
+            size={24}
             style={{
-              left: `calc(${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}% - 12px)`,
+              left: `calc(${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}% - 12px)`, // 偏移一半
             }}
             type="icon-yuandian"
           />

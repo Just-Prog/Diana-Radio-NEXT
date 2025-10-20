@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 import { AntdRegistry } from '@ant-design/nextjs-registry';
@@ -28,6 +29,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh">
+      <head>
+        <Script
+          src="//at.alicdn.com/t/c/font_5032848_nj6kk3o8gqk.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >

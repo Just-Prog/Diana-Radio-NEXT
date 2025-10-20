@@ -19,7 +19,7 @@ export default function Home() {
         </Link>
         <div className="mt-2 mb-2 font-black text-4xl">Diana Radio FM.307</div>
         <div className="font-semibold text-base">
-          NOT ONLY n alternative frontend project for NCM Podcast@嘉心糖周报
+          NOT ONLY An alternative frontend project for NCM Podcast@嘉心糖周报
         </div>
       </div>
     </div>

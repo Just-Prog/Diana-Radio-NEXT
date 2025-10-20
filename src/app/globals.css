@@ -25,6 +25,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.icon {
+  fill: currentColor;
+  overflow: hidden;
+}
+
 @utility pause-animation {
   animation-play-state: paused;
 }

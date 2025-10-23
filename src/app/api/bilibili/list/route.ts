@@ -3,6 +3,11 @@ import WbiSigner from '@/app/lib/api/utils/wbi_sign';
 import Request from '@/app/lib/axios/request';
 import { BilibiliHeaders } from '../../podcast/constants';
 
+type BilibiliSearchModuleResp = {
+  result_type: string;
+  data: any;
+};
+
 export async function GET(
   req: NextRequest,
   context: RouteContext<'/api/bilibili/list'>
@@ -21,7 +26,9 @@ export async function GET(
     });
     const data = (
       await Request.get(target, { params, headers: BilibiliHeaders })
-    ).data.data.result.find((v) => v.result_type === 'video').data;
+    ).data.data.result.find(
+      (v: BilibiliSearchModuleResp) => v.result_type === 'video'
+    ).data;
     return Response.json({
       code: 200,
       data,

@@ -22,6 +22,24 @@ const DianaWeeklyAvailableProgramsInfo = [
   { name: '嘉然的哈基米音乐', key: 'hachimi', cover: hachimi_cover },
 ];
 
+const BilibiliCookies = {
+  sessdata: '',
+};
+
+const BilibiliHeaders = {
+  accept: '*/*',
+  'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+  origin: 'https://www.bilibili.com',
+  referer: 'https://www.bilibili.com/client',
+  'sec-ch-ua':
+    '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': 'windows',
+  cookie: 'SESSDATA=;',
+  'user-agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.5.1.4',
+};
+
 export {
   PC_SONGS,
   PC_SLEEPSTORY,
@@ -33,4 +51,6 @@ export {
   sleep_cover,
   DianaWeeklyAvailablePodcasts,
   DianaWeeklyAvailableProgramsInfo,
+  BilibiliHeaders,
+  BilibiliCookies,
 };

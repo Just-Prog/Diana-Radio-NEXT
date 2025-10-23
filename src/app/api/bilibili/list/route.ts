@@ -34,14 +34,25 @@ export async function GET(
       data,
     });
   } catch (e) {
-    return Response.json(
-      {
-        code: 500,
-        msg: e.message,
-      },
-      {
-        status: 500,
-      }
-    );
+    if (e instanceof Error) {
+      return Response.json(
+        {
+          code: 500,
+          msg: e.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
   }
+  return Response.json(
+    {
+      code: 500,
+      msg: 'unknown',
+    },
+    {
+      status: 500,
+    }
+  );
 }

@@ -3,32 +3,31 @@ import WbiSigner from '@/app/lib/api/utils/wbi_sign';
 import Request from '@/app/lib/axios/request';
 import { BilibiliHeaders } from '../../podcast/constants';
 
-type BilibiliSearchModuleResp = {
-  result_type: string;
-  data: any;
-};
-
 export async function GET(
   req: NextRequest,
   context: RouteContext<'/api/bilibili/list'>
 ) {
   try {
     const pageNum = req.nextUrl.searchParams.get('page') ?? 1;
-    const target = 'https://api.bilibili.com/x/web-interface/search/all/v2';
+    const target = 'https://api.bilibili.com/x/web-interface/wbi/search/type';
     const params = await WbiSigner({
+      search_type: 'video',
       page: pageNum,
-      page_size: 30,
       tids: 3,
       device: 'win',
       mobi_app: 'pc_electron',
       keyword: '嘉然',
       web_location: 'bilibili-electron',
+      highlight: 0,
     });
     const data = (
       await Request.get(target, { params, headers: BilibiliHeaders })
-    ).data.data.result.find(
-      (v: BilibiliSearchModuleResp) => v.result_type === 'video'
-    ).data;
+    ).data.data.result.map((v) => {
+      return {
+        ...v,
+        title: v.title.replace('<em class="keyword">', '').replace('</em>', ''),
+      };
+    });
     return Response.json({
       code: 200,
       data,

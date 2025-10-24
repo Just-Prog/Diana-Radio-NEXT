@@ -22,7 +22,7 @@ export async function GET(
     });
     const data = (
       await Request.get(target, { params, headers: BilibiliHeaders })
-    ).data.data.result.map((v) => {
+    ).data.data.result.map((v: any) => {
       const tmp = v;
       v.title = v.title
         .replace(/<em[^>]*>/gi, '')

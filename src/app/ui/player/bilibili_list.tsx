@@ -53,7 +53,7 @@ const PlaylistBilibili = () => {
               <span>什么都没有</span>
             </div>
           }
-          render={(v) => {
+          render={(v: any) => {
             return (
               <List.Item className="flex">
                 <div className="flex h-20 flex-1 items-center md:h-18">

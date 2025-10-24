@@ -31,7 +31,7 @@ export default function RootLayout({
     <html lang="zh">
       <head>
         <Script
-          src="//at.alicdn.com/t/c/font_5032848_ibsqjcvczj.js"
+          src="//at.alicdn.com/t/c/font_5032848_gnec1ern4c.js"
           strategy="beforeInteractive"
         />
       </head>

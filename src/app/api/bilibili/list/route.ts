@@ -23,10 +23,13 @@ export async function GET(
     const data = (
       await Request.get(target, { params, headers: BilibiliHeaders })
     ).data.data.result.map((v) => {
-      return {
-        ...v,
-        title: v.title.replace('<em class="keyword">', '').replace('</em>', ''),
-      };
+      const tmp = v;
+      v.title = v.title
+        .replace(/<em[^>]*>/gi, '')
+        .replace(/<\/em>/gi, '')
+        .replace(/<\\\/em>/gi, '')
+        .replace(/&amp;/g, '&');
+      return tmp;
     });
     return Response.json({
       code: 200,

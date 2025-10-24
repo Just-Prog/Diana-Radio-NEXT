@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
 import IconFont from '../ui/common/iconfont';
 import LiveIndicator from '../ui/main/live_indicator';
+import PlaylistBilibili from '../ui/player/bilibili_list';
 import Player, { programCover } from '../ui/player/player';
 import Playlist from '../ui/player/playlist';
 
@@ -24,6 +25,8 @@ export default function MainPage() {
   const [isClient, setIsClient] = useState(false);
   const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
+
+  const [isBilibiliMode, setIsBilibiliMode] = useState(false);
 
   const playlistManager = getPlaylistManager();
 
@@ -118,13 +121,17 @@ export default function MainPage() {
         visible={playlistOpened}
       >
         <div className="flex h-[calc(90vh-48px)] w-full flex-1 md:h-[80vh]">
-          <Playlist
-            currentPlaying={currentPlaying}
-            setCurrentPlaying={(v) => {
-              setCurrentPlaying(v);
-              setPlaylistOpened(false);
-            }}
-          />
+          {isBilibiliMode ? (
+            <PlaylistBilibili />
+          ) : (
+            <Playlist
+              currentPlaying={currentPlaying}
+              setCurrentPlaying={(v) => {
+                setCurrentPlaying(v);
+                setPlaylistOpened(false);
+              }}
+            />
+          )}
         </div>
       </Modal>
     </>

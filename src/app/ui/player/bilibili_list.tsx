@@ -1,5 +1,5 @@
 'use client';
-import { List } from '@arco-design/web-react';
+import { Button, List } from '@arco-design/web-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -27,6 +27,7 @@ const PlaylistBilibili = () => {
   const [searchResult, setSearchResult] = useState([]);
 
   const fetchSearchResp = async () => {
+    setIsLoading(true);
     const data = (await Request.get(BILIBILI_SEARCH, { params: { page } })).data
       .data;
     setSearchResult(data);
@@ -34,12 +35,13 @@ const PlaylistBilibili = () => {
   };
 
   useEffect(() => {
-    fetchSearchResp();
-  }, []);
+    fetchSearchResp().then((_) => setIsLoading(false));
+  }, [page]);
 
   return (
     <div className="flex h-full max-h-full min-h-full w-full flex-1 flex-col gap-y-2 p-4">
-      <div className="flex-1 overflow-y-auto overflow-x-clip">
+      <span className="font-semibold text-base">检索结果</span>
+      <div className="flex-2 overflow-y-auto overflow-x-clip">
         <List
           dataSource={searchResult}
           loading={isLoading}
@@ -86,6 +88,18 @@ const PlaylistBilibili = () => {
             );
           }}
         />
+      </div>
+      <div className="flex flex-row justify-center">
+        <Button
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+          type="text"
+        >
+          <span>上一页</span>
+        </Button>
+        <Button onClick={() => setPage(page + 1)} type="text">
+          <span>下一页</span>
+        </Button>
       </div>
     </div>
   );

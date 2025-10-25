@@ -1,5 +1,5 @@
 'use client';
-import { Modal, Notification } from '@arco-design/web-react';
+import { Modal, Notification, Switch } from '@arco-design/web-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
@@ -54,8 +54,16 @@ export default function MainPage() {
     };
   }, []);
 
-  // 初始化时恢复播放状态
   useEffect(() => {
+    localStorage.setItem(
+      'player_platform',
+      isBilibiliMode ? 'bilibili' : 'ncm_podcast'
+    );
+  }, [isBilibiliMode]);
+
+  // 初始化时恢复播放和平台模式状态
+  useEffect(() => {
+    setIsBilibiliMode(localStorage.getItem('player_platform') !== 'bilibili');
     const restoredSong = playlistManager.getCurrentSong();
     if (restoredSong) {
       setCurrentPlaying(restoredSong);
@@ -72,30 +80,42 @@ export default function MainPage() {
         {/* <div className="h-full bg-linear-120 from-pink-400 to-orange-300 backdrop-blur-lg md:flex-3"> */}
         <div className="h-full backdrop-blur-lg md:flex-3">
           <LiveIndicator />
-          {isClient && (
-            <div
-              className="absolute top-4 right-4 cursor-pointer"
-              onClick={() => {
-                if (
-                  navigator?.serviceWorker &&
-                  navigator?.serviceWorker?.controller
-                ) {
-                  navigator?.serviceWorker?.controller.postMessage({
-                    action: 'CACHE_CLEAR',
-                  });
-                  notification.info?.({
-                    title: '清理缓存',
-                    content: <span>已尝试清理。</span>,
-                  });
-                }
-              }}
-            >
-              <IconFont
-                className="!text-2xl z-[99] w-4 text-black"
-                type="icon-qinglihuancun"
+          <div className="absolute top-4 right-4 flex flex-row justify-end gap-x-2">
+            <span className="flex flex-row items-center gap-x-2 text-sm">
+              <p className="text-sm">
+                模式：{isBilibiliMode ? 'Bilibili' : '播客'}
+              </p>
+              <Switch
+                checked={isBilibiliMode}
+                onChange={(v) => setIsBilibiliMode(v)}
               />
-            </div>
-          )}
+            </span>
+            {isClient && (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  if (
+                    navigator?.serviceWorker &&
+                    navigator?.serviceWorker?.controller
+                  ) {
+                    navigator?.serviceWorker?.controller.postMessage({
+                      action: 'CACHE_CLEAR',
+                    });
+                    notification.info?.({
+                      title: '清理缓存',
+                      content: <span>已尝试清理。</span>,
+                    });
+                  }
+                }}
+              >
+                <IconFont
+                  className="!text-2xl z-[99] w-4 text-black"
+                  type="icon-qinglihuancun"
+                />
+              </div>
+            )}
+          </div>
+
           <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0] blur-lg">
             <div className="flex h-full min-h-full w-full min-w-full flex-1">
               <Image

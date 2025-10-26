@@ -5,6 +5,7 @@ import { BilibiliHeaders } from '../../podcast/constants';
 
 const BLACKLIST_MID = [
   '1643484295', // @岱川Doris
+  '299013902', // @炫神_
 ];
 
 const BLACKLIST_KEYWORD = [
@@ -18,7 +19,29 @@ const BLACKLIST_KEYWORD = [
   '李滇滇',
   '李姐',
   '理解',
+  '炫狗',
+  '炫神',
+  '许昊龙',
 ]; // 你B搜索结果里面掺大数据瞎推荐的视频的行为是真的烦人 :)
+
+const BLACKLIST_TAGS = [
+  'EOE',
+  'eoe',
+  'TTUP',
+  '啵啵小狼341',
+  '三姐',
+  '大三姐',
+  '小三姐',
+  '李滇滇',
+  '李姐',
+  '理解',
+  '嘉晚饭',
+  '向晚',
+  '炫狗',
+  '炫神',
+  '许昊龙',
+  'Last炫神丶',
+];
 
 export async function GET(
   req: NextRequest,
@@ -44,7 +67,13 @@ export async function GET(
       .filter(
         (v: any) =>
           !(
-            BLACKLIST_MID.includes(v.mid) && BLACKLIST_KEYWORD.includes(v.title)
+            BLACKLIST_MID.find((e: string) => e === String(v.mid)) ||
+            BLACKLIST_KEYWORD.find((e: string) => v.title.includes(e)) ||
+            v.tags
+              .split(',')
+              .find((e: string) =>
+                BLACKLIST_TAGS.find((t: string) => e.includes(t))
+              )
           )
       )
       .map((v: any) => {

@@ -3,6 +3,10 @@ import WbiSigner from '@/app/lib/api/utils/wbi_sign';
 import Request from '@/app/lib/axios/request';
 import { BilibiliHeaders } from '../../podcast/constants';
 
+const BLACKLIST_MID = [
+  '1643484295', // @岱川Doris
+];
+
 export async function GET(
   req: NextRequest,
   context: RouteContext<'/api/bilibili/list'>
@@ -22,15 +26,17 @@ export async function GET(
     });
     const data = (
       await Request.get(target, { params, headers: BilibiliHeaders })
-    ).data.data.result.map((v: any) => {
-      const tmp = v;
-      v.title = v.title
-        .replace(/<em[^>]*>/gi, '')
-        .replace(/<\/em>/gi, '')
-        .replace(/<\\\/em>/gi, '')
-        .replace(/&amp;/g, '&');
-      return tmp;
-    });
+    ).data.data.result
+      .filter((v: any) => !BLACKLIST_MID.includes(v.mid))
+      .map((v: any) => {
+        const tmp = v;
+        v.title = v.title
+          .replace(/<em[^>]*>/gi, '')
+          .replace(/<\/em>/gi, '')
+          .replace(/<\\\/em>/gi, '')
+          .replace(/&amp;/g, '&');
+        return tmp;
+      });
     return Response.json({
       code: 200,
       data,

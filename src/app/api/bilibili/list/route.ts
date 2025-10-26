@@ -6,6 +6,7 @@ import { BilibiliHeaders } from '../../podcast/constants';
 const BLACKLIST_MID = [
   '1643484295', // @岱川Doris
   '299013902', // @炫神_
+  '823284', // @DJ鱼谷
 ];
 
 const BLACKLIST_KEYWORD = [
@@ -22,6 +23,8 @@ const BLACKLIST_KEYWORD = [
   '炫狗',
   '炫神',
   '许昊龙',
+  '鱼头',
+  '鱼谷',
 ]; // 你B搜索结果里面掺大数据瞎推荐的视频的行为是真的烦人 :)
 
 const BLACKLIST_TAGS = [
@@ -41,6 +44,8 @@ const BLACKLIST_TAGS = [
   '炫神',
   '许昊龙',
   'Last炫神丶',
+  '鱼谷',
+  'DJ鱼谷',
 ];
 
 export async function GET(

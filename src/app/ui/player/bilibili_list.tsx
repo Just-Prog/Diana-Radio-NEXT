@@ -1,5 +1,5 @@
 'use client';
-import { Button, List } from '@arco-design/web-react';
+import { List, Pagination } from '@arco-design/web-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -23,6 +23,8 @@ const PlaylistMetadata: React.FC<{
 
 const PlaylistBilibili = () => {
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [maxPage, setMaxPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [searchResult, setSearchResult] = useState([]);
 
@@ -30,7 +32,9 @@ const PlaylistBilibili = () => {
     setIsLoading(true);
     const data = (await Request.get(BILIBILI_SEARCH, { params: { page } })).data
       .data;
-    setSearchResult(data);
+    setSearchResult(data.result);
+    setMaxPage(data.total);
+    setPageSize(data.current_size);
     setIsLoading(false);
   };
 
@@ -39,7 +43,7 @@ const PlaylistBilibili = () => {
   }, [page]);
 
   return (
-    <div className="flex h-full max-h-full min-h-full w-full flex-1 flex-col gap-y-2 p-4">
+    <div className="flex h-full max-h-full min-h-full w-full flex-1 flex-col gap-y-2 py-2 md:px-2">
       <span className="font-semibold text-base">检索结果</span>
       <div className="flex-2 overflow-y-auto overflow-x-clip">
         <List
@@ -89,17 +93,23 @@ const PlaylistBilibili = () => {
           }}
         />
       </div>
-      <div className="flex flex-row justify-center">
-        <Button
+      <div className="flex flex-row justify-center gap-x-2">
+        {/* <Button
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
           type="text"
         >
           <span>上一页</span>
-        </Button>
-        <Button onClick={() => setPage(page + 1)} type="text">
+        </Button> */}
+        <Pagination
+          onChange={(v) => setPage(v)}
+          pageSize={pageSize}
+          simple
+          total={pageSize * maxPage}
+        />
+        {/* <Button onClick={() => setPage(page + 1)} type="text">
           <span>下一页</span>
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

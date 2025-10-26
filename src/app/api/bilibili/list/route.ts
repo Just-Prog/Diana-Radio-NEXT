@@ -7,6 +7,19 @@ const BLACKLIST_MID = [
   '1643484295', // @岱川Doris
 ];
 
+const BLACKLIST_KEYWORD = [
+  '珈',
+  '珈乐',
+  '三姐',
+  '341',
+  '啵啵',
+  '向晚',
+  '嘉晚饭',
+  '李滇滇',
+  '李姐',
+  '理解',
+]; // 你B搜索结果里面掺大数据瞎推荐的视频的行为是真的烦人 :)
+
 export async function GET(
   req: NextRequest,
   context: RouteContext<'/api/bilibili/list'>
@@ -26,20 +39,39 @@ export async function GET(
     });
     const data = (
       await Request.get(target, { params, headers: BilibiliHeaders })
-    ).data.data.result
-      .filter((v: any) => !BLACKLIST_MID.includes(v.mid))
+    ).data.data;
+    const result = data.result
+      .filter(
+        (v: any) =>
+          !(
+            BLACKLIST_MID.includes(v.mid) && BLACKLIST_KEYWORD.includes(v.title)
+          )
+      )
       .map((v: any) => {
         const tmp = v;
         v.title = v.title
           .replace(/<em[^>]*>/gi, '')
           .replace(/<\/em>/gi, '')
           .replace(/<\\\/em>/gi, '')
-          .replace(/&amp;/g, '&');
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&copy;/g, '©')
+          .replace(/&reg;/g, '®')
+          .replace(/&trade;/g, '™')
+          .replace(/&mdash;/g, '—')
+          .replace(/&ndash;/g, '–')
+          .replace(/&hellip;/g, '…');
         return tmp;
       });
     return Response.json({
       code: 200,
-      data,
+      data: {
+        current: data.page,
+        current_size: data.pagesize,
+        total: data.numPages,
+        result,
+      },
     });
   } catch (e) {
     if (e instanceof Error) {

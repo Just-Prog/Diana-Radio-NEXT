@@ -2,7 +2,7 @@
 import { Modal, Notification, Switch } from '@arco-design/web-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
+import { getPlaylistManager } from '@/app/lib/utils/ncmPlaylistManager';
 import IconFont from '../ui/common/iconfont';
 import LiveIndicator from '../ui/main/live_indicator';
 import PlaylistBilibili from '../ui/player/bilibili_list';

@@ -35,7 +35,7 @@ import {
 import playerBG from '@/app/assets/program/bg.png';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
-import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
+import { getPlaylistManager } from '@/app/lib/utils/ncmPlaylistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 import IconFont from '@/app/ui/common/iconfont';

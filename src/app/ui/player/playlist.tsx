@@ -9,8 +9,7 @@ import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import image_404 from '@/app/assets/404.png';
 import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
-import { getPlaylistManager } from '@/app/lib/utils/playlistManager';
-import { playlistCache } from '@/app/lib/utils/storage';
+import { getPlaylistManager } from '@/app/lib/utils/ncmPlaylistManager';
 import { ts2mmss } from '@/app/lib/utils/timestamp';
 import type { SongInfo } from '@/app/main/page';
 

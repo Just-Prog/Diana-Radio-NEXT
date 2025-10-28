@@ -2,12 +2,12 @@
 import { Modal, Notification, Switch } from '@arco-design/web-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { getPlaylistManager } from '@/app/lib/utils/ncmPlaylistManager';
+import { getPlaylistManager } from '../lib/player/ncm/playlistManager';
 import IconFont from '../ui/common/iconfont';
 import LiveIndicator from '../ui/main/live_indicator';
-import PlaylistBilibili from '../ui/player/bilibili_list';
-import Player, { programCover } from '../ui/player/player';
-import Playlist from '../ui/player/playlist';
+import PlaylistBilibili from '../ui/player/platform/bilibili/playlist';
+import Player, { programCover } from '../ui/player/platform/ncm/player';
+import Playlist from '../ui/player/platform/ncm/playlist';
 
 type SongInfo = {
   date: string;
@@ -18,22 +18,48 @@ type SongInfo = {
   playTime: number;
 };
 
+type SongInfoBilibili = {
+  id: number;
+  author: string;
+  mid: number;
+  typeid: string;
+  typename: string;
+  arcurl: string;
+  aid: number;
+  bvid: string;
+  title: string;
+  description: string;
+  pic: string;
+  play: number;
+  video_review: number;
+  favorites: number;
+  tag: string;
+  review: number;
+  pubdate: number;
+  senddate: number;
+  duration: string;
+  danmaku: number;
+};
+
 export default function MainPage() {
   const [notification, contextHolder] = Notification.useNotification({
     maxCount: 1,
   });
   const [isClient, setIsClient] = useState(false);
-  const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
+  const [currentPlaying, setCurrentPlaying] = useState<
+    SongInfo | SongInfoBilibili
+  >();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
 
   const [isBilibiliMode, setIsBilibiliMode] = useState(false);
 
   const playlistManager = getPlaylistManager();
 
-  // 处理播放器事件
   useEffect(() => {
-    setIsClient(true);
-
+    localStorage.setItem(
+      'player_platform',
+      isBilibiliMode ? 'bilibili' : 'ncm_podcast'
+    );
     const handleSongChanged = (event: CustomEvent) => {
       setCurrentPlaying(event.detail);
     };
@@ -41,10 +67,23 @@ export default function MainPage() {
     const handleSongEnded = (event: CustomEvent) => {
       setCurrentPlaying(event.detail);
     };
-
-    window.addEventListener('songChanged', handleSongChanged as EventListener);
-    window.addEventListener('songEnded', handleSongEnded as EventListener);
-
+    if (isBilibiliMode) {
+      window.removeEventListener(
+        'songChanged',
+        handleSongChanged as EventListener
+      );
+      window.removeEventListener('songEnded', handleSongEnded as EventListener);
+    } else {
+      window.addEventListener(
+        'songChanged',
+        handleSongChanged as EventListener
+      );
+      window.addEventListener('songEnded', handleSongEnded as EventListener);
+      const restoredSong = playlistManager.getCurrentSong();
+      if (restoredSong) {
+        setCurrentPlaying(restoredSong);
+      }
+    }
     return () => {
       window.removeEventListener(
         'songChanged',
@@ -52,22 +91,12 @@ export default function MainPage() {
       );
       window.removeEventListener('songEnded', handleSongEnded as EventListener);
     };
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(
-      'player_platform',
-      isBilibiliMode ? 'bilibili' : 'ncm_podcast'
-    );
   }, [isBilibiliMode]);
 
-  // 初始化时恢复播放和平台模式状态
+  // 处理播放器事件
   useEffect(() => {
+    setIsClient(true);
     setIsBilibiliMode(localStorage.getItem('player_platform') !== 'bilibili');
-    const restoredSong = playlistManager.getCurrentSong();
-    if (restoredSong) {
-      setCurrentPlaying(restoredSong);
-    }
   }, []);
 
   return (
@@ -142,10 +171,16 @@ export default function MainPage() {
       >
         <div className="flex h-[calc(90vh-48px)] w-full flex-1 md:h-[80vh]">
           {isBilibiliMode ? (
-            <PlaylistBilibili />
+            <PlaylistBilibili
+              currentPlaying={currentPlaying as SongInfoBilibili}
+              setCurrentPlaying={(v) => {
+                setCurrentPlaying(v);
+                setPlaylistOpened(false);
+              }}
+            />
           ) : (
             <Playlist
-              currentPlaying={currentPlaying}
+              currentPlaying={currentPlaying as SongInfo}
               setCurrentPlaying={(v) => {
                 setCurrentPlaying(v);
                 setPlaylistOpened(false);
@@ -158,4 +193,4 @@ export default function MainPage() {
   );
 }
 
-export type { SongInfo };
+export type { SongInfo, SongInfoBilibili };

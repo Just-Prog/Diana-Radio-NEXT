@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import IconFont from '../common/iconfont';
+import IconFont from '../../../common/iconfont';
 
 type lyricsResp = { time: number; text: string };
 

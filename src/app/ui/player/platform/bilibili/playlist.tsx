@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import image_404 from '@/app/assets/404.png';
 import { BILIBILI_SEARCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
-import IconFont from '../common/iconfont';
+import type { SongInfoBilibili } from '@/app/main/page';
+import IconFont from '../../../common/iconfont';
 
 const PlaylistMetadata: React.FC<{
   type: string;
@@ -21,7 +22,10 @@ const PlaylistMetadata: React.FC<{
   );
 };
 
-const PlaylistBilibili = () => {
+const PlaylistBilibili: React.FC<{
+  currentPlaying: SongInfoBilibili;
+  setCurrentPlaying: (v: SongInfoBilibili) => void;
+}> = ({ setCurrentPlaying }) => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [maxPage, setMaxPage] = useState(1);
@@ -61,7 +65,7 @@ const PlaylistBilibili = () => {
           }
           render={(v: any) => {
             return (
-              <List.Item className="flex">
+              <List.Item className="flex" onClick={() => setCurrentPlaying(v)}>
                 <div className="flex h-20 flex-1 items-center md:h-18">
                   <div className="mr-3 h-12 w-16 overflow-clip rounded md:mr-4 md:h-18 md:h-18 md:w-32 md:rounded-xl">
                     {/** biome-ignore lint/performance/noImgElement: f**k ultracite */}

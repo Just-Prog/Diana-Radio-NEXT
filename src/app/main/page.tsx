@@ -96,7 +96,7 @@ export default function MainPage() {
   // 处理播放器事件
   useEffect(() => {
     setIsClient(true);
-    setIsBilibiliMode(localStorage.getItem('player_platform') !== 'bilibili');
+    setIsBilibiliMode(localStorage.getItem('player_platform') === 'bilibili');
   }, []);
 
   return (
@@ -145,19 +145,25 @@ export default function MainPage() {
             )}
           </div>
 
-          <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0] blur-lg">
-            <div className="flex h-full min-h-full w-full min-w-full flex-1">
-              <Image
-                alt=""
-                className={'h-full w-full object-cover object-center'}
-                src={programCover[currentPlaying?.type ?? 'songs']}
-              />
+          <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0]">
+            <div className="flex h-full min-h-full w-full min-w-full flex-1 blur-lg">
+              {!isBilibiliMode && (
+                <Image
+                  alt=""
+                  className={'h-full w-full object-cover object-center'}
+                  height={0}
+                  src={
+                    programCover[(currentPlaying as SongInfo)?.type ?? 'songs']
+                  }
+                  width={300}
+                />
+              )}
             </div>
           </div>
           <div className="flex h-full max-h-full w-full max-w-full">
             <Player
               notification={notification}
-              songInfo={currentPlaying}
+              songInfo={currentPlaying as SongInfo}
               togglePlaylist={() => setPlaylistOpened(true)}
             />
           </div>

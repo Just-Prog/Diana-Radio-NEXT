@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { getPlaylistManager } from '../lib/player/ncm/playlistManager';
 import IconFont from '../ui/common/iconfont';
 import LiveIndicator from '../ui/main/live_indicator';
+import PlayerBilibili from '../ui/player/platform/bilibili/player';
 import PlaylistBilibili from '../ui/player/platform/bilibili/playlist';
 import Player, { programCover } from '../ui/player/platform/ncm/player';
 import Playlist from '../ui/player/platform/ncm/playlist';
@@ -50,10 +51,16 @@ export default function MainPage() {
     SongInfo | SongInfoBilibili
   >();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
-
-  const [isBilibiliMode, setIsBilibiliMode] = useState(false);
-
+  const [isBilibiliMode, setIsBilibiliMode] = useState<boolean | undefined>(
+    undefined
+  );
   const playlistManager = getPlaylistManager();
+
+  // 处理播放器事件
+  useEffect(() => {
+    setIsClient(true);
+    setIsBilibiliMode(localStorage.getItem('player_platform') === 'bilibili');
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(
@@ -92,12 +99,6 @@ export default function MainPage() {
       window.removeEventListener('songEnded', handleSongEnded as EventListener);
     };
   }, [isBilibiliMode]);
-
-  // 处理播放器事件
-  useEffect(() => {
-    setIsClient(true);
-    setIsBilibiliMode(localStorage.getItem('player_platform') === 'bilibili');
-  }, []);
 
   return (
     <>
@@ -145,9 +146,11 @@ export default function MainPage() {
             )}
           </div>
 
-          <div className="-z-10 absolute h-full w-full flex-1 overflow-clip bg-[#e799b0]">
+          <div
+            className={`-z-10 absolute h-full w-full flex-1 overflow-clip ${isBilibiliMode !== undefined && 'bg-[#e799b0]'}`}
+          >
             <div className="flex h-full min-h-full w-full min-w-full flex-1 blur-lg">
-              {!isBilibiliMode && (
+              {isBilibiliMode !== undefined && !isBilibiliMode && (
                 <Image
                   alt=""
                   className={'h-full w-full object-cover object-center'}
@@ -161,11 +164,20 @@ export default function MainPage() {
             </div>
           </div>
           <div className="flex h-full max-h-full w-full max-w-full">
-            <Player
-              notification={notification}
-              songInfo={currentPlaying as SongInfo}
-              togglePlaylist={() => setPlaylistOpened(true)}
-            />
+            {isBilibiliMode !== undefined &&
+              (isBilibiliMode ? (
+                <PlayerBilibili
+                  notification={notification}
+                  songInfo={currentPlaying as SongInfoBilibili}
+                  togglePlaylist={() => setPlaylistOpened(true)}
+                />
+              ) : (
+                <Player
+                  notification={notification}
+                  songInfo={currentPlaying as SongInfo}
+                  togglePlaylist={() => setPlaylistOpened(true)}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -175,25 +187,28 @@ export default function MainPage() {
         onCancel={() => setPlaylistOpened(false)}
         visible={playlistOpened}
       >
+        (
         <div className="flex h-[calc(90vh-48px)] w-full flex-1 md:h-[80vh]">
-          {isBilibiliMode ? (
-            <PlaylistBilibili
-              currentPlaying={currentPlaying as SongInfoBilibili}
-              setCurrentPlaying={(v) => {
-                setCurrentPlaying(v);
-                setPlaylistOpened(false);
-              }}
-            />
-          ) : (
-            <Playlist
-              currentPlaying={currentPlaying as SongInfo}
-              setCurrentPlaying={(v) => {
-                setCurrentPlaying(v);
-                setPlaylistOpened(false);
-              }}
-            />
-          )}
+          {isBilibiliMode !== undefined &&
+            (isBilibiliMode ? (
+              <PlaylistBilibili
+                currentPlaying={currentPlaying as SongInfoBilibili}
+                setCurrentPlaying={(v) => {
+                  setCurrentPlaying(v);
+                  setPlaylistOpened(false);
+                }}
+              />
+            ) : (
+              <Playlist
+                currentPlaying={currentPlaying as SongInfo}
+                setCurrentPlaying={(v) => {
+                  setCurrentPlaying(v);
+                  setPlaylistOpened(false);
+                }}
+              />
+            ))}
         </div>
+        );
       </Modal>
     </>
   );

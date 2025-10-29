@@ -187,7 +187,6 @@ export default function MainPage() {
         onCancel={() => setPlaylistOpened(false)}
         visible={playlistOpened}
       >
-        (
         <div className="flex h-[calc(90vh-48px)] w-full flex-1 md:h-[80vh]">
           {isBilibiliMode !== undefined &&
             (isBilibiliMode ? (

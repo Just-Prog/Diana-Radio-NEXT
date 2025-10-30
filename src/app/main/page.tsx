@@ -31,6 +31,7 @@ type SongInfoBilibili = {
   title: string;
   description: string;
   pic: string;
+  upic: string;
   play: number;
   video_review: number;
   favorites: number;
@@ -47,9 +48,9 @@ export default function MainPage() {
     maxCount: 1,
   });
   const [isClient, setIsClient] = useState(false);
-  const [currentPlaying, setCurrentPlaying] = useState<
-    SongInfo | SongInfoBilibili
-  >();
+  const [currentPlaying, setCurrentPlaying] = useState<SongInfo>();
+  const [currentPlayingBilibili, setCurrentPlayingBilibili] =
+    useState<SongInfoBilibili>();
   const [playlistOpened, setPlaylistOpened] = useState<boolean>(false);
   const [isBilibiliMode, setIsBilibiliMode] = useState<boolean | undefined>(
     undefined
@@ -149,18 +150,32 @@ export default function MainPage() {
           <div
             className={`-z-10 absolute h-full w-full flex-1 overflow-clip ${isBilibiliMode !== undefined && 'bg-[#e799b0]'}`}
           >
-            <div className="flex h-full min-h-full w-full min-w-full flex-1 blur-lg">
-              {isBilibiliMode !== undefined && !isBilibiliMode && (
-                <Image
-                  alt=""
-                  className={'h-full w-full object-cover object-center'}
-                  height={0}
-                  src={
-                    programCover[(currentPlaying as SongInfo)?.type ?? 'songs']
-                  }
-                  width={300}
-                />
-              )}
+            <div className="flex h-full min-h-full w-full min-w-full flex-1 blur-xl">
+              {isBilibiliMode !== undefined &&
+                (isBilibiliMode ? (
+                  // biome-ignore lint/performance/noImgElement: ***
+                  <img
+                    alt=""
+                    className={'h-full w-full object-cover object-center'}
+                    crossOrigin="anonymous"
+                    height={0}
+                    referrerPolicy="no-referrer"
+                    src={currentPlayingBilibili?.pic ?? ''}
+                    width={300}
+                  />
+                ) : (
+                  <Image
+                    alt=""
+                    className={'h-full w-full object-cover object-center'}
+                    height={0}
+                    src={
+                      programCover[
+                        (currentPlaying as SongInfo)?.type ?? 'songs'
+                      ]
+                    }
+                    width={300}
+                  />
+                ))}
             </div>
           </div>
           <div className="flex h-full max-h-full w-full max-w-full">
@@ -168,7 +183,7 @@ export default function MainPage() {
               (isBilibiliMode ? (
                 <PlayerBilibili
                   notification={notification}
-                  songInfo={currentPlaying as SongInfoBilibili}
+                  songInfo={currentPlayingBilibili as SongInfoBilibili}
                   togglePlaylist={() => setPlaylistOpened(true)}
                 />
               ) : (
@@ -191,9 +206,9 @@ export default function MainPage() {
           {isBilibiliMode !== undefined &&
             (isBilibiliMode ? (
               <PlaylistBilibili
-                currentPlaying={currentPlaying as SongInfoBilibili}
-                setCurrentPlaying={(v) => {
-                  setCurrentPlaying(v);
+                currentPlaying={currentPlayingBilibili as SongInfoBilibili}
+                setCurrentPlaying={(v: SongInfoBilibili) => {
+                  setCurrentPlayingBilibili(v);
                   setPlaylistOpened(false);
                 }}
               />
@@ -207,7 +222,6 @@ export default function MainPage() {
               />
             ))}
         </div>
-        );
       </Modal>
     </>
   );

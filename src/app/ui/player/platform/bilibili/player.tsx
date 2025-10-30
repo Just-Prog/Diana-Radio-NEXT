@@ -210,7 +210,6 @@ const PlayerBilibili: React.FC<{
         artwork: [
           {
             src: songInfo?.pic ?? LOGO.src,
-            sizes: '512x512',
           },
         ],
       });
@@ -353,6 +352,9 @@ const PlayerBilibili: React.FC<{
     <div className="flex h-full w-full flex-col">
       <div className="flex-1">
         <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
+          {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+          {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
+          {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
           <div
             className={`flex h-36 w-64 items-center justify-center overflow-clip rounded-lg shadow-black shadow-xl/10 md:h-72 md:w-128 ${songInfo?.pic ?? 'bg-[#f0b5c7] text-white/65'}`}
             onClick={async () => {
@@ -360,14 +362,17 @@ const PlayerBilibili: React.FC<{
             }}
           >
             {songInfo?.pic ? (
-              <Image
+              // biome-ignore lint/performance/noImgElement: why?
+              <img
                 alt="cover"
                 className={
-                  'h-36 w-64 object-contain object-center md:h-72 md:w-128'
+                  'h-36 w-64 object-cover object-center md:h-72 md:w-128'
                 }
                 crossOrigin="anonymous"
+                height={0}
                 referrerPolicy="no-referrer"
-                src={songInfo?.pic ?? ''}
+                src={songInfo?.pic.replace('//', 'https://') ?? ''}
+                width={0}
               />
             ) : (
               <BilibiliLogoSVG size={72} />
@@ -378,8 +383,17 @@ const PlayerBilibili: React.FC<{
             <span className="font-bold text-black/85 text-xl md:text-2xl">
               {songInfo?.title ?? 'Bilibili'}
             </span>
-            <span className="font-normal text-black/85 text-sm md:text-lg">
-              {songInfo?.author ?? '未选择'}
+            <span className="flex flex-row items-center gap-x-2 font-normal text-black/85 text-sm md:text-lg">
+              {/** biome-ignore lint/performance/noImgElement: <explanation> */}
+              <img
+                alt="up_avatar"
+                className={'rounded-[50%] bg-gray-600 object-contain'}
+                height={0}
+                referrerPolicy="no-referrer"
+                src={songInfo?.upic ?? ''}
+                width={24}
+              />
+              <p>{songInfo?.author ?? '未选择'}</p>
             </span>
           </div>
         </div>

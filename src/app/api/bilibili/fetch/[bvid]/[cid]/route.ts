@@ -22,9 +22,11 @@ export async function GET(
     if (cur.bandwidth === Math.max(acc.bandwidth, cur.bandwidth)) {
       return cur;
     }
+    return cur;
   });
+  const { base_url, backup_url, bandwidth, mime_type, codecs } = audio;
   return Response.json({
     code: 0,
-    data: audio,
+    data: { base_url, backup_url, bandwidth, mime_type, codecs },
   });
 }

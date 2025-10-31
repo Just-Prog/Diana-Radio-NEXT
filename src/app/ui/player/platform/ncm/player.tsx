@@ -250,28 +250,9 @@ const Player: React.FC<{
     }
   }, [songInfo]);
 
-  const setupServiceWorker = () => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js', {
-          scope: '/',
-        })
-        .then((_) => {
-          console.log('service worker registered succesfully');
-        })
-        .catch((_) => {
-          console.warn(
-            "oops there's something wrong registering service worker",
-            _
-          );
-        });
-    }
-  };
-
   useEffect(() => {
     initMediaSession();
     toggleLoopStatus();
-    setupServiceWorker();
   }, []);
 
   useEffect(() => {

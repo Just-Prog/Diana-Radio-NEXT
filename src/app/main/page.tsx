@@ -57,10 +57,29 @@ export default function MainPage() {
   );
   const playlistManager = getPlaylistManager();
 
+  const setupServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/service-worker.js', {
+          scope: '/',
+        })
+        .then((_) => {
+          console.log('service worker registered succesfully');
+        })
+        .catch((_) => {
+          console.warn(
+            "oops there's something wrong registering service worker",
+            _
+          );
+        });
+    }
+  };
+
   // 处理播放器事件
   useEffect(() => {
     setIsClient(true);
     setIsBilibiliMode(localStorage.getItem('player_platform') === 'bilibili');
+    setupServiceWorker();
   }, []);
 
   useEffect(() => {
@@ -160,7 +179,7 @@ export default function MainPage() {
                     crossOrigin="anonymous"
                     height={0}
                     referrerPolicy="no-referrer"
-                    src={currentPlayingBilibili?.pic ?? ''}
+                    src={currentPlayingBilibili?.pic ?? undefined}
                     width={300}
                   />
                 ) : (

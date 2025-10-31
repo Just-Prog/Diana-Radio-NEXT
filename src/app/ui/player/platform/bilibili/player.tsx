@@ -17,7 +17,6 @@ import {
   IconSound,
 } from '@arco-design/web-react/icon';
 import { Slider } from 'antd';
-import Image from 'next/image';
 import {
   type ReactNode,
   useCallback,
@@ -113,25 +112,32 @@ const PlayerBilibili: React.FC<{
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchBilibiliVidData = useCallback(async () => {
-    // if (songInfo?.bvid) {
-    //   setPaused('loading');
-    //   const data = await Request.get(`${PODCAST_AUDIO_FETCH}${songInfo?.id}`);
-    //   if (player.current) {
-    //     player.current.src = data.data.data.url.replace('http://', 'https://');
-    //   }
-    //   try {
-    //     await play();
-    //     setupMediaSessionMetadata();
-    //   } catch (e) {
-    //     notification.info?.({
-    //       title: '自动播放失败',
-    //       content: <span>请手动点击播放键重试。</span>,
-    //     });
-    //     setPaused(true);
-    //   }
-    // } else {
-    //   return;
-    // }
+    if (songInfo?.bvid) {
+      setPaused('loading');
+      const cid_list = (
+        await Request.get(`${BILIBILI_DATA_FETCH}${songInfo?.bvid}`)
+      ).data;
+      const data = (
+        await Request.get(
+          `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${cid_list.data[0].cid}`
+        )
+      ).data;
+      if (player.current) {
+        player.current.src = data.data.base_url.replace('http://', 'https://');
+      }
+      try {
+        await play();
+        setupMediaSessionMetadata();
+      } catch (e) {
+        notification.info?.({
+          title: '自动播放失败',
+          content: <span>请手动点击播放键重试。</span>,
+        });
+        setPaused(true);
+      }
+    } else {
+      return;
+    }
   }, [songInfo]);
 
   const togglePlayPause = async () => {
@@ -371,7 +377,7 @@ const PlayerBilibili: React.FC<{
                 crossOrigin="anonymous"
                 height={0}
                 referrerPolicy="no-referrer"
-                src={songInfo?.pic.replace('//', 'https://') ?? ''}
+                src={songInfo?.pic ?? null}
                 width={0}
               />
             ) : (
@@ -386,11 +392,16 @@ const PlayerBilibili: React.FC<{
             <span className="flex flex-row items-center gap-x-2 font-normal text-black/85 text-sm md:text-lg">
               {/** biome-ignore lint/performance/noImgElement: <explanation> */}
               <img
-                alt="up_avatar"
-                className={'rounded-[50%] bg-gray-600 object-contain'}
-                height={0}
+                alt=""
+                className={
+                  'h-6 w-6 overflow-clip rounded-[50%] bg-gray-600 object-contain'
+                }
+                height={24}
                 referrerPolicy="no-referrer"
-                src={songInfo?.upic ?? ''}
+                src={
+                  songInfo?.upic ??
+                  'https://i2.hdslb.com/bfs/face/member/noface.jpg@96w_96h.avif'
+                }
                 width={24}
               />
               <p>{songInfo?.author ?? '未选择'}</p>
@@ -430,7 +441,7 @@ const PlayerBilibili: React.FC<{
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
         {/** biome-ignore lint/a11y/useMediaCaption: 不需要 */}
-        <audio ref={player} />
+        <audio crossOrigin="anonymous" ref={player} />
         <div className="flex gap-x-1/3 md:gap-x-4">
           <PlayerControllerButton
             action={() => {

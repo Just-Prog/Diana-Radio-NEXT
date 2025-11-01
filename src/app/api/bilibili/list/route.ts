@@ -123,7 +123,7 @@ export async function GET(
   return Response.json(
     {
       code: 500,
-      msg: 'unknown',
+      msg: 'unknown error',
     },
     {
       status: 500,

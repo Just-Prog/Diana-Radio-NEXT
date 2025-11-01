@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { BilibiliHeaders } from '@/app/api/podcast/constants';
+import { encryption } from '@/app/lib/api/utils/cryptojs';
 import WbiSigner from '@/app/lib/api/utils/wbi_sign';
 import Request from '@/app/lib/axios/request';
 
@@ -28,10 +29,10 @@ export async function GET(
     return cur;
   });
   let { base_url, backup_url, bandwidth, mime_type, codecs } = audio;
-  base_url = base_url.replace(
-    pcdn_pattern,
-    'https://upos-sz-mirrorcos.bilivideo.com'
+  base_url = encryption(
+    base_url.replace(pcdn_pattern, 'https://upos-sz-mirrorcos.bilivideo.com')
   );
+  backup_url = backup_url.map((v: string) => encryption(v));
   return Response.json({
     code: 0,
     data: {
@@ -40,7 +41,7 @@ export async function GET(
       bandwidth,
       mime_type,
       codecs,
-      referer: `https://www.bilibili.com/${bvid}`,
+      expired_at: Number.parseInt(String(Date.now() / 1000 + 60 * 60 * 2), 10),
     },
   });
 }

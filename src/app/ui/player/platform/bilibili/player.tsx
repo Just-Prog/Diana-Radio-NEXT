@@ -122,8 +122,22 @@ const PlayerBilibili: React.FC<{
           `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${cid_list.data[0].cid}`
         )
       ).data;
+      const target = data.data.base_url;
+      const mime = data.data.mime_type;
+      const blob: Blob = (
+        await Request.post(
+          `${BILIBILI_DATA_FETCH}proxy`,
+          {
+            target,
+            mime,
+          },
+          {
+            responseType: 'blob',
+          }
+        )
+      ).data;
       if (player.current) {
-        player.current.src = data.data.base_url.replace('http://', 'https://');
+        player.current.src = URL.createObjectURL(blob);
       }
       try {
         await play();

@@ -29,9 +29,7 @@ export async function GET(
     return cur;
   });
   let { base_url, backup_url, bandwidth, mime_type, codecs } = audio;
-  base_url = encryption(
-    base_url.replace(pcdn_pattern, 'https://upos-sz-mirrorcos.bilivideo.com')
-  );
+  base_url = encryption(base_url);
   backup_url = backup_url.map((v: string) => encryption(v));
   return Response.json({
     code: 0,

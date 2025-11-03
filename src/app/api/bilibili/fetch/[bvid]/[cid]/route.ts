@@ -4,9 +4,6 @@ import { encryption } from '@/app/lib/api/utils/cryptojs';
 import WbiSigner from '@/app/lib/api/utils/wbi_sign';
 import Request from '@/app/lib/axios/request';
 
-const pcdn_pattern =
-  /https:\/\/xy\d+x\d+x\d+x\d+xy\.mcdn\.bilivideo\.cn(:\d+)?/g;
-
 export async function GET(
   req: NextRequest,
   ctx: RouteContext<'/api/bilibili/fetch/[bvid]/[cid]'>

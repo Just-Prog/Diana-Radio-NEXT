@@ -221,6 +221,9 @@ const PlayerBilibili: React.FC<{
     }
   };
 
+  // Chrome 142.0.7444.59 on Linux 的媒体面板有问题无法显示所有元数据，但是一部分元数据能被桌面环境抓到
+  // Edge 142.0.3595.53 on Linux 没这个问题，Safari on iOS 26.1 RC 也没有问题
+  // 离谱
   const setupMediaSessionMetadata = useCallback(() => {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({

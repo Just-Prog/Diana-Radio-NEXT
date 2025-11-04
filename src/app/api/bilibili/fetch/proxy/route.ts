@@ -13,14 +13,14 @@ export async function POST(req: NextRequest) {
   const url = new URL(target);
   if (
     url.hostname.endsWith('bilivideo.cn') ||
-    url.hostname.endsWith('bilivideo.com')
+    url.hostname.endsWith('bilivideo.com') ||
+    url.hostname.endsWith('szbdyd.com')
   ) {
     try {
       target = target.replace(
         pcdn_pattern,
-        'https://upos-sz-mirrorcoso1.bilivideo.com'
+        'https://upos-sz-estghw.bilivideo.com'
       );
-
       // Fetch with streaming enabled
       const response = await Request.get(target, {
         headers: BilibiliHeaders,

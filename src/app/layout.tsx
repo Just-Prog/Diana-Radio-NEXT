@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Noto_Sans_SC } from 'next/font/google';
+import localFont from 'next/font/local';
 import Script from 'next/script';
 import './globals.css';
 
@@ -9,11 +10,23 @@ import Background from './ui/common/background';
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
+  fallback: ['misans'],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
   subsets: ['latin'],
+  fallback: ['Noto Sans SC'],
+});
+
+const notoSansCJKSC = Noto_Sans_SC({
+  variable: '--font-noto-sans-sc',
+  subsets: [],
+});
+
+const misans = localFont({
+  src: './assets/fonts/MiSans_VF.ttf',
+  variable: '--font-misans',
 });
 
 export const metadata: Metadata = {
@@ -36,7 +49,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} ${notoSansCJKSC.variable} ${misans.variable} !font-sans antialiased`}
       >
         <Background />
         <AntdRegistry>{children}</AntdRegistry>

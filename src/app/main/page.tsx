@@ -202,6 +202,7 @@ export default function MainPage() {
               (isBilibiliMode ? (
                 <PlayerBilibili
                   notification={notification}
+                  setSongInfo={setCurrentPlayingBilibili}
                   songInfo={currentPlayingBilibili as SongInfoBilibili}
                   togglePlaylist={() => setPlaylistOpened(true)}
                 />

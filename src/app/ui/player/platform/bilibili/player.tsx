@@ -57,8 +57,9 @@ const PlayerControllerButton: React.FC<{
 const PlayerBilibili: React.FC<{
   notification: NotificationHookReturnType;
   songInfo: SongInfoBilibili | undefined;
+  setSongInfo: (v: SongInfoBilibili | undefined) => void;
   togglePlaylist: () => void;
-}> = ({ songInfo, togglePlaylist, notification }) => {
+}> = ({ songInfo, togglePlaylist, notification, setSongInfo }) => {
   const player = useRef<HTMLAudioElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState<boolean | 'loading'>(true);
@@ -72,6 +73,8 @@ const PlayerBilibili: React.FC<{
 
   const [isVolumeControllerVisible, setIsVolumeControllerVisible] =
     useState<boolean>(false);
+
+  const [songInfoBK, setSongInfoBK] = useState<SongInfoBilibili | undefined>();
 
   const play = async () => {
     if (player.current) {
@@ -112,42 +115,43 @@ const PlayerBilibili: React.FC<{
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchBilibiliVidData = useCallback(async () => {
-    if (songInfo?.bvid) {
-      setPaused('loading');
-      const cid_list = (
-        await Request.get(`${BILIBILI_DATA_FETCH}${songInfo?.bvid}`)
-      ).data;
-      const data = (
-        await Request.get(
-          `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${cid_list.data[0].cid}`
-        )
-      ).data;
-      const target = data.data.base_url;
-      const mime = data.data.mime_type;
-      const blob: Blob = (
-        await Request.post(
-          `${BILIBILI_DATA_FETCH}proxy`,
-          {
-            target,
-            mime,
-          },
-          {
-            responseType: 'blob',
-          }
-        )
-      ).data;
-      if (player.current) {
-        player.current.src = URL.createObjectURL(blob);
-      }
+    if (songInfo?.bvid && songInfo?.bvid !== songInfoBK?.bvid) {
       try {
+        setPaused('loading');
+        const cid_list = (
+          await Request.get(`${BILIBILI_DATA_FETCH}${songInfo?.bvid}`)
+        ).data;
+        const data = (
+          await Request.get(
+            `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${cid_list.data[0].cid}`
+          )
+        ).data;
+        const target = data.data.base_url;
+        const mime = data.data.mime_type;
+        const blob: Blob = (
+          await Request.post(
+            `${BILIBILI_DATA_FETCH}proxy`,
+            {
+              target,
+              mime,
+            },
+            {
+              responseType: 'blob',
+            }
+          )
+        ).data;
+        if (player.current) {
+          player.current.src = URL.createObjectURL(blob);
+        }
         await play();
         setupMediaSessionMetadata();
+        setSongInfoBK(songInfo);
       } catch (e) {
         notification.info?.({
-          title: '自动播放失败',
-          content: <span>请手动点击播放键重试。</span>,
+          title: '播放失败',
+          content: <span>请手动重试。</span>,
         });
-        setPaused(true);
+        setSongInfo(songInfoBK);
       }
     } else {
       return;

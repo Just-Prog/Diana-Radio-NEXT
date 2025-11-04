@@ -1,6 +1,8 @@
+import { AxiosError } from 'axios';
 import { type NextRequest, NextResponse } from 'next/server';
 import { BilibiliHeaders } from '@/app/api/podcast/constants';
 import { decryption } from '@/app/lib/api/utils/cryptojs';
+import Request from '@/app/lib/axios/request';
 
 const pcdn_pattern =
   /(https:\/\/[^/]*.mcdn\.bilivideo\.cn|https?:\/\/[^/]*szbdyd\.com)(:\d+)?/g;
@@ -18,20 +20,41 @@ export async function POST(req: NextRequest) {
         pcdn_pattern,
         'https://upos-sz-mirrorcoso1.bilivideo.com'
       );
-      const data = await fetch(target, {
+
+      // Fetch with streaming enabled
+      const response = await Request.get(target, {
         headers: BilibiliHeaders,
+        responseType: 'stream',
       });
-      return new NextResponse(await data.arrayBuffer(), {
+
+      // Return streaming response with proper headers
+      return new NextResponse(response.data, {
         status: 200,
         headers: {
           'content-type': 'audio/mp4',
+          'cache-control': 'no-cache',
+          'transfer-encoding': 'chunked',
         },
       });
     } catch (e: any) {
-      return NextResponse.json({
-        code: 500,
-        msg: e,
-      });
+      if (e instanceof AxiosError) {
+        return NextResponse.json(
+          {
+            code: e.status,
+            msg: e.code,
+          },
+          { status: e.status }
+        );
+      }
+      return NextResponse.json(
+        {
+          code: 500,
+          msg: e.message || e,
+        },
+        {
+          status: 500,
+        }
+      );
     }
   }
   return NextResponse.json(

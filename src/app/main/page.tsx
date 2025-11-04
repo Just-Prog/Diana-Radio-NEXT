@@ -130,7 +130,7 @@ export default function MainPage() {
         {/* <div className="h-full bg-linear-120 from-pink-400 to-orange-300 backdrop-blur-lg md:flex-3"> */}
         <div className="h-full backdrop-blur-lg md:flex-3">
           <LiveIndicator />
-          <div className="absolute top-4 right-4 flex flex-row justify-end gap-x-2">
+          <div className="absolute top-4 right-4 flex flex-row justify-end gap-x-2 p-2">
             <span className="flex flex-row items-center gap-x-2 text-sm">
               <p className="text-sm">
                 模式：{isBilibiliMode ? 'Bilibili' : '播客'}

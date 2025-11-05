@@ -27,10 +27,6 @@ import {
 } from 'react';
 import {
   DianaWeeklyAvailableProgramsInfo,
-  hachimi_cover,
-  jianwen_cover,
-  sleep_cover,
-  songs_cover,
 } from '@/app/api/podcast/constants';
 import playerBG from '@/app/assets/program/bg.png';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
@@ -41,12 +37,10 @@ import type { SongInfo } from '@/app/main/page';
 import IconFont from '@/app/ui/common/iconfont';
 import { LyricDisplayArea, LyricSwitch } from './lyrics';
 
-const programCover = {
-  songs: songs_cover,
-  jianwen: jianwen_cover,
-  sleep: sleep_cover,
-  hachimi: hachimi_cover,
-};
+const programCover = DianaWeeklyAvailableProgramsInfo.reduce((acc, program) => {
+  acc[program.key] = program.cover;
+  return acc;
+}, {} as Record<string, any>);
 
 const PlayerControllerButton: React.FC<{
   children: ReactNode;

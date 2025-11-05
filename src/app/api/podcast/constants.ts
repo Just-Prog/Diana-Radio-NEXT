@@ -2,17 +2,20 @@ import hachimi_cover from '@/app/assets/program/hachimi.png';
 import jianwen_cover from '@/app/assets/program/jianwen.png';
 import sleep_cover from '@/app/assets/program/sleep.png';
 import songs_cover from '@/app/assets/program/songs.png';
+import three_kingdoms_cover from '@/app/assets/program/baijia.png';
 
 const PC_SONGS = '986394922'; // A-SOUL嘉然歌曲合集
 const PC_SLEEPSTORY = '992840254'; // 嘉然睡前故事合集
 const PC_JIANWENLU = '1220070148'; // 小然见闻录
 const PC_HACHIMI = '1231330488'; // 嘉然的哈基米音乐
+const PC_SANGUO = '1480187002' //【百嘉讲坛】小然读三国
 
 const DianaWeeklyAvailablePodcasts = {
   jianwen: PC_JIANWENLU,
   sleep: PC_SLEEPSTORY,
   songs: PC_SONGS,
   hachimi: PC_HACHIMI,
+  three_kingdoms: PC_SANGUO
 };
 
 const DianaWeeklyAvailableProgramsInfo = [
@@ -20,6 +23,7 @@ const DianaWeeklyAvailableProgramsInfo = [
   { name: '嘉然睡前故事合集', key: 'sleep', cover: sleep_cover },
   { name: '小然见闻录', key: 'jianwen', cover: jianwen_cover },
   { name: '嘉然的哈基米音乐', key: 'hachimi', cover: hachimi_cover },
+  { name: '【百嘉讲坛】小然读三国', key: 'three_kingdoms', cover: three_kingdoms_cover }
 ];
 
 const BilibiliCookies = {
@@ -45,10 +49,12 @@ export {
   PC_SLEEPSTORY,
   PC_JIANWENLU,
   PC_HACHIMI,
+  PC_SANGUO,
   hachimi_cover,
   songs_cover,
   jianwen_cover,
   sleep_cover,
+  three_kingdoms_cover,
   DianaWeeklyAvailablePodcasts,
   DianaWeeklyAvailableProgramsInfo,
   BilibiliHeaders,

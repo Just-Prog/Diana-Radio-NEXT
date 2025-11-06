@@ -29,6 +29,8 @@ const Playlist: React.FC<{
     'songs' | 'sleep' | 'jianwen' | 'hachimi'
   >('songs');
 
+  const [cacheSize, setCacheSize] = useState(0);
+
   const playlistManager = getPlaylistManager();
 
   const fetchPlaylist = async () => {
@@ -55,13 +57,57 @@ const Playlist: React.FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: why?
   useEffect(() => {
     fetchPlaylist();
+    cachesSize().then((_) => {
+      setCacheSize(_);
+    });
   }, [playlistType]);
+
+  const cachesSize = async () => {
+    try {
+      const cacheNames = await caches.keys();
+      let totalSize = 0;
+
+      for (const cacheName of cacheNames) {
+        try {
+          const cache = await caches.open(cacheName);
+          const requests = await cache.keys();
+
+          for (const request of requests) {
+            try {
+              const response = await cache.match(request.url);
+              if (response) {
+                const contentLength = response.headers.get('content-length');
+                if (contentLength) {
+                  totalSize += Number.parseInt(contentLength, 10);
+                } else {
+                  const blob = await response.clone().blob();
+                  totalSize += blob.size;
+                }
+              }
+            } catch (error) {
+              console.warn(`无法访问缓存资源: ${request.url}`, error);
+            }
+          }
+        } catch (error) {
+          console.warn(`无法打开缓存: ${cacheName}`, error);
+        }
+      }
+
+      return totalSize;
+    } catch (error) {
+      console.error('计算缓存大小失败:', error);
+      return 0;
+    }
+  };
 
   return (
     <div className="flex h-full max-h-full min-h-full w-full flex-1 flex-col gap-y-2 p-4">
       <span>已存档总数：{totalCount}</span>
       <span>最近更新: {new Date(updatedAt * 1000).toLocaleString()}</span>
       <span>加载时间过久可能是在全局刷新，还请耐心等待。</span>
+      {navigator && navigator?.serviceWorker && (
+        <span>当前本地缓存量: {(cacheSize / 1024 / 1024).toFixed(2)}M</span>
+      )}
       <Select
         className="w-full"
         defaultValue={playlistType}

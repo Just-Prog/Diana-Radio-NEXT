@@ -14,7 +14,7 @@ self.addEventListener('fetch', (event) => {
     url.hostname.endsWith('music.163.com')
   ) {
     event.respondWith(
-      caches.match(url.pathname).then((cacheResponse) => {
+      caches.match(url).then((cacheResponse) => {
         if (cacheResponse) {
           console.log('metadata_cache_hit', cacheResponse);
           return cacheResponse;
@@ -27,24 +27,12 @@ self.addEventListener('fetch', (event) => {
               ? AUDIO_BUCKET_NAME
               : METADATA_BUCKET_NAME
           )
-          .then((cache) =>
-            fetch(event.request).then((response) => {
-              console.log('metadata_cache_put', response.clone());
-              cache.put(url.pathname, response.clone());
-              return response;
-            })
-          )
-          .catch((error) => {
-            console.error('Cache operation failed:', error);
-            return new Response(
-              JSON.stringify({ code: 500, msg: 'Cache operation failed' }),
-              {
-                status: 500,
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              }
-            );
+          .then((bucket) => {
+            fetch(event.request.url).then((res) => {
+              console.log('metadata_cache_push', res);
+              bucket.put(event.request.url, res.clone());
+              return res;
+            });
           });
       })
     );

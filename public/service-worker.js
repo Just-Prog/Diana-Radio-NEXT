@@ -28,7 +28,7 @@ self.addEventListener('fetch', (event) => {
               : METADATA_BUCKET_NAME
           )
           .then((bucket) => {
-            fetch(event.request.url).then((res) => {
+            return fetch(event.request.url).then((res) => {
               console.log('metadata_cache_push', res);
               bucket.put(event.request.url, res.clone());
               return res;

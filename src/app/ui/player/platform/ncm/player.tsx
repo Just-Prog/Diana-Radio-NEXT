@@ -25,9 +25,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  DianaWeeklyAvailableProgramsInfo,
-} from '@/app/api/podcast/constants';
+import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
 import playerBG from '@/app/assets/program/bg.png';
 import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
 import Request from '@/app/lib/axios/request';
@@ -37,10 +35,13 @@ import type { SongInfo } from '@/app/main/page';
 import IconFont from '@/app/ui/common/iconfont';
 import { LyricDisplayArea, LyricSwitch } from './lyrics';
 
-const programCover = DianaWeeklyAvailableProgramsInfo.reduce((acc, program) => {
-  acc[program.key] = program.cover;
-  return acc;
-}, {} as Record<string, any>);
+const programCover = DianaWeeklyAvailableProgramsInfo.reduce(
+  (acc, program) => {
+    acc[program.key] = program.cover;
+    return acc;
+  },
+  {} as Record<string, any>
+);
 
 const PlayerControllerButton: React.FC<{
   children: ReactNode;
@@ -138,10 +139,15 @@ const Player: React.FC<{
         await play();
         setLyrics(data.data.data.lrc ?? []);
         setupMediaSessionMetadata();
-      } catch (e) {
+      } catch (e: any) {
         notification.info?.({
           title: '自动播放失败',
-          content: <span>请手动点击播放键重试。</span>,
+          content: (
+            <span>
+              请手动点击播放键重试。
+              <br /> {e.toString()}
+            </span>
+          ),
         });
         setPaused(true);
       }

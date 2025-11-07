@@ -131,7 +131,7 @@ const PlayerBilibili: React.FC<{
         const target = data.data.base_url;
         const backup_target = data.data.backup_url[0];
         const mime = data.data.mime_type;
-        let blob: Blob;
+        let blob: Blob | null = null;
         try {
           blob = (
             await Request.post(
@@ -161,7 +161,7 @@ const PlayerBilibili: React.FC<{
             ).data;
           }
         }
-        if (player.current) {
+        if (player.current && blob) {
           player.current.src = URL.createObjectURL(blob);
         }
         await play();

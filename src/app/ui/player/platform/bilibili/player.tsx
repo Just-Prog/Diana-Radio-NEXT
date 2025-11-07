@@ -17,6 +17,7 @@ import {
   IconSound,
 } from '@arco-design/web-react/icon';
 import { Slider } from 'antd';
+import { AxiosError } from 'axios';
 import {
   type ReactNode,
   useCallback,
@@ -127,29 +128,54 @@ const PlayerBilibili: React.FC<{
           )
         ).data;
         const target = data.data.base_url;
+        const backup_target = data.data.backup_url[0];
         const mime = data.data.mime_type;
-        const blob: Blob = (
-          await Request.post(
-            `${BILIBILI_DATA_FETCH}proxy`,
-            {
-              target,
-              mime,
-            },
-            {
-              responseType: 'blob',
-            }
-          )
-        ).data;
+        let blob: Blob;
+        try {
+          blob = (
+            await Request.post(
+              `${BILIBILI_DATA_FETCH}proxy`,
+              {
+                target,
+                mime,
+              },
+              {
+                responseType: 'blob',
+              }
+            )
+          ).data;
+        } catch (e: any) {
+          if (e instanceof AxiosError && e.status === 403) {
+            blob = (
+              await Request.post(
+                `${BILIBILI_DATA_FETCH}proxy`,
+                {
+                  backup_target,
+                  mime,
+                },
+                {
+                  responseType: 'blob',
+                }
+              )
+            ).data;
+          }
+        }
         if (player.current) {
           player.current.src = URL.createObjectURL(blob);
         }
         await play();
         setupMediaSessionMetadata();
         setSongInfoBK(songInfo);
-      } catch (e) {
+      } catch (e: any) {
         notification.info?.({
           title: '播放失败',
-          content: <span>请手动重试。</span>,
+          content: (
+            <span>
+              请手动重试。
+              <br />
+              {e.message}
+            </span>
+          ),
         });
         setSongInfo(songInfoBK);
       }

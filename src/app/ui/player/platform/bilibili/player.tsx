@@ -151,7 +151,7 @@ const PlayerBilibili: React.FC<{
               await Request.post(
                 `${BILIBILI_DATA_FETCH}proxy`,
                 {
-                  backup_target,
+                  target: backup_target,
                   mime,
                 },
                 {

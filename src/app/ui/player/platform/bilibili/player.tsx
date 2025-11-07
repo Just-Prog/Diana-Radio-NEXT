@@ -416,7 +416,7 @@ const PlayerBilibili: React.FC<{
             }}
           >
             <div
-              className={`absolute top-auto left-auto z-10 ${paused ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+              className={`absolute top-auto left-auto z-10 ${paused && songInfo?.pic ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
             >
               <Image
                 alt="bilibili pause button"

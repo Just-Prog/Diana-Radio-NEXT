@@ -18,6 +18,7 @@ import {
 } from '@arco-design/web-react/icon';
 import { Slider } from 'antd';
 import { AxiosError } from 'axios';
+import Image from 'next/image';
 import {
   type ReactNode,
   useCallback,
@@ -414,6 +415,17 @@ const PlayerBilibili: React.FC<{
               await togglePlayPause();
             }}
           >
+            <div
+              className={`absolute top-auto left-auto z-10 ${paused ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+            >
+              <Image
+                alt="bilibili pause button"
+                height={96}
+                referrerPolicy="no-referrer"
+                src={'https://s1.hdslb.com/bfs/static/player/img/play.svg'}
+                width={96}
+              />
+            </div>
             {songInfo?.pic ? (
               // biome-ignore lint/performance/noImgElement: why?
               <img

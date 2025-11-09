@@ -494,7 +494,7 @@ const PlayerBilibili: React.FC<{
             {partList.length === 0 ? (
               <span>No Data</span>
             ) : (
-              <div className={"p-3"}>
+              <div className={"w-full p-3"}>
                 <Row className="gap-y-2" gutter={8}>
                   {partList.map((v: any) => (
                     <Col key={v.cid} md={12} xs={12}>
@@ -502,7 +502,7 @@ const PlayerBilibili: React.FC<{
                       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
                       {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
                       <div
-                        className={`line-clamp-2 h-13 w-full text-ellipsis rounded-lg p-2 text-xs transition-all duration-300 ease-in-out hover:bg-[#e799b0]/75 ${currentPart === (v.page - 1) ? "bg-[#e799b0]/25" : "bg-white/75"}`}
+                        className={`line-clamp-2 h-13 w-full min-w-full text-ellipsis rounded-lg p-2 text-xs transition-all duration-300 ease-in-out hover:bg-[#e799b0]/75 ${currentPart === (v.page - 1) ? "bg-[#e799b0]/25" : "bg-white/75"}`}
                         onClick={() => {
                           setCurrentPartBK(currentPart);
                           setCurrentPart(v.page - 1);

@@ -79,10 +79,10 @@ const PlayerBilibili: React.FC<{
   const [songInfoBK, setSongInfoBK] = useState<SongInfoBilibili | undefined>();
 
   const [partList, setPartList] = useState<any[]>([]);
-  const [partListBK, setPartListBK] = useState([]);
-  const [currentPart, setCurrentPart] = useState(0);
-  const [currentPartBK, setCurrentPartBK] = useState(0);
-  const [pListVisible, setPListVisible] = useState(true);
+  const [partListBK, setPartListBK] = useState<any[]>([]);
+  const [currentPart, setCurrentPart] = useState<number>(0);
+  const [currentPartBK, setCurrentPartBK] = useState<number>(0);
+  const [pListVisible, setPListVisible] = useState<boolean>(true);
 
   const play = async () => {
     if (player.current) {

@@ -478,7 +478,7 @@ const PlayerBilibili: React.FC<{
                 height={24}
                 referrerPolicy="no-referrer"
                 src={
-                  songInfo?.upic ?? 
+                  songInfo?.upic ??
                   "https://i2.hdslb.com/bfs/face/member/noface.jpg@96w_96h.avif"
                 }
                 width={24}
@@ -488,21 +488,26 @@ const PlayerBilibili: React.FC<{
           </div>
         </div>
         <div
-          className={`flex h-full w-full flex-1 items-center p-4 pt-0 lg:w-[70%] lg:pt-4 lg:pl-0 ${songInfo?.bvid ? "" : "hidden"}`}
+          className={`flex h-full w-full flex-1 items-center justify-center p-4 pt-0 lg:w-[70%] lg:pt-4 lg:pl-0 ${songInfo?.bvid ? "" : "hidden"}`}
         >
-          <div className="flex h-19 w-full flex-1 flex-row items-start justify-center overflow-clip overflow-y-auto rounded-lg bg-white/65 lg:h-[80%] lg:min-w-36">
+          <div
+            className="flex h-19 w-full max-w-96 flex-1 flex-row items-start justify-center overflow-auto overflow-y-auto rounded-lg bg-white/65 md:max-w-lg lg:h-[80%] lg:min-w-36"
+            style={{ scrollbarWidth: "thin" }}
+          >
             {partList.length === 0 ? (
-              <div className="h-full flex flex-1 justify-center items-center">Loading...</div>
+              <div className="flex h-full flex-1 items-center justify-center">
+                Loading...
+              </div>
             ) : (
-              <div className={"w-full p-3"}>
-                <Row className="gap-y-2 font-sans!" gutter={8}>
+              <div className={"h-full w-full grow-0 p-3"}>
+                <Row className="hidden! lg:flex! gap-y-2 font-sans!" gutter={8}>
                   {partList.map((v: any) => (
-                    <Col key={v.cid} md={12} xs={12} className="font-sans!">
+                    <Col className="font-sans!" key={v.cid} md={12} xs={12}>
                       {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
                       {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
                       <div
-                        className={`line-clamp-2 h-13 w-full min-w-full text-ellipsis rounded-lg p-2 text-xs transition-all duration-300 ease-in-out hover:bg-[#e799b0]/75 ${currentPart === (v.page - 1) ? "bg-[#e799b0]/25" : "bg-white/75"}`}
+                        className={`line-clamp-2 h-12 text-ellipsis rounded-lg p-2 text-xs transition-all duration-300 ease-in-out hover:bg-[#e799b0]/75 ${currentPart === (v.page - 1) ? "bg-[#e799b0]/25" : "bg-white/75"}`}
                         onClick={() => {
                           setCurrentPartBK(currentPart);
                           setCurrentPart(v.page - 1);
@@ -514,6 +519,28 @@ const PlayerBilibili: React.FC<{
                     </Col>
                   ))}
                 </Row>
+                <div
+                  className="flex h-full min-w-0 flex-1 gap-x-2 overflow-x-auto overflow-y-clip lg:hidden"
+                  style={{ scrollbarWidth: "thin" }}
+                >
+                  {partList.map((v: any) => (
+                    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+                    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation>
+                    // biome-ignore lint/a11y/noStaticElementInteractions: <explanation>
+                    <div
+                      className={`inline-block h-full w-32 shrink-0 rounded-lg p-2 text-xs transition-all duration-300 ease-in-out hover:bg-[#e799b0]/75 ${currentPart === (v.page - 1) ? "bg-[#e799b0]/25" : "bg-white/75"}`}
+                      key={v.cid}
+                      onClick={() => {
+                        setCurrentPartBK(currentPart);
+                        setCurrentPart(v.page - 1);
+                      }}
+                    >
+                      <div className="line-clamp-2 text-ellipsis">
+                        {v.page}. {v.part}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

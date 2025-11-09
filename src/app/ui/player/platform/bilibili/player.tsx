@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import {
   type NotificationHookReturnType,
   Popover,
-} from '@arco-design/web-react';
+} from "@arco-design/web-react";
 import {
   IconBackward,
   IconForward,
@@ -15,24 +15,24 @@ import {
   IconSkipNext,
   IconSkipPrevious,
   IconSound,
-} from '@arco-design/web-react/icon';
-import { Slider } from 'antd';
-import { AxiosError } from 'axios';
-import Image from 'next/image';
+} from "@arco-design/web-react/icon";
+import { Col, Row, Slider } from "antd";
+import { AxiosError } from "axios";
+import Image from "next/image";
 import {
   type ReactNode,
   useCallback,
   useEffect,
   useRef,
   useState,
-} from 'react';
-import LOGO from '@/app/assets/logo.png';
-import { BILIBILI_DATA_FETCH } from '@/app/lib/axios/constants';
-import Request from '@/app/lib/axios/request';
-import { ts2mmss } from '@/app/lib/utils/timestamp';
-import type { SongInfoBilibili } from '@/app/main/page';
-import IconFont from '@/app/ui/common/iconfont';
-import { BilibiliLogoSVG } from '@/app/ui/common/logo/bilibili';
+} from "react";
+import LOGO from "@/app/assets/logo.png";
+import { BILIBILI_DATA_FETCH } from "@/app/lib/axios/constants";
+import Request from "@/app/lib/axios/request";
+import { ts2mmss } from "@/app/lib/utils/timestamp";
+import type { SongInfoBilibili } from "@/app/main/page";
+import IconFont from "@/app/ui/common/iconfont";
+import { BilibiliLogoSVG } from "@/app/ui/common/logo/bilibili";
 
 const PlayerControllerButton: React.FC<{
   children: ReactNode;
@@ -64,7 +64,7 @@ const PlayerBilibili: React.FC<{
 }> = ({ songInfo, togglePlaylist, notification, setSongInfo }) => {
   const player = useRef<HTMLAudioElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
-  const [paused, setPaused] = useState<boolean | 'loading'>(true);
+  const [paused, setPaused] = useState<boolean | "loading">(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -77,6 +77,12 @@ const PlayerBilibili: React.FC<{
     useState<boolean>(false);
 
   const [songInfoBK, setSongInfoBK] = useState<SongInfoBilibili | undefined>();
+
+  const [partList, setPartList] = useState<any[]>([]);
+  const [partListBK, setPartListBK] = useState([]);
+  const [currentPart, setCurrentPart] = useState(0);
+  const [currentPartBK, setCurrentPartBK] = useState(0);
+  const [pListVisible, setPListVisible] = useState(true);
 
   const play = async () => {
     if (player.current) {
@@ -116,60 +122,21 @@ const PlayerBilibili: React.FC<{
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
-  const fetchBilibiliVidData = useCallback(async () => {
+  const fetchBiliMediaPList = useCallback(async () => {
     if (songInfo?.bvid && songInfo?.bvid !== songInfoBK?.bvid) {
       try {
-        setPaused('loading');
+        setPaused("loading");
         const cid_list = (
           await Request.get(`${BILIBILI_DATA_FETCH}${songInfo?.bvid}`)
         ).data;
-        const data = (
-          await Request.get(
-            `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${cid_list.data[0].cid}`
-          )
-        ).data;
-        const target = data.data.base_url;
-        const backup_target = data.data.backup_url[0];
-        const mime = data.data.mime_type;
-        let blob: Blob | null = null;
-        try {
-          blob = (
-            await Request.post(
-              `${BILIBILI_DATA_FETCH}proxy`,
-              {
-                target,
-                mime,
-              },
-              {
-                responseType: 'blob',
-              }
-            )
-          ).data;
-        } catch (e: any) {
-          if (e instanceof AxiosError && e.status === 403) {
-            blob = (
-              await Request.post(
-                `${BILIBILI_DATA_FETCH}proxy`,
-                {
-                  target: backup_target,
-                  mime,
-                },
-                {
-                  responseType: 'blob',
-                }
-              )
-            ).data;
-          }
-        }
-        if (player.current && blob) {
-          player.current.src = URL.createObjectURL(blob);
-        }
-        await play();
-        setupMediaSessionMetadata();
+        setPartListBK(partList);
+        setPartList(cid_list.data);
+        setCurrentPartBK(currentPart);
+        setCurrentPart(0);
         setSongInfoBK(songInfo);
       } catch (e: any) {
         notification.info?.({
-          title: '播放失败',
+          title: "播放失败",
           content: (
             <span>
               请手动重试。
@@ -179,21 +146,70 @@ const PlayerBilibili: React.FC<{
           ),
         });
         setSongInfo(songInfoBK);
+        setCurrentPart(currentPartBK);
+        setPartList(partListBK);
       }
     } else {
       return;
     }
   }, [songInfo]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ?
+  const fetchBiliStreamData = useCallback(async () => {
+    const data = (
+      await Request.get(
+        `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${partList[currentPart].cid}`
+      )
+    ).data;
+    const target = data.data.base_url;
+    const backup_target = data.data.backup_url[0];
+    const mime = data.data.mime_type;
+    let blob: Blob | null = null;
+    try {
+      blob = (
+        await Request.post(
+          `${BILIBILI_DATA_FETCH}proxy`,
+          {
+            target,
+            mime,
+          },
+          {
+            responseType: "blob",
+          }
+        )
+      ).data;
+    } catch (e: any) {
+      if (e instanceof AxiosError && e.status === 403) {
+        blob = (
+          await Request.post(
+            `${BILIBILI_DATA_FETCH}proxy`,
+            {
+              target: backup_target,
+              mime,
+            },
+            {
+              responseType: "blob",
+            }
+          )
+        ).data;
+      }
+    }
+    if (player.current && blob) {
+      player.current.src = URL.createObjectURL(blob);
+    }
+    await play();
+    setupMediaSessionMetadata();
+  }, [songInfo, partList, currentPart]);
+
   const togglePlayPause = async () => {
     if (!songInfo?.id) {
       notification.error?.({
-        title: '提示',
+        title: "提示",
         content: <span>请选择歌曲后重试</span>,
       });
       return;
     }
-    setPaused('loading');
+    setPaused("loading");
     if (paused) {
       await play();
       setupMediaSessionMetadata();
@@ -205,8 +221,12 @@ const PlayerBilibili: React.FC<{
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: ？
   useEffect(() => {
-    fetchBilibiliVidData();
+    fetchBiliMediaPList();
   }, [songInfo]);
+
+  useEffect(() => {
+    fetchBiliStreamData();
+  }, [partList, currentPart]);
 
   useEffect(() => {
     if (player.current) {
@@ -221,34 +241,34 @@ const PlayerBilibili: React.FC<{
       const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
       const handleLoadedData = () => setDuration(audio.duration);
 
-      audio.addEventListener('timeupdate', handleTimeUpdate);
-      audio.addEventListener('loadeddata', handleLoadedData);
+      audio.addEventListener("timeupdate", handleTimeUpdate);
+      audio.addEventListener("loadeddata", handleLoadedData);
 
       return () => {
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-        audio.removeEventListener('loadeddata', handleLoadedData);
+        audio.removeEventListener("timeupdate", handleTimeUpdate);
+        audio.removeEventListener("loadeddata", handleLoadedData);
       };
     }
   }, []);
 
   const initMediaSession = () => {
-    if ('mediaSession' in navigator) {
-      console.log('环境支持MediaSession');
+    if ("mediaSession" in navigator) {
+      console.log("环境支持MediaSession");
 
-      navigator.mediaSession.setActionHandler('play', async () => {
+      navigator.mediaSession.setActionHandler("play", async () => {
         await play();
-        navigator.mediaSession.playbackState = 'playing';
+        navigator.mediaSession.playbackState = "playing";
       });
-      navigator.mediaSession.setActionHandler('pause', () => {
+      navigator.mediaSession.setActionHandler("pause", () => {
         pause();
-        navigator.mediaSession.playbackState = 'paused';
+        navigator.mediaSession.playbackState = "paused";
       });
-      navigator.mediaSession.setActionHandler('stop', () => {
+      navigator.mediaSession.setActionHandler("stop", () => {
         pause();
-        navigator.mediaSession.playbackState = 'none';
+        navigator.mediaSession.playbackState = "none";
       });
     } else {
-      console.log('MediaSession不可用');
+      console.log("MediaSession不可用");
     }
   };
 
@@ -256,18 +276,18 @@ const PlayerBilibili: React.FC<{
   // Edge 142.0.3595.53 on Linux 没这个问题，Safari on iOS 26.1 RC 也没有问题
   // 离谱
   const setupMediaSessionMetadata = useCallback(() => {
-    if ('mediaSession' in navigator) {
+    if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: songInfo?.title,
         artist: songInfo?.author,
-        album: '',
+        album: "",
         artwork: [
           {
             src: songInfo?.pic ?? LOGO.src,
           },
         ],
       });
-      navigator.mediaSession.playbackState = 'playing';
+      navigator.mediaSession.playbackState = "playing";
     }
   }, [songInfo]);
 
@@ -277,8 +297,8 @@ const PlayerBilibili: React.FC<{
   }, []);
 
   useEffect(() => {
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.playbackState = paused ? 'paused' : 'playing';
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = paused ? "paused" : "playing";
     }
   }, [paused]);
 
@@ -389,40 +409,40 @@ const PlayerBilibili: React.FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: shutup
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleTouchMove);
-      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        document.removeEventListener('touchmove', handleTouchMove);
-        document.removeEventListener('touchend', handleTouchEnd);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
       };
     }
   }, [isDragging]);
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex-1">
-        <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
+      <div className="flex h-full max-w-full flex-1 flex-col p-6 lg:h-[75%] lg:flex-row">
+        <div className="flex h-full flex-4 select-none flex-col items-center justify-center gap-y-8 p-4 lg:flex-2">
           {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
           {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
           <div
-            className={`flex h-36 w-64 items-center justify-center overflow-clip rounded-lg shadow-black shadow-xl/10 md:h-72 md:w-128 ${songInfo?.pic ?? 'bg-[#f0b5c7] text-white/65'}`}
+            className={`flex h-36 w-64 items-center justify-center overflow-clip rounded-lg shadow-black shadow-xl/10 md:h-54 md:w-96 lg:h-72 lg:w-lg ${songInfo?.pic ?? "bg-[#f0b5c7] text-white/65"}`}
             onClick={async () => {
               await togglePlayPause();
             }}
           >
             <div
-              className={`absolute top-auto left-auto z-10 ${paused && songInfo?.pic ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+              className={`absolute top-auto left-auto z-10 ${paused && songInfo?.pic ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}
             >
               <Image
                 alt="bilibili pause button"
                 height={96}
                 referrerPolicy="no-referrer"
-                src={'https://s1.hdslb.com/bfs/static/player/img/play.svg'}
+                src={"https://s1.hdslb.com/bfs/static/player/img/play.svg"}
                 width={96}
               />
             </div>
@@ -431,7 +451,7 @@ const PlayerBilibili: React.FC<{
               <img
                 alt="cover"
                 className={
-                  'h-36 w-64 object-cover object-center md:h-72 md:w-128'
+                  "h-36 w-64 object-cover object-center md:h-54 md:w-96 lg:h-72 lg:w-lg"
                 }
                 crossOrigin="anonymous"
                 height={0}
@@ -446,25 +466,56 @@ const PlayerBilibili: React.FC<{
 
           <div className="flex flex-col items-center gap-y-2 px-8 text-center">
             <span className="font-bold text-black/85 text-xl md:text-2xl">
-              {songInfo?.title ?? 'Bilibili'}
+              {songInfo?.title ?? "Bilibili"}
             </span>
             <span className="flex flex-row items-center gap-x-2 font-normal text-black/85 text-sm md:text-lg">
               {/** biome-ignore lint/performance/noImgElement: <explanation> */}
               <img
                 alt=""
                 className={
-                  'h-6 w-6 overflow-clip rounded-[50%] bg-gray-600 object-contain'
+                  "h-6 w-6 overflow-clip rounded-[50%] bg-gray-600 object-contain"
                 }
                 height={24}
                 referrerPolicy="no-referrer"
                 src={
                   songInfo?.upic ??
-                  'https://i2.hdslb.com/bfs/face/member/noface.jpg@96w_96h.avif'
+                  "https://i2.hdslb.com/bfs/face/member/noface.jpg@96w_96h.avif"
                 }
                 width={24}
               />
-              <p>{songInfo?.author ?? '未选择'}</p>
+              <p>{songInfo?.author ?? "未选择"}</p>
             </span>
+          </div>
+        </div>
+        <div
+          className={`flex h-full w-full flex-1 items-center p-4 pt-0 lg:w-[70%] lg:pt-4 lg:pl-0 ${songInfo?.bvid ? "" : "hidden"}`}
+        >
+          <div className="flex h-18 w-full flex-1 flex-row items-start justify-center overflow-clip overflow-y-auto rounded-lg bg-white/65 lg:h-[80%] lg:min-w-36">
+            {partList.length === 0 ? (
+              <span>No Data</span>
+            ) : (
+              <div className={"p-3"}>
+                <Row className="gap-y-2" gutter={8}>
+                  {partList.map((v: any) => (
+                    <Col key={v.cid} md={12} xs={12}>
+                      {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+                      {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
+                      {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
+                      <div
+                        className={`line-clamp-2 h-13 w-full text-ellipsis rounded-lg p-2 text-xs transition-all duration-300 ease-in-out hover:bg-[#e799b0]/75 ${currentPart === (v.page - 1) ? "bg-[#e799b0]/25" : "bg-white/75"}`}
+                        onClick={() => {
+                          setCurrentPartBK(currentPart);
+                          setCurrentPart(v.page - 1);
+                        }}
+                        style={{ maxLines: 2 }}
+                      >
+                        {v.page}. {v.part}
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -472,18 +523,18 @@ const PlayerBilibili: React.FC<{
       {/** biome-ignore lint/a11y/useKeyWithClickEvents: ? */}
       {/** biome-ignore lint/a11y/noStaticElementInteractions: ? */}
       <div
-        className={'h-2 w-full bg-[#fff]'}
+        className={"h-2 w-full bg-[#fff]"}
         onClick={onClickProgressBar}
         ref={progressBar}
       >
         <div
-          className={'flex h-full flex-col justify-center bg-[#e799b0]'}
+          className={"flex h-full flex-col justify-center bg-[#e799b0]"}
           style={{
             width: `${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}%`,
           }}
         >
           <IconFont
-            className={'-right-2 absolute z-[99] w-4 cursor-pointer'}
+            className={"-right-2 absolute z-[99] w-4 cursor-pointer"}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             size={24}
@@ -494,8 +545,8 @@ const PlayerBilibili: React.FC<{
           />
         </div>
         <div className="-top-10 relative my-1.5 flex w-full flex-row justify-between px-2 text-sm">
-          <span>{ts2mmss(currentTime, 's')}</span>
-          <span>{ts2mmss(duration, 's')}</span>
+          <span>{ts2mmss(currentTime, "s")}</span>
+          <span>{ts2mmss(duration, "s")}</span>
         </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
@@ -505,7 +556,7 @@ const PlayerBilibili: React.FC<{
           <PlayerControllerButton
             action={() => {
               notification.warning?.({
-                title: '提示',
+                title: "提示",
                 content: <span>Not implemented</span>,
               });
             }}
@@ -516,7 +567,7 @@ const PlayerBilibili: React.FC<{
             <IconBackward />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlayPause}>
-            {paused === 'loading' ? (
+            {paused === "loading" ? (
               <IconLoading />
             ) : paused ? (
               <IconPlayArrow />
@@ -530,7 +581,7 @@ const PlayerBilibili: React.FC<{
           <PlayerControllerButton
             action={() => {
               notification.warning?.({
-                title: '提示',
+                title: "提示",
                 content: <span>Not implemented</span>,
               });
             }}
@@ -552,8 +603,8 @@ const PlayerBilibili: React.FC<{
                     style={{
                       color:
                         volume > 0
-                          ? 'var(--color-text-4)'
-                          : 'var(--color-text-1)',
+                          ? "var(--color-text-4)"
+                          : "var(--color-text-1)",
                     }}
                   />
                   <Slider
@@ -562,7 +613,7 @@ const PlayerBilibili: React.FC<{
                       setVolume(val / 100.0);
                     }}
                     step={1}
-                    style={{ width: '153px' }}
+                    style={{ width: "153px" }}
                     value={volume * 100}
                   />
                   <IconSound
@@ -570,8 +621,8 @@ const PlayerBilibili: React.FC<{
                     style={{
                       color:
                         volume === 0
-                          ? 'var(--color-text-4)'
-                          : 'var(--color-text-1)',
+                          ? "var(--color-text-4)"
+                          : "var(--color-text-1)",
                     }}
                   />
                 </div>

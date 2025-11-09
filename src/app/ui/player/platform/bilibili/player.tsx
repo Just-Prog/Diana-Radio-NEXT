@@ -478,7 +478,7 @@ const PlayerBilibili: React.FC<{
                 height={24}
                 referrerPolicy="no-referrer"
                 src={
-                  songInfo?.upic ??
+                  songInfo?.upic ?? 
                   "https://i2.hdslb.com/bfs/face/member/noface.jpg@96w_96h.avif"
                 }
                 width={24}
@@ -490,14 +490,14 @@ const PlayerBilibili: React.FC<{
         <div
           className={`flex h-full w-full flex-1 items-center p-4 pt-0 lg:w-[70%] lg:pt-4 lg:pl-0 ${songInfo?.bvid ? "" : "hidden"}`}
         >
-          <div className="flex h-18 w-full flex-1 flex-row items-start justify-center overflow-clip overflow-y-auto rounded-lg bg-white/65 lg:h-[80%] lg:min-w-36">
+          <div className="flex h-19 w-full flex-1 flex-row items-start justify-center overflow-clip overflow-y-auto rounded-lg bg-white/65 lg:h-[80%] lg:min-w-36">
             {partList.length === 0 ? (
-              <span>No Data</span>
+              <div className="h-full flex flex-1 justify-center items-center">Loading...</div>
             ) : (
               <div className={"w-full p-3"}>
-                <Row className="gap-y-2" gutter={8}>
+                <Row className="gap-y-2 font-sans!" gutter={8}>
                   {partList.map((v: any) => (
-                    <Col key={v.cid} md={12} xs={12}>
+                    <Col key={v.cid} md={12} xs={12} className="font-sans!">
                       {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
                       {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}

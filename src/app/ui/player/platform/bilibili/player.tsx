@@ -278,9 +278,9 @@ const PlayerBilibili: React.FC<{
   const setupMediaSessionMetadata = useCallback(() => {
     if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: songInfo?.title,
+        title: partList[currentPart]?.part,
         artist: songInfo?.author,
-        album: "",
+        album: songInfo?.title,
         artwork: [
           {
             src: songInfo?.pic ?? LOGO.src,
@@ -289,7 +289,7 @@ const PlayerBilibili: React.FC<{
       });
       navigator.mediaSession.playbackState = "playing";
     }
-  }, [songInfo]);
+  }, [songInfo, currentPart, partList]);
 
   useEffect(() => {
     initMediaSession();

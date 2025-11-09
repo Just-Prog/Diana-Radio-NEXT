@@ -18,7 +18,7 @@ import {
 } from "@arco-design/web-react/icon";
 import { Col, Row, Slider } from "antd";
 import { AxiosError } from "axios";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import {
   type ReactNode,
   useCallback,
@@ -277,13 +277,19 @@ const PlayerBilibili: React.FC<{
   // 离谱
   const setupMediaSessionMetadata = useCallback(() => {
     if ("mediaSession" in navigator) {
+      const target = getImageProps({
+        width: 512,
+        height: 512,
+        alt: "",
+        src: songInfo?.pic.replace("//", "https://") ?? LOGO.src,
+      });
       navigator.mediaSession.metadata = new MediaMetadata({
         title: partList[currentPart]?.part,
         artist: songInfo?.author,
         album: songInfo?.title,
         artwork: [
           {
-            src: songInfo?.pic ?? LOGO.src,
+            src: target.props.src,
           },
         ],
       });

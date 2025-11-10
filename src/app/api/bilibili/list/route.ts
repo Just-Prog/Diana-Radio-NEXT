@@ -25,7 +25,9 @@ const BLACKLIST_KEYWORD = [
   "许昊龙",
   "鱼头",
   "鱼谷",
-]; // 你B搜索结果里面掺大数据瞎推荐的视频的行为是真的烦人 :)
+  "塌房",
+  "事件",
+]; // 你B搜索结果里面掺大数据瞎推荐的视频的行为是真的烦人 牛魔
 
 const BLACKLIST_TAGS = [
   "EOE",
@@ -59,10 +61,7 @@ export async function GET(
       search_type: "video",
       page: pageNum,
       tids: 3,
-      device: "win",
-      mobi_app: "pc_electron",
       keyword: "嘉然",
-      web_location: "bilibili-electron",
       highlight: 0,
     });
     const data = (

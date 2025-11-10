@@ -136,14 +136,8 @@ const PlayerBilibili: React.FC<{
         setSongInfoBK(songInfo);
       } catch (e: any) {
         notification.info?.({
-          title: "播放失败",
-          content: (
-            <span>
-              请手动重试。
-              <br />
-              {e.message}
-            </span>
-          ),
+          title: "信息获取失败",
+          content: <span>{e.message}</span>,
         });
         setSongInfo(songInfoBK);
         setCurrentPart(currentPartBK);
@@ -156,49 +150,62 @@ const PlayerBilibili: React.FC<{
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: ?
   const fetchBiliStreamData = useCallback(async () => {
-    const data = (
-      await Request.get(
-        `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${partList[currentPart].cid}`
-      )
-    ).data;
-    const target = data.data.base_url;
-    const backup_target = data.data.backup_url[0];
-    const mime = data.data.mime_type;
-    let blob: Blob | null = null;
     try {
-      blob = (
-        await Request.post(
-          `${BILIBILI_DATA_FETCH}proxy`,
-          {
-            target,
-            mime,
-          },
-          {
-            responseType: "blob",
-          }
-        )
-      ).data;
-    } catch (e: any) {
-      if (e instanceof AxiosError && e.status === 403) {
-        blob = (
-          await Request.post(
-            `${BILIBILI_DATA_FETCH}proxy`,
-            {
-              target: backup_target,
-              mime,
-            },
-            {
-              responseType: "blob",
-            }
+      if (songInfo?.bvid && partList.length > 0) {
+        setPaused("loading");
+        const data = (
+          await Request.get(
+            `${BILIBILI_DATA_FETCH}${songInfo?.bvid}/${partList[currentPart].cid}`
           )
         ).data;
+        const target = data.data.base_url;
+        const backup_target = data.data.backup_url[0];
+        const mime = data.data.mime_type;
+        let blob: Blob | null = null;
+        try {
+          blob = (
+            await Request.post(
+              `${BILIBILI_DATA_FETCH}proxy`,
+              {
+                target,
+                mime,
+              },
+              {
+                responseType: "blob",
+              }
+            )
+          ).data;
+        } catch (e: any) {
+          if (e instanceof AxiosError && e.status === 403) {
+            blob = (
+              await Request.post(
+                `${BILIBILI_DATA_FETCH}proxy`,
+                {
+                  target: backup_target,
+                  mime,
+                },
+                {
+                  responseType: "blob",
+                }
+              )
+            ).data;
+          }
+        }
+        if (player.current && blob) {
+          player.current.src = URL.createObjectURL(blob);
+        }
+        await play();
+        setupMediaSessionMetadata();
       }
+    } catch (e: any) {
+      console.error(e);
+      notification.info?.({
+        title: "播放失败",
+        content: <span>{e.message}</span>,
+      });
+      setCurrentPart(currentPartBK);
+      setPartList(partListBK);
     }
-    if (player.current && blob) {
-      player.current.src = URL.createObjectURL(blob);
-    }
-    await play();
-    setupMediaSessionMetadata();
   }, [songInfo, partList, currentPart]);
 
   const togglePlayPause = async () => {
@@ -230,7 +237,16 @@ const PlayerBilibili: React.FC<{
 
   useEffect(() => {
     if (player.current) {
-      player.current.onended = () => pause();
+      player.current.onended = () => {
+        console.log("current:", currentPart);
+        console.log("next:", currentPart + 1);
+        if (currentPart === partList.length - 1) {
+          pause();
+        } else {
+          setCurrentPartBK(currentPart);
+          setCurrentPart(currentPart + 1);
+        }
+      };
     }
   }, [player.current]);
 

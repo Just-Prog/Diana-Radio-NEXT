@@ -1,6 +1,6 @@
-import { dj_program } from 'NeteaseCloudMusicApi';
-import { DianaWeeklyAvailablePodcasts } from '@/app/api/podcast/constants';
-import redis from '../redis';
+import { dj_program } from "NeteaseCloudMusicApi";
+import { DianaWeeklyAvailablePodcasts } from "@/app/api/podcast/constants";
+import redis from "../redis";
 
 type listResponse = {
   code: number;
@@ -15,14 +15,14 @@ const refreshAll = async () => {
       rid,
       limit,
       offset: 0,
-      asc: 'false',
+      asc: "false",
     });
     const response = result.body as unknown as listResponse;
     if (response.code === 405) {
       return Response.json(
         {
           code: 405,
-          message: 'request blocked by ncm risk firewall',
+          message: "request blocked by ncm risk firewall",
         },
         { status: 405 }
       );
@@ -41,12 +41,12 @@ const syncDB = async (data: any, prefix: string) => {
     // 暴力匹配 `【】`里的日期
     // 希望组里负责电台的兄弟别动标题格式，欧内盖
     name:
-      e.mainSong.name.includes('】') && e.mainSong.name.includes('【')
-        ? e.mainSong.name.split('】')[1]
+      e.mainSong.name.includes("】") && e.mainSong.name.includes("【")
+        ? e.mainSong.name.split("】")[1]
         : e.mainSong.name,
     date:
-      e.mainSong.name.includes('】') && e.mainSong.name.includes('【')
-        ? e.mainSong.name.split('【')[1].split('】')[0]
+      e.mainSong.name.includes("】") && e.mainSong.name.includes("【")
+        ? e.mainSong.name.split("【")[1].split("】")[0]
         : null,
     playTime:
       e.mainSong?.bMusic?.playTime ??

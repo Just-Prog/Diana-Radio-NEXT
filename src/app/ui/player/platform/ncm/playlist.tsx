@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { List, Select } from '@arco-design/web-react';
-import { IconMusic, IconPlayCircle } from '@arco-design/web-react/icon';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { List, Select } from "@arco-design/web-react";
+import { IconMusic, IconPlayCircle } from "@arco-design/web-react/icon";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
-import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
-import image_404 from '@/app/assets/404.png';
-import { PODCAST_LIST_FETCH } from '@/app/lib/axios/constants';
-import Request from '@/app/lib/axios/request';
-import { getPlaylistManager } from '@/app/lib/player/ncm/playlistManager';
-import { ts2mmss } from '@/app/lib/utils/timestamp';
-import type { SongInfo } from '@/app/main/page';
+import { DianaWeeklyAvailableProgramsInfo } from "@/app/api/podcast/constants";
+import image_404 from "@/app/assets/404.png";
+import { PODCAST_LIST_FETCH } from "@/app/lib/axios/constants";
+import Request from "@/app/lib/axios/request";
+import { getPlaylistManager } from "@/app/lib/player/ncm/playlistManager";
+import { ts2mmss } from "@/app/lib/utils/timestamp";
+import type { SongInfo } from "@/app/main/page";
 
 const Option = Select.Option;
 const options = DianaWeeklyAvailableProgramsInfo;
@@ -26,8 +26,8 @@ const Playlist: React.FC<{
   const [updatedAt, setUpdatedAt] = useState<number>(FIRST_BROADCAST_TIMESTAMP);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [playlistType, setPlaylistType] = useState<
-    'songs' | 'sleep' | 'jianwen' | 'hachimi'
-  >('songs');
+    "songs" | "sleep" | "jianwen" | "hachimi"
+  >("songs");
 
   const [cacheSize, setCacheSize] = useState(0);
 
@@ -76,7 +76,7 @@ const Playlist: React.FC<{
             try {
               const response = await cache.match(request.url);
               if (response) {
-                const contentLength = response.headers.get('content-length');
+                const contentLength = response.headers.get("content-length");
                 if (contentLength) {
                   totalSize += Number.parseInt(contentLength, 10);
                 } else {
@@ -95,7 +95,7 @@ const Playlist: React.FC<{
 
       return totalSize;
     } catch (error) {
-      console.error('计算缓存大小失败:', error);
+      console.error("计算缓存大小失败:", error);
       return 0;
     }
   };
@@ -114,13 +114,13 @@ const Playlist: React.FC<{
         onChange={(v) => setPlaylistType(v)}
         placeholder="选择电台"
         renderFormat={(_, value) => (
-            <span>
-              {
-                DianaWeeklyAvailableProgramsInfo.find((v) => v.key === value)
-                  ?.name
-              }
-            </span>
-          )}
+          <span>
+            {
+              DianaWeeklyAvailableProgramsInfo.find((v) => v.key === value)
+                ?.name
+            }
+          </span>
+        )}
       >
         {options.map((option) => (
           <Option key={option.key} value={option.key}>
@@ -153,46 +153,46 @@ const Playlist: React.FC<{
             </div>
           }
           render={(v) => (
-              <List.Item key={v.id}>
-                <div className="flex w-full max-w-full flex-row items-center gap-x-4">
-                  <IconMusic className="mr-2 text-lg" />
-                  <div
-                    className={`${currentPlaying?.id === v.id ? 'font-bold text-blue-500' : ''} mr-2 flex flex-1 flex-col`}
-                  >
-                    <span className="line-clamp-1 overflow-clip text-ellipsis text-sm">
-                      {v.name}
+            <List.Item key={v.id}>
+              <div className="flex w-full max-w-full flex-row items-center gap-x-4">
+                <IconMusic className="mr-2 text-lg" />
+                <div
+                  className={`${currentPlaying?.id === v.id ? "font-bold text-blue-500" : ""} mr-2 flex flex-1 flex-col`}
+                >
+                  <span className="line-clamp-1 overflow-clip text-ellipsis text-sm">
+                    {v.name}
+                  </span>
+                  <span className="text-gray-500 text-xs">
+                    <span>{ts2mmss(v.playTime)}</span>
+                    <span>
+                      {v.date
+                        ? ` - ${v.date.replaceAll(".", "/")}`
+                        : " - 未知日期"}
                     </span>
-                    <span className="text-gray-500 text-xs">
-                      <span>{ts2mmss(v.playTime)}</span>
-                      <span>
-                        {v.date
-                          ? ` - ${v.date.replaceAll('.', '/')}`
-                          : ' - 未知日期'}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="flex flex-row items-center">
-                    <button
-                      className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
-                      onClick={() => {
+                  </span>
+                </div>
+                <div className="flex flex-row items-center">
+                  <button
+                    className="cursor-pointer rounded-2xl px-2 duration-400 hover:bg-gray-400/20"
+                    onClick={() => {
+                      playlistManager.playSong(v);
+                      setCurrentPlaying(v);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
                         playlistManager.playSong(v);
                         setCurrentPlaying(v);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          playlistManager.playSong(v);
-                          setCurrentPlaying(v);
-                        }
-                      }}
-                      type="button"
-                    >
-                      <IconPlayCircle className="text-lg" />
-                    </button>
-                  </div>
+                      }
+                    }}
+                    type="button"
+                  >
+                    <IconPlayCircle className="text-lg" />
+                  </button>
                 </div>
-              </List.Item>
-            )}
+              </div>
+            </List.Item>
+          )}
         />
       </div>
     </div>

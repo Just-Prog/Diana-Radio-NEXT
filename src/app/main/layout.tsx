@@ -1,6 +1,6 @@
-'use client';
-import { Layout } from '@arco-design/web-react';
-import NavBar from '../ui/main/nav_bar';
+"use client";
+import { Layout } from "@arco-design/web-react";
+import NavBar from "../ui/main/nav_bar";
 
 export default function MainPageLayout({
   children,
@@ -23,7 +23,7 @@ export default function MainPageLayout({
         <Layout.Footer className="bg-white">
           <div className="py-4 shadow-black/100 shadow-lg">
             <div className="text-center">
-              Diana Radio @Diana_Weekly, 2025{' '}
+              Diana Radio @Diana_Weekly, 2025{" "}
               <a
                 className="duration-500 ease-in-out hover:text-[#e799b0]"
                 href="https://space.bilibili.com/672328094"

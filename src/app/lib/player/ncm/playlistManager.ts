@@ -1,5 +1,5 @@
-import type { SongInfo } from '@/app/main/page';
-import { currentPlayingStorage, playlistCache } from './storage';
+import type { SongInfo } from "@/app/main/page";
+import { currentPlayingStorage, playlistCache } from "./storage";
 
 export type PlaylistManagerOptions = {
   onSongChange?: (song: SongInfo) => void;
@@ -9,7 +9,7 @@ export type PlaylistManagerOptions = {
 export class PlaylistManager {
   private currentPlaylist: SongInfo[] = [];
   private currentIndex = -1;
-  private currentType = '';
+  private currentType = "";
   private readonly onSongChange?: (song: SongInfo) => void;
   private readonly onPlaylistUpdate?: (songs: SongInfo[]) => void;
 
@@ -59,7 +59,7 @@ export class PlaylistManager {
     // 如果歌曲不在当前播放列表中，创建新的播放列表
     this.currentPlaylist = [song];
     this.currentIndex = 0;
-    this.currentType = song.type || '';
+    this.currentType = song.type || "";
     this.notifySongChange(song);
   }
 

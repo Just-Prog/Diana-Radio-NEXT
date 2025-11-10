@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { CSSProperties } from 'react';
+import type { CSSProperties } from "react";
 
 type IconProps = {
   type: string;
@@ -14,24 +14,24 @@ type IconProps = {
 
 const IconFont: React.FC<IconProps> = ({
   type,
-  color = 'black',
+  color = "black",
   size = 24,
   className,
   onMouseDown,
   onTouchStart,
   style,
 }) => (
-    <span
-      className={className ?? ''}
-      color={color}
-      onMouseDown={onMouseDown}
-      onTouchStart={onTouchStart}
-      style={style}
-    >
-      <svg aria-hidden="true" className={'icon'} height={size} width={size}>
-        <use xlinkHref={`#${type}`} />
-      </svg>
-    </span>
-  );
+  <span
+    className={className ?? ""}
+    color={color}
+    onMouseDown={onMouseDown}
+    onTouchStart={onTouchStart}
+    style={style}
+  >
+    <svg aria-hidden="true" className={"icon"} height={size} width={size}>
+      <use xlinkHref={`#${type}`} />
+    </svg>
+  </span>
+);
 
 export default IconFont;

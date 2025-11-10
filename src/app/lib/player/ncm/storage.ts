@@ -1,8 +1,8 @@
-import type { SongInfo } from '@/app/main/page';
+import type { SongInfo } from "@/app/main/page";
 
 const STORAGE_KEYS = {
-  PLAYLIST_CACHE: 'playlist_cache',
-  CURRENT_PLAYING: 'current_playing',
+  PLAYLIST_CACHE: "playlist_cache",
+  CURRENT_PLAYING: "current_playing",
 } as const;
 
 const HOURS_24 = 24;
@@ -100,7 +100,7 @@ export const storageUtils = {
   // 检查本地存储是否可用
   isAvailable(): boolean {
     try {
-      const test = '__storage_test__';
+      const test = "__storage_test__";
       localStorage.setItem(test, test);
       localStorage.removeItem(test);
       return true;
@@ -116,7 +116,7 @@ export const storageUtils = {
 
     for (const key of Object.keys(localStorage)) {
       if (key.startsWith(STORAGE_KEYS.PLAYLIST_CACHE)) {
-        const type = key.replace(`${STORAGE_KEYS.PLAYLIST_CACHE}_`, '');
+        const type = key.replace(`${STORAGE_KEYS.PLAYLIST_CACHE}_`, "");
         types.push(type);
         size += localStorage.getItem(key)?.length || 0;
       }

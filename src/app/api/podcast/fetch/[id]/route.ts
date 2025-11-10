@@ -1,8 +1,8 @@
-import { dj_program_detail, lyric, song_url } from 'NeteaseCloudMusicApi';
-import type { NextRequest } from 'next/server';
-import { DianaWeeklyAvailablePodcasts } from '@/app/api/podcast/constants';
-import { refreshAll } from '@/app/lib/api/podcast';
-import redis from '@/app/lib/redis';
+import { dj_program_detail, lyric, song_url } from "NeteaseCloudMusicApi";
+import type { NextRequest } from "next/server";
+import { DianaWeeklyAvailablePodcasts } from "@/app/api/podcast/constants";
+import { refreshAll } from "@/app/lib/api/podcast";
+import redis from "@/app/lib/redis";
 
 type songInfoResp = {
   br: number;
@@ -27,13 +27,13 @@ type lyricsResp = { time: number; text: string };
 
 // 过滤函数，只保留 genericSongInfoResp 中定义的字段
 function filterGenericSongInfoResp(data: unknown): genericSongInfoResp {
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     return {
       id: 0,
-      name: '',
+      name: "",
       alias: [],
       artists: [],
-      album: { picUrl: '' },
+      album: { picUrl: "" },
     };
   }
 
@@ -41,15 +41,15 @@ function filterGenericSongInfoResp(data: unknown): genericSongInfoResp {
 
   return {
     id: Number(dataObj.id) || 0,
-    name: String(dataObj.name || ''),
+    name: String(dataObj.name || ""),
     alias: Array.isArray(dataObj.alias) ? dataObj.alias.map(String) : [],
     artists: Array.isArray(dataObj.artists)
       ? dataObj.artists.map((artist: unknown) =>
-          String((artist as Record<string, unknown>)?.name || '')
+          String((artist as Record<string, unknown>)?.name || "")
         )
       : [],
     album: {
-      picUrl: String((dataObj.album as Record<string, unknown>)?.picUrl || ''),
+      picUrl: String((dataObj.album as Record<string, unknown>)?.picUrl || ""),
     },
   };
 }
@@ -66,7 +66,7 @@ const lrcTSRegex = /\[(\d{2}:\d{2}.\d{2})\](.*)/;
 
 export async function GET(
   _req: NextRequest,
-  ctx: RouteContext<'/api/podcast/fetch/[id]'>
+  ctx: RouteContext<"/api/podcast/fetch/[id]">
 ) {
   const { id } = await ctx.params;
 
@@ -103,13 +103,13 @@ export async function GET(
             await lyric({ id: filteredRelatedSongs[0].id })
           ).body.lrc as lyrics163Resp;
           lyrics = tmp.lyric
-            .split('\n')
+            .split("\n")
             .map((v) => {
               const matched = v.match(lrcTSRegex);
               if (matched) {
                 const time =
-                  Number.parseInt(matched[1].split(':')[0]) * 60 +
-                  Number.parseInt(matched[1].split(':')[1]); // lrc HH:mm:ss => minutes
+                  Number.parseInt(matched[1].split(":")[0]) * 60 +
+                  Number.parseInt(matched[1].split(":")[1]); // lrc HH:mm:ss => minutes
                 return {
                   time,
                   text: matched[2],
@@ -136,7 +136,7 @@ export async function GET(
     }
   }
   return Response.json(
-    { code: 403, message: 'audio id not in whitelist' },
+    { code: 403, message: "audio id not in whitelist" },
     { status: 403 }
   );
 }

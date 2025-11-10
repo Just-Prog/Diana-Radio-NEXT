@@ -1,4 +1,4 @@
-import md5 from 'md5';
+import md5 from "md5";
 
 const mixinKeyEncTab = [
   46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
@@ -11,7 +11,7 @@ const mixinKeyEncTab = [
 const getMixinKey = (orig: string) =>
   mixinKeyEncTab
     .map((n) => orig[n])
-    .join('')
+    .join("")
     .slice(0, 32);
 
 // 为请求参数进行 wbi 签名
@@ -28,23 +28,23 @@ function encWbi(
   const query = Object.keys(params)
     .sort()
     .map((key) => {
-      const value = params[key].toString().replace(chr_filter, '');
+      const value = params[key].toString().replace(chr_filter, "");
       return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     })
-    .join('&');
+    .join("&");
 
   const wbi_sign = md5(query + mixin_key);
 
   return { wbi_sign, ...params };
 }
 async function getWbiKeys(SESSDATA: string) {
-  const res = await fetch('https://api.bilibili.com/x/web-interface/nav', {
+  const res = await fetch("https://api.bilibili.com/x/web-interface/nav", {
     headers: {
       // SESSDATA 字段
       Cookie: `SESSDATA=${SESSDATA}`,
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-      Referer: 'https://www.bilibili.com/',
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+      Referer: "https://www.bilibili.com/",
     },
   });
   const {
@@ -59,18 +59,18 @@ async function getWbiKeys(SESSDATA: string) {
 
   return {
     img_key: img_url.slice(
-      img_url.lastIndexOf('/') + 1,
-      img_url.lastIndexOf('.')
+      img_url.lastIndexOf("/") + 1,
+      img_url.lastIndexOf(".")
     ),
     sub_key: sub_url.slice(
-      sub_url.lastIndexOf('/') + 1,
-      sub_url.lastIndexOf('.')
+      sub_url.lastIndexOf("/") + 1,
+      sub_url.lastIndexOf(".")
     ),
   };
 }
 
 async function WbiSigner(params: { [key: string]: string | number | object }) {
-  const web_keys = await getWbiKeys('');
+  const web_keys = await getWbiKeys("");
   const img_key = web_keys.img_key,
     sub_key = web_keys.sub_key;
   const query = encWbi(params, img_key, sub_key);

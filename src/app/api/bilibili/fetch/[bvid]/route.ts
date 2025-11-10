@@ -1,14 +1,14 @@
-import type { NextRequest } from 'next/server';
-import { BilibiliHeaders } from '@/app/api/podcast/constants';
-import WbiSigner from '@/app/lib/api/utils/wbi_sign';
-import Request from '@/app/lib/axios/request';
+import type { NextRequest } from "next/server";
+import { BilibiliHeaders } from "@/app/api/podcast/constants";
+import WbiSigner from "@/app/lib/api/utils/wbi_sign";
+import Request from "@/app/lib/axios/request";
 
 export async function GET(
   _req: NextRequest,
-  ctx: RouteContext<'/api/bilibili/fetch/[bvid]'>
+  ctx: RouteContext<"/api/bilibili/fetch/[bvid]">
 ) {
   const { bvid } = await ctx.params;
-  const target_v = 'https://api.bilibili.com/x/player/pagelist';
+  const target_v = "https://api.bilibili.com/x/player/pagelist";
   const params_v = await WbiSigner({
     bvid,
   });

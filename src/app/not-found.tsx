@@ -1,21 +1,21 @@
-import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
-import Image from 'next/image';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import Image from "next/image";
+import "./globals.css";
 
-import Link from 'next/link';
-import image from '@/app/assets/404.png';
-import Divider from './ui/common/divider';
+import Link from "next/link";
+import image from "@/app/assets/404.png";
+import Divider from "./ui/common/divider";
 
-const inter = Inter({ variable: '--font-inter', subsets: ['latin'] });
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const mono = JetBrains_Mono({
-  variable: '--font-jetbrains-mono',
-  subsets: ['latin'],
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: '404 - Diana Audio',
-  description: '啊这，小然不知道哦',
+  title: "404 - Diana Audio",
+  description: "啊这，小然不知道哦",
 };
 
 export default function GlobalNotFound() {

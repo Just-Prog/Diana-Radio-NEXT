@@ -1,5 +1,5 @@
-import type { NextRequest } from 'next/server';
-import Request from '@/app/lib/axios/request';
+import type { NextRequest } from "next/server";
+import Request from "@/app/lib/axios/request";
 
 type LiveRoomStatusProps = {
   uid: number;
@@ -17,10 +17,10 @@ type LiveRoomStatusProps = {
 export async function GET(req: NextRequest) {
   try {
     const all = await Request.get(
-      'https://api.live.bilibili.com/room/v1/Room/get_info',
+      "https://api.live.bilibili.com/room/v1/Room/get_info",
       {
         params: {
-          room_id: '22637261',
+          room_id: "22637261",
         },
       }
     );
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     return Response.json(
       {
         code: 500,
-        msg: 'unknown error',
+        msg: "unknown error",
       },
       { status: 500 }
     );

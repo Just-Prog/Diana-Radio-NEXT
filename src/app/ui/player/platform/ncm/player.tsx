@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import {
   type NotificationHookReturnType,
   Popover,
-} from '@arco-design/web-react';
+} from "@arco-design/web-react";
 import {
   IconBackward,
   IconForward,
@@ -15,25 +15,25 @@ import {
   IconSkipNext,
   IconSkipPrevious,
   IconSound,
-} from '@arco-design/web-react/icon';
-import { Slider } from 'antd';
-import Image from 'next/image';
+} from "@arco-design/web-react/icon";
+import { Slider } from "antd";
+import Image from "next/image";
 import {
   type ReactNode,
   useCallback,
   useEffect,
   useRef,
   useState,
-} from 'react';
-import { DianaWeeklyAvailableProgramsInfo } from '@/app/api/podcast/constants';
-import playerBG from '@/app/assets/program/bg.png';
-import { PODCAST_AUDIO_FETCH } from '@/app/lib/axios/constants';
-import Request from '@/app/lib/axios/request';
-import { getPlaylistManager } from '@/app/lib/player/ncm/playlistManager';
-import { ts2mmss } from '@/app/lib/utils/timestamp';
-import type { SongInfo } from '@/app/main/page';
-import IconFont from '@/app/ui/common/iconfont';
-import { LyricDisplayArea, LyricSwitch } from './lyrics';
+} from "react";
+import { DianaWeeklyAvailableProgramsInfo } from "@/app/api/podcast/constants";
+import playerBG from "@/app/assets/program/bg.png";
+import { PODCAST_AUDIO_FETCH } from "@/app/lib/axios/constants";
+import Request from "@/app/lib/axios/request";
+import { getPlaylistManager } from "@/app/lib/player/ncm/playlistManager";
+import { ts2mmss } from "@/app/lib/utils/timestamp";
+import type { SongInfo } from "@/app/main/page";
+import IconFont from "@/app/ui/common/iconfont";
+import { LyricDisplayArea, LyricSwitch } from "./lyrics";
 
 const programCover = DianaWeeklyAvailableProgramsInfo.reduce(
   (acc, program) => {
@@ -72,7 +72,7 @@ const Player: React.FC<{
 }> = ({ songInfo, togglePlaylist, notification }) => {
   const player = useRef<HTMLAudioElement>(null);
   const progressBar = useRef<HTMLDivElement>(null);
-  const [paused, setPaused] = useState<boolean | 'loading'>(true);
+  const [paused, setPaused] = useState<boolean | "loading">(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -130,10 +130,10 @@ const Player: React.FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
-      setPaused('loading');
+      setPaused("loading");
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}${songInfo?.id}`);
       if (player.current) {
-        player.current.src = data.data.data.url.replace('http://', 'https://');
+        player.current.src = data.data.data.url.replace("http://", "https://");
       }
       try {
         await play();
@@ -141,7 +141,7 @@ const Player: React.FC<{
         setupMediaSessionMetadata();
       } catch (e: any) {
         notification.info?.({
-          title: '自动播放失败',
+          title: "自动播放失败",
           content: (
             <span>
               请手动点击播放键重试。
@@ -159,12 +159,12 @@ const Player: React.FC<{
   const togglePlayPause = async () => {
     if (!songInfo?.id) {
       notification.error?.({
-        title: '提示',
+        title: "提示",
         content: <span>请选择歌曲后重试</span>,
       });
       return;
     }
-    setPaused('loading');
+    setPaused("loading");
     if (paused) {
       await play();
     } else {
@@ -184,7 +184,7 @@ const Player: React.FC<{
         const nextSong = playlistManager.playNext();
         if (nextSong) {
           window.dispatchEvent(
-            new CustomEvent('songEnded', { detail: nextSong })
+            new CustomEvent("songEnded", { detail: nextSong })
           );
         } else {
           pause();
@@ -200,53 +200,53 @@ const Player: React.FC<{
       const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
       const handleLoadedData = () => setDuration(audio.duration);
 
-      audio.addEventListener('timeupdate', handleTimeUpdate);
-      audio.addEventListener('loadeddata', handleLoadedData);
+      audio.addEventListener("timeupdate", handleTimeUpdate);
+      audio.addEventListener("loadeddata", handleLoadedData);
 
       return () => {
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-        audio.removeEventListener('loadeddata', handleLoadedData);
+        audio.removeEventListener("timeupdate", handleTimeUpdate);
+        audio.removeEventListener("loadeddata", handleLoadedData);
       };
     }
   }, []);
 
   const initMediaSession = () => {
-    if ('mediaSession' in navigator) {
-      console.log('环境支持MediaSession');
+    if ("mediaSession" in navigator) {
+      console.log("环境支持MediaSession");
 
-      navigator.mediaSession.setActionHandler('play', async () => {
+      navigator.mediaSession.setActionHandler("play", async () => {
         await play();
-        navigator.mediaSession.playbackState = 'playing';
+        navigator.mediaSession.playbackState = "playing";
       });
-      navigator.mediaSession.setActionHandler('pause', () => {
+      navigator.mediaSession.setActionHandler("pause", () => {
         pause();
-        navigator.mediaSession.playbackState = 'paused';
+        navigator.mediaSession.playbackState = "paused";
       });
-      navigator.mediaSession.setActionHandler('stop', () => {
+      navigator.mediaSession.setActionHandler("stop", () => {
         pause();
-        navigator.mediaSession.playbackState = 'none';
+        navigator.mediaSession.playbackState = "none";
       });
     } else {
-      console.log('MediaSession不可用');
+      console.log("MediaSession不可用");
     }
   };
 
   const setupMediaSessionMetadata = useCallback(() => {
-    if ('mediaSession' in navigator) {
+    if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: songInfo?.name,
-        artist: 'Diana Radio',
+        artist: "Diana Radio",
         album: DianaWeeklyAvailableProgramsInfo.find(
           (v) => v.key === songInfo?.type
         )?.name,
         artwork: [
           {
-            src: programCover[songInfo?.type ?? 'songs'].src,
-            sizes: '512x512',
+            src: programCover[songInfo?.type ?? "songs"].src,
+            sizes: "512x512",
           },
         ],
       });
-      navigator.mediaSession.playbackState = 'playing';
+      navigator.mediaSession.playbackState = "playing";
     }
   }, [songInfo]);
 
@@ -256,8 +256,8 @@ const Player: React.FC<{
   }, []);
 
   useEffect(() => {
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.playbackState = paused ? 'paused' : 'playing';
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = paused ? "paused" : "playing";
     }
   }, [paused]);
 
@@ -368,15 +368,15 @@ const Player: React.FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: shutup
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleTouchMove);
-      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        document.removeEventListener('touchmove', handleTouchMove);
-        document.removeEventListener('touchend', handleTouchEnd);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
       };
     }
   }, [isDragging]);
@@ -386,36 +386,36 @@ const Player: React.FC<{
       <div className="flex-1">
         <div className="flex h-full select-none flex-col items-center justify-center gap-y-8">
           <div
-            className={`animate-[spin_3s_linear_infinite] overflow-clip rounded-[50%] shadow-black shadow-xl/10 ${paused && 'pause-animation'} flex items-center justify-center`}
+            className={`animate-[spin_3s_linear_infinite] overflow-clip rounded-[50%] shadow-black shadow-xl/10 ${paused && "pause-animation"} flex items-center justify-center`}
             onClick={async () => {
               await togglePlayPause();
             }}
           >
-            <Image alt="bg" className={'h-50 w-50'} src={playerBG} />
+            <Image alt="bg" className={"h-50 w-50"} src={playerBG} />
             <Image
               alt="cover"
-              className={'absolute h-35 w-35 rounded-[50%]'}
-              src={programCover[songInfo?.type ?? 'songs']}
+              className={"absolute h-35 w-35 rounded-[50%]"}
+              src={programCover[songInfo?.type ?? "songs"]}
             />
           </div>
 
           <div className="flex flex-col items-center gap-y-2 px-8 text-center">
             <span className="font-bold text-black/85 text-xl md:text-2xl">
-              {songInfo?.name ?? 'Diana Radio'}
+              {songInfo?.name ?? "Diana Radio"}
             </span>
             <span className="font-normal text-black/85 text-sm md:text-lg">
               {songInfo?.type
                 ? DianaWeeklyAvailableProgramsInfo.find(
                     (v) => v.key === songInfo?.type
                   )?.name
-                : '未选择'}
+                : "未选择"}
             </span>
           </div>
           {isLyricBarEnabled && (
             <LyricDisplayArea
               current={currentTime}
               lyrics={
-                lyrics.length > 0 ? lyrics : [{ time: 0, text: '暂无歌词' }]
+                lyrics.length > 0 ? lyrics : [{ time: 0, text: "暂无歌词" }]
               }
             />
           )}
@@ -425,18 +425,18 @@ const Player: React.FC<{
       {/** biome-ignore lint/a11y/useKeyWithClickEvents: ? */}
       {/** biome-ignore lint/a11y/noStaticElementInteractions: ? */}
       <div
-        className={'h-2 w-full bg-[#fff]'}
+        className={"h-2 w-full bg-[#fff]"}
         onClick={onClickProgressBar}
         ref={progressBar}
       >
         <div
-          className={'flex h-full flex-col justify-center bg-[#e799b0]'}
+          className={"flex h-full flex-col justify-center bg-[#e799b0]"}
           style={{
             width: `${isDragging ? dragProgress * 100 : Number.isNaN(currentTime / duration) ? 0 : (currentTime / duration) * 100}%`,
           }}
         >
           <IconFont
-            className={'-right-2 absolute z-[99] w-4 cursor-pointer'}
+            className={"-right-2 absolute z-[99] w-4 cursor-pointer"}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             size={24}
@@ -447,8 +447,8 @@ const Player: React.FC<{
           />
         </div>
         <div className="-top-10 relative my-1.5 flex w-full flex-row justify-between px-2 text-sm">
-          <span>{ts2mmss(currentTime, 's')}</span>
-          <span>{ts2mmss(duration, 's')}</span>
+          <span>{ts2mmss(currentTime, "s")}</span>
+          <span>{ts2mmss(duration, "s")}</span>
         </div>
       </div>
       <div className="flex h-16 w-full items-center justify-center bg-white/60 backdrop-blur-lg">
@@ -461,11 +461,11 @@ const Player: React.FC<{
               if (previousSong) {
                 // 通知父组件更新当前播放歌曲
                 window.dispatchEvent(
-                  new CustomEvent('songChanged', { detail: previousSong })
+                  new CustomEvent("songChanged", { detail: previousSong })
                 );
               } else {
                 notification.warning?.({
-                  title: '提示',
+                  title: "提示",
                   content: <span>没有上一首歌曲</span>,
                 });
               }
@@ -477,7 +477,7 @@ const Player: React.FC<{
             <IconBackward />
           </PlayerControllerButton>
           <PlayerControllerButton action={togglePlayPause}>
-            {paused === 'loading' ? (
+            {paused === "loading" ? (
               <IconLoading />
             ) : paused ? (
               <IconPlayArrow />
@@ -494,11 +494,11 @@ const Player: React.FC<{
               if (nextSong) {
                 // 通知父组件更新当前播放歌曲
                 window.dispatchEvent(
-                  new CustomEvent('songChanged', { detail: nextSong })
+                  new CustomEvent("songChanged", { detail: nextSong })
                 );
               } else {
                 notification.warning?.({
-                  title: '提示',
+                  title: "提示",
                   content: <span>没有下一首歌曲</span>,
                 });
               }
@@ -523,8 +523,8 @@ const Player: React.FC<{
                     style={{
                       color:
                         volume > 0
-                          ? 'var(--color-text-4)'
-                          : 'var(--color-text-1)',
+                          ? "var(--color-text-4)"
+                          : "var(--color-text-1)",
                     }}
                   />
                   {/* 字节没给滑动输入条这玩意加触摸屏适配 */}
@@ -535,7 +535,7 @@ const Player: React.FC<{
                       setVolume(val / 100.0);
                     }}
                     step={1}
-                    style={{ width: '153px' }}
+                    style={{ width: "153px" }}
                     value={volume * 100}
                   />
                   <IconSound
@@ -543,8 +543,8 @@ const Player: React.FC<{
                     style={{
                       color:
                         volume === 0
-                          ? 'var(--color-text-4)'
-                          : 'var(--color-text-1)',
+                          ? "var(--color-text-4)"
+                          : "var(--color-text-1)",
                     }}
                   />
                 </div>

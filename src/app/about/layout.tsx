@@ -1,6 +1,6 @@
-'use client';
-import { Layout } from '@arco-design/web-react';
-import NavBar from '../ui/main/nav_bar';
+"use client";
+import { Layout } from "@arco-design/web-react";
+import NavBar from "../ui/main/nav_bar";
 
 export default function MainPageLayout({
   children,

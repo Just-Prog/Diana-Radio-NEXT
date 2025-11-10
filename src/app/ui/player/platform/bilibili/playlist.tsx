@@ -1,24 +1,24 @@
-'use client';
-import { List, Pagination } from '@arco-design/web-react';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+"use client";
+import { List, Pagination } from "@arco-design/web-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
-import image_404 from '@/app/assets/404.png';
-import { BILIBILI_SEARCH } from '@/app/lib/axios/constants';
-import Request from '@/app/lib/axios/request';
-import type { SongInfoBilibili } from '@/app/main/page';
-import IconFont from '../../../common/iconfont';
+import image_404 from "@/app/assets/404.png";
+import { BILIBILI_SEARCH } from "@/app/lib/axios/constants";
+import Request from "@/app/lib/axios/request";
+import type { SongInfoBilibili } from "@/app/main/page";
+import IconFont from "../../../common/iconfont";
 
 const PlaylistMetadata: React.FC<{
   type: string;
   size?: number;
   data: string | number;
 }> = ({ type, data, size = 14 }) => (
-    <span className="flex flex-row items-center gap-x-1">
-      <IconFont size={size} type={type} />
-      <p style={{ fontSize: size - 2 }}>{data}</p>
-    </span>
-  );
+  <span className="flex flex-row items-center gap-x-1">
+    <IconFont size={size} type={type} />
+    <p style={{ fontSize: size - 2 }}>{data}</p>
+  </span>
+);
 
 const PlaylistBilibili: React.FC<{
   currentPlaying: SongInfoBilibili;

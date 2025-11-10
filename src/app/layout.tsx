@@ -1,38 +1,38 @@
-import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono, Noto_Sans_SC } from 'next/font/google';
-import localFont from 'next/font/local';
-import Script from 'next/script';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter, JetBrains_Mono, Noto_Sans_SC } from "next/font/google";
+import localFont from "next/font/local";
+import Script from "next/script";
+import "./globals.css";
 
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import Background from './ui/common/background';
+import { AntdRegistry } from "@ant-design/nextjs-registry";
+import Background from "./ui/common/background";
 
 const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-  fallback: ['misans'],
+  variable: "--font-inter",
+  subsets: ["latin"],
+  fallback: ["misans"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-jetbrains-mono',
-  subsets: ['latin'],
-  fallback: ['Noto Sans SC'],
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  fallback: ["Noto Sans SC"],
 });
 
 const notoSansCJKSC = Noto_Sans_SC({
-  variable: '--font-noto-sans-sc',
+  variable: "--font-noto-sans-sc",
   subsets: [],
 });
 
 const misans = localFont({
-  src: './assets/fonts/MiSans_VF.ttf',
-  variable: '--font-misans',
+  src: "./assets/fonts/MiSans_VF.ttf",
+  variable: "--font-misans",
 });
 
 export const metadata: Metadata = {
-  title: 'Diana Radio',
+  title: "Diana Radio",
   description:
-    'An alternative frontend project for NCM Podcast@嘉心糖周报. Powered by NEXT.JS',
+    "An alternative frontend project for NCM Podcast@嘉心糖周报. Powered by NEXT.JS",
 };
 
 export default function RootLayout({

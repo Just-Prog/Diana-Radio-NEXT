@@ -1,21 +1,21 @@
-'use client';
-import { Modal, Notification, Switch } from '@arco-design/web-react';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { getPlaylistManager } from '../lib/player/ncm/playlistManager';
-import IconFont from '../ui/common/iconfont';
-import LiveIndicator from '../ui/main/live_indicator';
-import PlayerBilibili from '../ui/player/platform/bilibili/player';
-import PlaylistBilibili from '../ui/player/platform/bilibili/playlist';
-import Player, { programCover } from '../ui/player/platform/ncm/player';
-import Playlist from '../ui/player/platform/ncm/playlist';
+"use client";
+import { Modal, Notification, Switch } from "@arco-design/web-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getPlaylistManager } from "../lib/player/ncm/playlistManager";
+import IconFont from "../ui/common/iconfont";
+import LiveIndicator from "../ui/main/live_indicator";
+import PlayerBilibili from "../ui/player/platform/bilibili/player";
+import PlaylistBilibili from "../ui/player/platform/bilibili/playlist";
+import Player, { programCover } from "../ui/player/platform/ncm/player";
+import Playlist from "../ui/player/platform/ncm/playlist";
 
 type SongInfo = {
   date: string;
   id: string;
   pid: number;
   name: string;
-  type?: 'songs' | 'sleep' | 'jianwen' | 'hachimi';
+  type?: "songs" | "sleep" | "jianwen" | "hachimi";
   playTime: number;
 };
 
@@ -58,13 +58,13 @@ export default function MainPage() {
   const playlistManager = getPlaylistManager();
 
   const setupServiceWorker = () => {
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register('/service-worker.js', {
-          scope: '/',
+        .register("/service-worker.js", {
+          scope: "/",
         })
         .then((_) => {
-          console.log('service worker registered succesfully');
+          console.log("service worker registered succesfully");
         })
         .catch((_) => {
           console.warn(
@@ -78,14 +78,14 @@ export default function MainPage() {
   // 处理播放器事件
   useEffect(() => {
     setIsClient(true);
-    setIsBilibiliMode(localStorage.getItem('player_platform') === 'bilibili');
+    setIsBilibiliMode(localStorage.getItem("player_platform") === "bilibili");
     setupServiceWorker();
   }, []);
 
   useEffect(() => {
     localStorage.setItem(
-      'player_platform',
-      isBilibiliMode ? 'bilibili' : 'ncm_podcast'
+      "player_platform",
+      isBilibiliMode ? "bilibili" : "ncm_podcast"
     );
     const handleSongChanged = (event: CustomEvent) => {
       setCurrentPlaying(event.detail);
@@ -96,16 +96,16 @@ export default function MainPage() {
     };
     if (isBilibiliMode) {
       window.removeEventListener(
-        'songChanged',
+        "songChanged",
         handleSongChanged as EventListener
       );
-      window.removeEventListener('songEnded', handleSongEnded as EventListener);
+      window.removeEventListener("songEnded", handleSongEnded as EventListener);
     } else {
       window.addEventListener(
-        'songChanged',
+        "songChanged",
         handleSongChanged as EventListener
       );
-      window.addEventListener('songEnded', handleSongEnded as EventListener);
+      window.addEventListener("songEnded", handleSongEnded as EventListener);
       const restoredSong = playlistManager.getCurrentSong();
       if (restoredSong) {
         setCurrentPlaying(restoredSong);
@@ -113,10 +113,10 @@ export default function MainPage() {
     }
     return () => {
       window.removeEventListener(
-        'songChanged',
+        "songChanged",
         handleSongChanged as EventListener
       );
-      window.removeEventListener('songEnded', handleSongEnded as EventListener);
+      window.removeEventListener("songEnded", handleSongEnded as EventListener);
     };
   }, [isBilibiliMode]);
 
@@ -133,7 +133,7 @@ export default function MainPage() {
           <div className="absolute top-4 right-4 flex flex-row justify-end gap-x-2 p-2">
             <span className="flex flex-row items-center gap-x-2 text-sm">
               <p className="text-sm">
-                模式：{isBilibiliMode ? 'Bilibili' : '播客'}
+                模式：{isBilibiliMode ? "Bilibili" : "播客"}
               </p>
               <Switch
                 checked={isBilibiliMode}
@@ -149,10 +149,10 @@ export default function MainPage() {
                     navigator?.serviceWorker?.controller
                   ) {
                     navigator?.serviceWorker?.controller.postMessage({
-                      action: 'CACHE_CLEAR',
+                      action: "CACHE_CLEAR",
                     });
                     notification.info?.({
-                      title: '清理缓存',
+                      title: "清理缓存",
                       content: <span>已尝试清理。</span>,
                     });
                   }
@@ -167,7 +167,7 @@ export default function MainPage() {
           </div>
 
           <div
-            className={`-z-10 absolute h-full w-full flex-1 overflow-clip ${isBilibiliMode !== undefined && 'bg-[#e799b0]'}`}
+            className={`-z-10 absolute h-full w-full flex-1 overflow-clip ${isBilibiliMode !== undefined && "bg-[#e799b0]"}`}
           >
             <div className="flex h-full min-h-full w-full min-w-full flex-1 blur-xl">
               {isBilibiliMode !== undefined &&
@@ -175,7 +175,7 @@ export default function MainPage() {
                   // biome-ignore lint/performance/noImgElement: ***
                   <img
                     alt=""
-                    className={'h-full w-full object-cover object-center'}
+                    className={"h-full w-full object-cover object-center"}
                     crossOrigin="anonymous"
                     height={0}
                     referrerPolicy="no-referrer"
@@ -185,11 +185,11 @@ export default function MainPage() {
                 ) : (
                   <Image
                     alt=""
-                    className={'h-full w-full object-cover object-center'}
+                    className={"h-full w-full object-cover object-center"}
                     height={0}
                     src={
                       programCover[
-                        (currentPlaying as SongInfo)?.type ?? 'songs'
+                        (currentPlaying as SongInfo)?.type ?? "songs"
                       ]
                     }
                     width={300}

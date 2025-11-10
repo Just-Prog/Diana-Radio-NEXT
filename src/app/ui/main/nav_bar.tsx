@@ -1,12 +1,12 @@
-'use client';
-import { Button } from '@arco-design/web-react';
+"use client";
+import { Button } from "@arco-design/web-react";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import LogoHorizon from '@/app/assets/logo_horizon.png';
+import LogoHorizon from "@/app/assets/logo_horizon.png";
 
 interface NavBarItemProps {
   href: string;
@@ -18,15 +18,15 @@ export default function NavBar() {
   const [pathNow, setPathNow] = useState<string[]>([]);
 
   const NavBarItem: React.FC<NavBarItemProps> = ({ href, desc }) => (
-      <Link href={href}>
-        <Button
-          className={`${pathNow[0] && pathNow[0] === href ? '!text-[#e79dad]' : '!text-black'} !font-bold`}
-          type="text"
-        >
-          {desc}
-        </Button>
-      </Link>
-    );
+    <Link href={href}>
+      <Button
+        className={`${pathNow[0] && pathNow[0] === href ? "!text-[#e79dad]" : "!text-black"} !font-bold`}
+        type="text"
+      >
+        {desc}
+      </Button>
+    </Link>
+  );
 
   useEffect(() => {
     setPathNow([pathname]);

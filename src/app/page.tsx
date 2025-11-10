@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
-import logo from '@/app/assets/logo.png';
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import logo from "@/app/assets/logo.png";
 
-export const metadata: Metadata = { referrer: 'no-referrer' };
+export const metadata: Metadata = { referrer: "no-referrer" };
 
 export default function Home() {
   return (

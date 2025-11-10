@@ -20,8 +20,7 @@ const IconFont: React.FC<IconProps> = ({
   onMouseDown,
   onTouchStart,
   style,
-}) => {
-  return (
+}) => (
     <span
       className={className ?? ''}
       color={color}
@@ -34,6 +33,5 @@ const IconFont: React.FC<IconProps> = ({
       </svg>
     </span>
   );
-};
 
 export default IconFont;

@@ -113,16 +113,14 @@ const Playlist: React.FC<{
         defaultValue={playlistType}
         onChange={(v) => setPlaylistType(v)}
         placeholder="选择电台"
-        renderFormat={(_, value) => {
-          return (
+        renderFormat={(_, value) => (
             <span>
               {
                 DianaWeeklyAvailableProgramsInfo.find((v) => v.key === value)
                   ?.name
               }
             </span>
-          );
-        }}
+          )}
       >
         {options.map((option) => (
           <Option key={option.key} value={option.key}>
@@ -154,8 +152,7 @@ const Playlist: React.FC<{
               <span>什么都没有</span>
             </div>
           }
-          render={(v) => {
-            return (
+          render={(v) => (
               <List.Item key={v.id}>
                 <div className="flex w-full max-w-full flex-row items-center gap-x-4">
                   <IconMusic className="mr-2 text-lg" />
@@ -195,8 +192,7 @@ const Playlist: React.FC<{
                   </div>
                 </div>
               </List.Item>
-            );
-          }}
+            )}
         />
       </div>
     </div>

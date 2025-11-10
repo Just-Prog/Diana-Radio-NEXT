@@ -6,8 +6,7 @@ type lyricsResp = { time: number; text: string };
 
 const LyricSwitch: React.FC<{
   isLyricAreaEnabled: boolean;
-}> = ({ isLyricAreaEnabled }) => {
-  return (
+}> = ({ isLyricAreaEnabled }) => (
     <div className="relative h-4 w-4">
       <IconFont
         className="!fill-black !text-black !stroke-black"
@@ -23,7 +22,6 @@ const LyricSwitch: React.FC<{
       )}
     </div>
   );
-};
 
 const LyricDisplayArea: React.FC<{
   lyrics: lyricsResp[];

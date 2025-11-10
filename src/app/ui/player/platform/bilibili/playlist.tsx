@@ -13,14 +13,12 @@ const PlaylistMetadata: React.FC<{
   type: string;
   size?: number;
   data: string | number;
-}> = ({ type, data, size = 14 }) => {
-  return (
+}> = ({ type, data, size = 14 }) => (
     <span className="flex flex-row items-center gap-x-1">
       <IconFont size={size} type={type} />
       <p style={{ fontSize: size - 2 }}>{data}</p>
     </span>
   );
-};
 
 const PlaylistBilibili: React.FC<{
   currentPlaying: SongInfoBilibili;

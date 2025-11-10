@@ -2,8 +2,7 @@ import Image from 'next/image';
 import logo from '@/app/assets/logo_horizon.png';
 import Divider from '../ui/common/divider';
 
-const AboutPage = () => {
-  return (
+const AboutPage = () => (
     <div className="flex flex-col justify-center px-8 py-4 md:flex-row">
       <div className="">
         <Image
@@ -22,6 +21,5 @@ const AboutPage = () => {
       </div>
     </div>
   );
-};
 
 export default AboutPage;

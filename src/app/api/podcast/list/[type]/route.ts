@@ -23,9 +23,7 @@ export async function GET(
 
   const isValidType = (
     key: string
-  ): key is keyof typeof DianaWeeklyAvailablePodcasts => {
-    return key in DianaWeeklyAvailablePodcasts;
-  };
+  ): key is keyof typeof DianaWeeklyAvailablePodcasts => key in DianaWeeklyAvailablePodcasts;
 
   if (isValidType(type)) {
     const isUpdated = (await redis.get(`${type}_updated_at`)) ?? 0;

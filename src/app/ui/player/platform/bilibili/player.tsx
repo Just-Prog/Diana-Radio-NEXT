@@ -68,7 +68,7 @@ const PlayerBilibili: React.FC<{
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
-  const [loop, setLoop] = useState(false);
+  const [loop, setLoop] = useState(true);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
@@ -235,20 +235,18 @@ const PlayerBilibili: React.FC<{
     fetchBiliStreamData();
   }, [partList, currentPart]);
 
+  const onEnded = useCallback(() => {
+    const nextPart = currentPart + 1;
+    if (nextPart < partList.length - 1) {
+      setCurrentPart(nextPart);
+    }
+  }, [currentPart, partList.length]);
+
   useEffect(() => {
     if (player.current) {
-      player.current.onended = () => {
-        console.log("current:", currentPart);
-        console.log("next:", currentPart + 1);
-        if (currentPart === partList.length - 1) {
-          pause();
-        } else {
-          setCurrentPartBK(currentPart);
-          setCurrentPart(currentPart + 1);
-        }
-      };
+      player.current.onended = onEnded;
     }
-  }, [player.current]);
+  }, [player.current, onEnded]);
 
   useEffect(() => {
     const audio = player.current;
@@ -524,7 +522,7 @@ const PlayerBilibili: React.FC<{
               <div className={"h-full w-full grow-0 p-3"}>
                 <Row className="hidden! lg:flex! gap-y-2 font-sans!" gutter={8}>
                   {partList.map((v: any) => (
-                    <Col className="font-sans!" key={v.cid} md={12} xs={12}>
+                    <Col className="font-sans!" key={v.cid} lg={24} xl={12}>
                       {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
                       {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}

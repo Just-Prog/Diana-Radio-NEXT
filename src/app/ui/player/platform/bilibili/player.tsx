@@ -510,10 +510,7 @@ const PlayerBilibili: React.FC<{
         <div
           className={`flex h-full w-full flex-1 items-center justify-center p-4 pt-0 lg:w-[70%] lg:pt-4 lg:pl-0 ${songInfo?.bvid ? "" : "hidden"}`}
         >
-          <div
-            className="flex h-19 w-full max-w-96 flex-1 flex-row items-start justify-center overflow-auto overflow-y-auto rounded-lg bg-white/65 md:max-w-lg lg:h-[80%] lg:min-w-36"
-            style={{ scrollbarWidth: "thin" }}
-          >
+          <div className="scrollbar-hide flex h-19 w-full max-w-96 flex-1 flex-row items-start justify-center overflow-auto overflow-y-auto rounded-lg bg-white/65 md:max-w-lg lg:h-[80%] lg:min-w-36">
             {partList.length === 0 ? (
               <div className="flex h-full flex-1 items-center justify-center">
                 Loading...

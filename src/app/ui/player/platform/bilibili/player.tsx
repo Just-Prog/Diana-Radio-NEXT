@@ -81,7 +81,7 @@ const PlayerBilibili: React.FC<{
   const [partList, setPartList] = useState<any[]>([]);
   const [partListBK, setPartListBK] = useState<any[]>([]);
   const [currentPart, setCurrentPart] = useState<number>(0);
-  const [currentPartBK, setCurrentPartBK] = useState<number>(0);
+  const [currentPartBK, setCurrentPartBK] = useState<number>(-999);
   const [pListVisible, setPListVisible] = useState<boolean>(true);
 
   const play = async () => {
@@ -232,8 +232,17 @@ const PlayerBilibili: React.FC<{
   }, [songInfo]);
 
   useEffect(() => {
-    fetchBiliStreamData();
-  }, [partList, currentPart]);
+    if (
+      currentPart >= 0 &&
+      currentPart < partList.length &&
+      currentPartBK !== currentPart
+    ) {
+      fetchBiliStreamData();
+    } else {
+      setCurrentPart(currentPartBK);
+      setCurrentPartBK(-999);
+    }
+  }, [partList, currentPart, currentPartBK]);
 
   const onEnded = useCallback(() => {
     const nextPart = currentPart + 1;
@@ -593,10 +602,8 @@ const PlayerBilibili: React.FC<{
         <div className="flex gap-x-1/3 md:gap-x-4">
           <PlayerControllerButton
             action={() => {
-              notification.warning?.({
-                title: "提示",
-                content: <span>Not implemented</span>,
-              });
+              setCurrentPartBK(currentPart);
+              setCurrentPart(currentPart - 1);
             }}
           >
             <IconSkipPrevious />
@@ -618,10 +625,8 @@ const PlayerBilibili: React.FC<{
           </PlayerControllerButton>
           <PlayerControllerButton
             action={() => {
-              notification.warning?.({
-                title: "提示",
-                content: <span>Not implemented</span>,
-              });
+              setCurrentPartBK(currentPart);
+              setCurrentPart(currentPart + 1);
             }}
           >
             <IconSkipNext />

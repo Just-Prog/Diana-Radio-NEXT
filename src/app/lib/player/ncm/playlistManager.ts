@@ -1,3 +1,4 @@
+"use client";
 import type { SongInfo } from "@/app/main/page";
 import { currentPlayingStorage, playlistCache } from "./storage";
 
@@ -10,6 +11,7 @@ export class PlaylistManager {
   private currentPlaylist: SongInfo[] = [];
   private currentIndex = -1;
   private currentType = "";
+  private isShuffleEnabled = false;
   private readonly onSongChange?: (song: SongInfo) => void;
   private readonly onPlaylistUpdate?: (songs: SongInfo[]) => void;
 
@@ -19,6 +21,11 @@ export class PlaylistManager {
 
     // 恢复之前的播放状态
     this.restorePlayingState();
+    try {
+      this.isShuffleEnabled = localStorage.getItem("player_shuffle") === "true";
+    } catch {
+      this.setShuffleEnabled(false);
+    }
   }
 
   // 设置播放列表
@@ -67,6 +74,11 @@ export class PlaylistManager {
   playPrevious(): SongInfo | null {
     if (this.currentPlaylist.length === 0) return null;
 
+    if (this.isShuffleEnabled) {
+      // 随机播放模式
+      return this.shuffle();
+    }
+    // 顺序播放模式
     if (this.currentIndex > 0) {
       this.currentIndex--;
     } else {
@@ -86,6 +98,11 @@ export class PlaylistManager {
       return null;
     }
 
+    if (this.isShuffleEnabled) {
+      // 随机播放模式
+      return this.shuffle();
+    }
+    // 顺序播放模式
     if (this.currentIndex < this.currentPlaylist.length - 1) {
       this.currentIndex++;
     } else {
@@ -123,6 +140,19 @@ export class PlaylistManager {
   // 获取播放列表类型
   getCurrentType(): string {
     return this.currentType;
+  }
+
+  // 获取随机播放状态
+  getShuffleEnabled(): boolean {
+    return this.isShuffleEnabled;
+  }
+
+  // 设置随机播放状态
+  setShuffleEnabled(enabled: boolean): void {
+    this.isShuffleEnabled = enabled;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("player_shuffle", String(enabled));
+    }
   }
 
   // 是否有上一首

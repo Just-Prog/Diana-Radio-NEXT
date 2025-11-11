@@ -41,6 +41,8 @@
     }
   },
   "extends": [
-    "ultracite"
+    "ultracite/core",
+    "ultracite/next",
+    "ultracite/react"
   ]
 }

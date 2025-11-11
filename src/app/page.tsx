@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
-import logo from '@/app/assets/logo.png';
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import logo from "@/app/assets/logo.png";
 
-export const metadata: Metadata = { referrer: 'no-referrer' };
+export const metadata: Metadata = { referrer: "no-referrer" };
 
 export default function Home() {
   return (
@@ -19,7 +19,7 @@ export default function Home() {
         </Link>
         <div className="mt-2 mb-2 font-black text-4xl">Diana Radio FM.307</div>
         <div className="font-semibold text-base">
-          An alternative frontend project for NCM Podcast@嘉心糖周报
+          NOT ONLY An alternative frontend project for NCM Podcast@嘉心糖周报
         </div>
       </div>
     </div>

@@ -19,7 +19,8 @@ const options = DianaWeeklyAvailableProgramsInfo;
 const Playlist: React.FC<{
   currentPlaying: SongInfo | undefined;
   setCurrentPlaying: (value: SongInfo) => void;
-}> = ({ currentPlaying, setCurrentPlaying }) => {
+  playlistOpened: boolean;
+}> = ({ currentPlaying, setCurrentPlaying, playlistOpened }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<SongInfo[]>();
   const FIRST_BROADCAST_TIMESTAMP = 1_607_772_600; // 2021-01-01 00:00:00 的时间戳
@@ -57,10 +58,13 @@ const Playlist: React.FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: why?
   useEffect(() => {
     fetchPlaylist();
+  }, [playlistType]);
+
+  useEffect(() => {
     cachesSize().then((_) => {
       setCacheSize(_);
     });
-  }, [playlistType]);
+  }, [playlistOpened]);
 
   const cachesSize = async () => {
     try {
@@ -92,7 +96,7 @@ const Playlist: React.FC<{
           console.warn(`无法打开缓存: ${cacheName}`, error);
         }
       }
-
+      console.log("cache size calculated", totalSize);
       return totalSize;
     } catch (error) {
       console.error("计算缓存大小失败:", error);

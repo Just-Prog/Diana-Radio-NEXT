@@ -235,6 +235,7 @@ export default function MainPage() {
             ) : (
               <Playlist
                 currentPlaying={currentPlaying as SongInfo}
+                playlistOpened={playlistOpened}
                 setCurrentPlaying={(v) => {
                   setCurrentPlaying(v);
                   setPlaylistOpened(false);

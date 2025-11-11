@@ -58,7 +58,7 @@ const PlayerControllerButton: React.FC<{
         action?.();
       }}
     >
-      <div className="flex-1 px-2 py-1 opacity-45 hover:opacity-80">
+      <div className="flex flex-1 items-center justify-center px-2 py-1 opacity-45 hover:opacity-80">
         {children}
       </div>
     </div>
@@ -77,6 +77,7 @@ const Player: React.FC<{
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [loop, setLoop] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
@@ -127,6 +128,12 @@ const Player: React.FC<{
     }
   };
 
+  const toggleShuffleStatus = () => {
+    const newShuffleState = !shuffle;
+    setShuffle(newShuffleState);
+    playlistManager.setShuffleEnabled(newShuffleState);
+  };
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <?>
   const fetchProgramURL = useCallback(async () => {
     if (songInfo?.id) {
@@ -171,6 +178,10 @@ const Player: React.FC<{
       pause();
     }
     setPaused(!paused);
+  };
+
+  const initShuffleStatus = () => {
+    setShuffle(playlistManager.getShuffleEnabled());
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: ？
@@ -253,6 +264,7 @@ const Player: React.FC<{
   useEffect(() => {
     initMediaSession();
     toggleLoopStatus();
+    initShuffleStatus();
   }, []);
 
   useEffect(() => {
@@ -554,6 +566,24 @@ const Player: React.FC<{
             >
               {volume === 0 ? <IconMute /> : <IconSound />}
             </Popover>
+          </PlayerControllerButton>
+          <PlayerControllerButton action={toggleShuffleStatus}>
+            <div className="relative h-4 w-4">
+              <div className="flex flex-1 items-center justify-center">
+                <IconFont
+                  className={shuffle ? "text-[#e799b0]" : "text-black"}
+                  size={18}
+                  type="icon-suijibofang"
+                />
+                {!shuffle && (
+                  <IconFont
+                    className="-right-0.5 -bottom-0.5 absolute z-10 stroke-4! stroke-black!"
+                    size={10}
+                    type="icon-icon-close"
+                  />
+                )}
+              </div>
+            </div>
           </PlayerControllerButton>
           <PlayerControllerButton action={toggleLoopStatus}>
             <IconLoop spin={loop} />

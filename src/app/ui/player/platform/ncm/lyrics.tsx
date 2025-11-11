@@ -9,13 +9,13 @@ const LyricSwitch: React.FC<{
 }> = ({ isLyricAreaEnabled }) => (
   <div className="relative h-4 w-4">
     <IconFont
-      className="!fill-black !text-black !stroke-black"
+      className="fill-black! stroke-black! text-black!"
       size={18}
       type="icon-c-icon-gecix"
     />
     {!isLyricAreaEnabled && (
       <IconFont
-        className="-right-1 -bottom-1 !stroke-black !stroke-2 absolute z-10"
+        className="-right-0.5 -bottom-0.5 absolute z-10 stroke-2! stroke-black!"
         size={12}
         type="icon-icon-close"
       />

@@ -220,7 +220,6 @@ export default function MainPage() {
         className="!w-[90%] md:!w-[60%] flex overflow-hidden"
         footer={null}
         onCancel={() => setPlaylistOpened(false)}
-        unmountOnExit
         visible={playlistOpened}
       >
         <div className="flex h-[calc(90vh-48px)] w-full flex-1 md:h-[80vh]">

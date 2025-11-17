@@ -139,8 +139,14 @@ const Player: React.FC<{
     if (songInfo?.id) {
       setPaused("loading");
       const data = await Request.get(`${PODCAST_AUDIO_FETCH}${songInfo?.id}`);
+      const target = data.data.data.url.replace("http://", "https://");
+      const blob: Blob = (
+        await Request.get(target, {
+          responseType: "blob",
+        })
+      ).data;
       if (player.current) {
-        player.current.src = data.data.data.url.replace("http://", "https://");
+        player.current.src = URL.createObjectURL(blob);
       }
       try {
         await play();

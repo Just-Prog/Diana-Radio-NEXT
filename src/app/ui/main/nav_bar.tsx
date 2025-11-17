@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@arco-design/web-react";
-
+import { IconGithub } from "@arco-design/web-react/icon";
+import { Popover } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
 import LogoHorizon from "@/app/assets/logo_horizon.png";
 
 interface NavBarItemProps {
@@ -41,9 +41,24 @@ export default function NavBar() {
           src={LogoHorizon}
         />
       </Link>
-      <div className="flex flex-row gap-x-4">
+      <div className="flex flex-1 flex-row gap-x-3">
         <NavBarItem desc="主页" href="/main" />
         <NavBarItem desc="关于" href="/about" />
+      </div>
+      <div className="flex">
+        <Popover content={<span>GitHub</span>}>
+          <IconGithub
+            className="text-xl hover:text-[#e799b0]!"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.open(
+                  "https://github.com/Just-Prog/Diana-Radio-NEXT",
+                  "_blank"
+                );
+              }
+            }}
+          />
+        </Popover>
       </div>
     </div>
   );

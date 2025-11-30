@@ -451,6 +451,11 @@ const PlayerBilibili: React.FC<{
     }
   }, [isDragging]);
 
+  const onMouseWheelScrollVolButton = (e: any) => {
+    const direction: boolean = e.deltaY < 0;
+    setVolume(direction ? (volume <= 0.9 ? volume + 0.1 : 1) : (volume >= 0.1 ? volume - 0.1 : 0))
+  }
+
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex h-full max-w-full flex-1 flex-col p-6 lg:h-[75%] lg:flex-row">
@@ -673,7 +678,9 @@ const PlayerBilibili: React.FC<{
               onVisibleChange={(v) => setIsVolumeControllerVisible(v)}
               popupVisible={isVolumeControllerVisible}
             >
-              {volume === 0 ? <IconMute /> : <IconSound />}
+              <div onWheel={onMouseWheelScrollVolButton}>
+                {volume === 0 ? <IconMute /> : <IconSound />}
+              </div>
             </Popover>
           </PlayerControllerButton>
           <PlayerControllerButton action={toggleLoopStatus}>

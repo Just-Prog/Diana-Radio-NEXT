@@ -23,7 +23,7 @@ export default function MainPageLayout({
         <Layout.Footer className="bg-white">
           <div className="py-4 shadow-black/100 shadow-lg">
             <div className="text-center">
-              Diana Radio @Diana_Weekly, 2025{" "}
+              Diana Radio @Diana_Weekly {new Date().getFullYear()}{" "}
               <a
                 className="duration-500 ease-in-out hover:text-[#e799b0]"
                 href="https://space.bilibili.com/672328094"
